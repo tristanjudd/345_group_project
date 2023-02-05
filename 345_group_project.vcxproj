@@ -19,12 +19,14 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\345_p1\Orders.h" />
     <ClInclude Include="Card.h" />
     <ClInclude Include="Deck.h" />
     <ClInclude Include="Hand.h" />
     <ClInclude Include="Player.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\345_p1\Orders.cpp" />
     <ClCompile Include="Card.cpp" />
     <ClCompile Include="card_driver.cpp" />
     <ClCompile Include="Deck.cpp" />
