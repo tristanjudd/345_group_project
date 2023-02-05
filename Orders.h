@@ -25,13 +25,12 @@ public:
 	bool validate();
 	bool execute();
 
-	string get_effect();
-	string set_effect();
-
 	friend ostream& operator <<(ostream& OUT, const Order& theOrder);
 
-private:
+protected:
 	string* effect;
+private:
+	
 };
 
 class deploy : public Order
@@ -46,7 +45,7 @@ public:
 
 	friend ostream& operator <<(ostream& OUT, const deploy& theOrder);
 private:
-	string* effect;
+	
 };
 
 class advance : public Order
