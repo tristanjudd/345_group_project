@@ -9,7 +9,7 @@ class OrderList
 public:
 	bool remove();
 	bool move();
-
+	
 private:
 
 };
@@ -20,18 +20,26 @@ public:
 
 	Order();
 	Order(string execMessage);
+	Order(const Order& o);
 	~Order();
 
 	bool validate();
 	bool execute();
 
-	friend ostream& operator <<(ostream& OUT, const Order& theOrder);
+	string getEffect() const;
+	void setEffect(string execMessage);
+	string getDesc() const;
+	void setDesc(string desc);
 
 protected:
+	string* description;
 	string* effect;
 private:
 	
 };
+
+//stream insertion operator
+std::ostream& operator<<(std::ostream& OUT, const Order& theOrder);
 
 class deploy : public Order
 {
@@ -43,21 +51,18 @@ public:
 	bool validate();
 	bool execute();
 
-	friend ostream& operator <<(ostream& OUT, const deploy& theOrder);
 private:
-	
 };
 
-class advance : public Order
+class Advance : public Order
 {
 public:
-	advance();
-	advance(string execMessage);
-	~advance();
+	Advance();
+	Advance(string execMessage);
+	~Advance();
 
 	bool validate();
 	bool execute();
-	friend ostream& operator <<(ostream& OUT, const advance& theOrder);
 
 private:
 
@@ -72,7 +77,6 @@ public:
 
 	bool validate();
 	bool execute();
-	friend ostream& operator <<(ostream& OUT, const bomb& theOrder);
 
 private:
 
@@ -87,25 +91,11 @@ public:
 
 	bool validate();
 	bool execute();
-	friend ostream& operator <<(ostream& OUT, const blockade& theOrder);
-private:
-
-};
-
-class deploy : public Order
-{
-public:
-	deploy();
-	deploy(string execMessage);
-	~deploy();
-
-	bool validate();
-	bool execute();
-	friend ostream& operator <<(ostream& OUT, const deploy& theOrder);
 
 private:
 
 };
+
 
 class airlift : public Order
 {
@@ -116,7 +106,6 @@ public:
 
 	bool validate();
 	bool execute();
-	friend ostream& operator <<(ostream& OUT, const airlift& theOrder);
 
 private:
 
@@ -131,7 +120,6 @@ public:
 
 	bool validate();
 	bool execute();
-	friend ostream& operator <<(ostream& OUT, const negotiate& theOrder);
 
 private:
 
