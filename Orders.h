@@ -30,11 +30,10 @@ public:
 	void setEffect(string execMessage);
 	string getDesc() const;
 	void setDesc(string desc);
-
-protected:
+	
+private:
 	string* description;
 	string* effect;
-private:
 	
 };
 
@@ -46,6 +45,7 @@ class deploy : public Order
 public:
 	deploy();
 	deploy(string execMessage);
+	deploy(const deploy& o);
 	~deploy();
 
 	bool validate();
@@ -59,6 +59,7 @@ class Advance : public Order
 public:
 	Advance();
 	Advance(string execMessage);
+	Advance(const Advance& o);
 	~Advance();
 
 	bool validate();
@@ -73,6 +74,7 @@ class bomb : public Order
 public:
 	bomb();
 	bomb(string message);
+	bomb(const bomb& o);
 	~bomb();
 
 	bool validate();
@@ -87,6 +89,7 @@ class blockade : public Order
 public:
 	blockade();
 	blockade(string execMessage);
+	blockade(const blockade& o);
 	~blockade();
 
 	bool validate();
@@ -102,6 +105,7 @@ class airlift : public Order
 public:
 	airlift();
 	airlift(string execMessage);
+	airlift(const airlift& o);
 	~airlift();
 
 	bool validate();
@@ -116,6 +120,7 @@ class negotiate : public Order
 public:
 	negotiate();
 	negotiate(string execMessage);
+	negotiate(const negotiate& negotiate);
 	~negotiate();
 
 	bool validate();

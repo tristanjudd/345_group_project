@@ -27,7 +27,10 @@ Order::~Order() {
 }
 
 string Order::getDesc() const{
-	return *description;
+	if (description != NULL) {
+		return *description;
+	}
+	return "null description pointer";
 }
 
 void Order::setDesc(string desc) {
@@ -44,7 +47,7 @@ void Order::setEffect(string execMessage) {
 
 //stream insertion operator
 std::ostream& operator<<(std::ostream& OUT, const Order& theOrder) {
-	OUT << theOrder.getDesc() << endl;
+	OUT << "\n" << theOrder.getDesc() << endl;
 
 	//outputs effect if the order was executed
 	if (!(theOrder.getEffect() == "") && !(theOrder.getEffect() == "invalid")) {
@@ -82,16 +85,25 @@ bool Order::execute() {
 }
 
 //deploy class
-deploy::deploy() : Order(){
+deploy::deploy()
+{
+	setDesc("This is a deploy order");
 }
 
-deploy::deploy(string execMessage) : Order(execMessage) {
+deploy::deploy(string execMessage) : Order(execMessage)
+{
+	setDesc("This is a deploy order");
+	setEffect(execMessage);
+}
+
+deploy::deploy(const deploy& o) : Order(o)
+{
 
 }
 
-deploy::~deploy() {
-	delete effect;
-	delete description;
+deploy::~deploy() 
+{
+
 }
 
 //invalid obj are created with "invalid" exec message
@@ -122,17 +134,24 @@ bool deploy::execute() {
 }
 
 //Advance class
-Advance::Advance() : Order(){
-
+Advance::Advance()
+{
+	setDesc("This is an advance order");
 }
 
-Advance::Advance(string execMessage) : Order(execMessage) {
+Advance::Advance(string execMessage)
+{
+	setDesc("This is an advance order");
+	setEffect(execMessage);
+}
+
+Advance::Advance(const Advance& o) : Order(o)
+{
 
 }
 
 Advance::~Advance() {
-	delete effect;
-	delete description;
+
 }
 
 //invalid obj are created with "invalid" exec message
@@ -163,17 +182,24 @@ bool Advance::execute() {
 }
 
 //bomb class
-bomb::bomb() : Order() {
-
+bomb::bomb()
+{
+	setDesc("This is a bomb order");
 }
 
-bomb::bomb(string execMessage) : Order(execMessage) {
+bomb::bomb(string execMessage) 
+{
+	setDesc("This is a bomb order");
+	setEffect(execMessage);
+}
+
+bomb::bomb(const bomb& o) : Order(o)
+{
 
 }
 
 bomb::~bomb() {
-	delete effect;
-	delete description;
+
 }
 
 //invalid obj are created with "invalid" exec message
@@ -204,17 +230,24 @@ bool bomb::execute() {
 }
 
 //blockade class
-blockade::blockade() : Order() {
-
+blockade::blockade()
+{
+	setDesc("This is a blockade order");
 }
 
-blockade::blockade(string execMessage) : Order(execMessage) {
+blockade::blockade(string execMessage)
+{
+	setDesc("This is a blockade order");
+	setEffect(execMessage);
+}
+
+blockade::blockade(const blockade& o) : Order(o)
+{
 
 }
 
 blockade::~blockade() {
-	delete effect;
-	delete description;
+
 }
 
 //invalid obj are created with "invalid" exec message
@@ -245,17 +278,24 @@ bool blockade::execute() {
 }
 
 //airlift class
-airlift::airlift() : Order() {
-
+airlift::airlift()
+{
+	setDesc("This is an airlift order");
 }
 
-airlift::airlift(string execMessage) : Order(execMessage) {
+airlift::airlift(string execMessage)
+{
+	setDesc("This is an airlift order");
+	setEffect(execMessage);
+}
+
+airlift::airlift(const airlift& o) : Order(o)
+{
 
 }
 
 airlift::~airlift() {
-	delete effect;
-	delete description;
+
 }
 
 //invalid obj are created with "invalid" exec message
@@ -286,22 +326,29 @@ bool airlift::execute() {
 }
 
 //negotiate class
-negotiate::negotiate() : Order() {
-
+negotiate::negotiate()
+{
+	setDesc("This is a negotiate order");
 }
 
-negotiate::negotiate(string execMessage) : Order(execMessage) {
+negotiate::negotiate(string execMessage)
+{
+	setDesc("This is a negotiate order");
+	setEffect(execMessage);
+}
+
+negotiate::negotiate(const negotiate& o) : Order(o)
+{
 
 }
 
 negotiate::~negotiate() {
-	delete effect;
-	delete description;
+
 }
 
 //invalid obj are created with "invalid" exec message
 //have to change when Orders are defined
-bool Order::validate() {
+bool negotiate::validate() {
 	if (getEffect() == "invalid") {
 		return false;
 	}
