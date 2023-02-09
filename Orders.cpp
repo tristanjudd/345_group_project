@@ -1,7 +1,10 @@
 #include "Orders.h"
 #include <iostream>
-using namespace std;
+using std::cout;
+#include <vector>
+using std::vector;
 #include <string>
+using namespace std;
 
 //Order class
 Order::Order() {
@@ -47,7 +50,7 @@ void Order::setEffect(string execMessage) {
 
 //stream insertion operator
 std::ostream& operator<<(std::ostream& OUT, const Order& theOrder) {
-	OUT << "\n" << theOrder.getDesc() << endl;
+	OUT << "\n" << theOrder.getDesc() <<endl;
 
 	//outputs effect if the order was executed
 	if (!(theOrder.getEffect() == "") && !(theOrder.getEffect() == "invalid")) {
@@ -372,4 +375,73 @@ bool negotiate::execute() {
 		return false;
 	}
 }
+
+//OrderList class
+
+OrderList::OrderList()
+{
+	theList = new std::vector<Order>;
+}
+
+OrderList::OrderList(const OrderList& o)
+{
+	theList = new std::vector<Order> (o.getList());
+}
+
+OrderList::~OrderList()
+{
+	delete theList; //debug
+}
+
+vector<Order> OrderList::getList() const
+{
+	return *theList;
+}
+
+bool OrderList::Add(Order obj)
+{
+	theList->push_back(obj);
+	return true;
+}
+
+bool OrderList::remove(int i)
+{
+	if (theList->size() <= i || i < 0) 
+	{
+		cout << "DEBUG: out of index" << endl;
+		return false;
+	}
+	else 
+	{
+		theList->erase(theList->begin() + i);
+		return true;
+	}	
+}
+
+bool OrderList::move(int objIndex, int newIndex)
+{
+	if (theList->size() <= objIndex || objIndex < 0 || theList->size() <= newIndex || newIndex < 0)
+	{
+		cout << "DEBUG: out of index" << endl;
+		return false;
+	}
+	else
+	{
+		Order temp = Order(getList()[objIndex]);
+		theList->erase(theList->begin()+objIndex);
+		theList->insert(theList->begin() + newIndex, temp);
+	}
+	
+}
+
+void OrderList::print() 
+{
+	for (Order obj : getList())
+	{
+		cout << obj<<endl;
+	}
+}
+
+
+
 

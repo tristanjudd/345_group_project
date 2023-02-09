@@ -1,18 +1,15 @@
 #pragma once
 
 #include <iostream>
-using namespace std;
+using std::cout;
+#include<vector>
+using std::vector;
 #include <string>
+using namespace std;
 
-class OrderList
-{
-public:
-	bool remove();
-	bool move();
-	
-private:
 
-};
+
+
 
 class Order
 {
@@ -128,4 +125,24 @@ public:
 
 private:
 
+};
+
+class OrderList
+{
+public:
+
+	OrderList();
+	OrderList(const OrderList& o);
+	~OrderList();
+
+	bool Add(Order obj);
+	bool remove(int i);
+	bool move(int objIndex, int newIndex);
+	std::vector<Order> getList() const;
+	void print();
+
+	std::vector<Order>* theList;
+
+private:
+	//std::vector<Order>* theList;
 };
