@@ -1,7 +1,0 @@
-# ninja log v5
-42	443	6977576771069284	CMakeFiles/Warzone.dir/Hand.cpp.obj	a2174eb594bc3268
-14	1522	6977576781850527	CMakeFiles/Warzone.dir/Map/Map.cpp.obj	8bbb4c7f57773c78
-35	452	6977576771069284	CMakeFiles/Warzone.dir/Deck.cpp.obj	1b01151b4cf64797
-20	2734	6977576794038050	CMakeFiles/Warzone.dir/Card.cpp.obj	d6c2fe779bd96bfd
-7	1512	6977576781694359	CMakeFiles/Warzone.dir/Map/MapDriver.cpp.obj	4cfde52f91a6251a
-2	2847	6977576795131859	CMakeFiles/Warzone.dir/main.cpp.obj	ace078a768c82e4c
