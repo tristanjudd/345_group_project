@@ -21,7 +21,6 @@ Order::Order(string execMessage) {
 Order::Order(const Order& o) {
 	description = new string(o.getDesc());
 	effect = new string(o.getEffect());
-
 }
 
 Order::~Order() {
@@ -33,24 +32,29 @@ string Order::getDesc() const{
 	if (description != NULL) {
 		return *description;
 	}
-	return "null description pointer";
+	return "null";
 }
 
 void Order::setDesc(string desc) {
+	delete description;
 	description = new string(desc);
 }
 
 string Order::getEffect() const{
-	return *effect;
+	if (effect != NULL) {
+		return *effect;
+	}
+	return "null";
 }
 
 void Order::setEffect(string execMessage) {
+	delete effect;
 	effect = new string(execMessage);
 }
 
 //stream insertion operator
 std::ostream& operator<<(std::ostream& OUT, const Order& theOrder) {
-	OUT << "\n" << theOrder.getDesc() <<endl;
+	OUT << theOrder.getDesc() <<endl;
 
 	//outputs effect if the order was executed
 	if (!(theOrder.getEffect() == "") && !(theOrder.getEffect() == "invalid")) {
@@ -58,6 +62,13 @@ std::ostream& operator<<(std::ostream& OUT, const Order& theOrder) {
 	}
 
 	return OUT;
+}
+
+//assignment operator
+void Order::operator= (Order const &obj)
+{
+	description = obj.description;
+	effect = obj.effect;
 }
 
 //invalid obj are created with "invalid" exec message
@@ -377,28 +388,31 @@ bool negotiate::execute() {
 }
 
 //OrderList class
-
 OrderList::OrderList()
 {
-	theList = new std::vector<Order>;
+	theList = new std::vector<Order*>;
 }
 
-OrderList::OrderList(const OrderList& o)
-{
-	theList = new std::vector<Order> (o.getList());
-}
+//OrderList::OrderList(const OrderList& o)
+//{
+//	theList = new std::vector<Order> (*(o.getList()));
+//}
 
 OrderList::~OrderList()
 {
-	delete theList; //debug
+	for (Order* obj : *theList)
+	{
+		delete obj;
+	}
+	delete theList;
 }
 
-vector<Order> OrderList::getList() const
-{
-	return *theList;
-}
+//vector<Order>* OrderList::getList() const
+//{
+//	return theList;
+//}
 
-bool OrderList::Add(Order obj)
+bool OrderList::Add(Order* obj)
 {
 	theList->push_back(obj);
 	return true;
@@ -418,27 +432,28 @@ bool OrderList::remove(int i)
 	}	
 }
 
-bool OrderList::move(int objIndex, int newIndex)
+bool OrderList::move(int _objIndex, int newIndex)
 {
-	if (theList->size() <= objIndex || objIndex < 0 || theList->size() <= newIndex || newIndex < 0)
+	if (m_theList->size() <= objIndex || objIndex < 0 || theList->size() <= newIndex || newIndex < 0)
 	{
-		cout << "DEBUG: out of index" << endl;
+		cout << "debug: out of index" << endl;
 		return false;
 	}
 	else
 	{
-		Order temp = Order(getList()[objIndex]);
+		Order* temp = theList->at(objIndex);
 		theList->erase(theList->begin()+objIndex);
 		theList->insert(theList->begin() + newIndex, temp);
+		return true;
 	}
 	
 }
 
 void OrderList::print() 
 {
-	for (Order obj : getList())
+	for (Order *obj : *theList)
 	{
-		cout << obj<<endl;
+		cout << *obj;
 	}
 }
 

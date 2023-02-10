@@ -11,6 +11,7 @@ using namespace std;
 
 
 
+
 class Order
 {
 public:
@@ -24,13 +25,14 @@ public:
 	bool execute();
 
 	string getEffect() const;
-	void setEffect(string execMessage);
+	void setEffect(string _execMessage);
 	string getDesc() const;
-	void setDesc(string desc);
+	void setDesc(string _desc);
+	void operator= (Order const &);
 	
 private:
-	string* description;
-	string* effect;
+	string* m_descriptionPtr;
+	string* m_effectPtr;
 	
 };
 
@@ -132,17 +134,15 @@ class OrderList
 public:
 
 	OrderList();
-	OrderList(const OrderList& o);
+	//OrderList(const OrderList& o);
 	~OrderList();
 
-	bool Add(Order obj);
+	bool Add(Order* obj);
 	bool remove(int i);
 	bool move(int objIndex, int newIndex);
-	std::vector<Order> getList() const;
+	//vector<Order>* getList() const;
 	void print();
 
-	std::vector<Order>* theList;
-
 private:
-	//std::vector<Order>* theList;
+	vector<Order* >* theList;
 };

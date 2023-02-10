@@ -8,9 +8,12 @@ using namespace std;
 
 //DRIVER TO TEST
 int main() {
+	//add new
 	Order ord = Order("");
+
 	cout << "Order created" << endl;
 	deploy dep = deploy("");
+
 	cout << "deploy created" << endl;
 	Advance adv = Advance("");
 	cout << "advance created" << endl;
@@ -22,27 +25,30 @@ int main() {
 	cout << "airlift created" << endl;
 	negotiate neg = negotiate("");
 	cout << "negotiate created" << endl;
+
+	Order invalid = Order("invalid");
+	cout << "invalid Order created" << endl;
 	
 	OrderList L = OrderList();
-	
-	L.Add(ord);
-	L.Add(dep);
-	L.Add(adv);
-	L.Add(bom);
-	L.Add(blo);
-	L.Add(air);
-	L.Add(neg);
+
+	negotiate* n = new negotiate("");
+
+	//remove &
+	L.Add(&ord);
+	L.Add(&dep);
+	L.Add(&adv);
+	L.Add(&bom);
+	L.Add(&blo);
+	L.Add(&air);
+	L.Add(&neg);
 
 	L.print();
 
-	//L.theList->erase(L.theList->begin());
-	//L.remove(0);
-	//cout<<"index 0:"<<L.theList->at(0);
+	L.move(0, 1);
+	//L.remove(1);
 
-	//L.move(0, 1);
-	//L.print();
-	//L.remove(0);
-	//L.print();
+	cout << "After Modification:" << endl;
+	L.print();
 	cout << "DONE";
 
 
@@ -76,9 +82,19 @@ int main() {
 	cout << neg << endl;
 	neg.execute();
 	cout << neg << endl;
+
+	cout << invalid << endl;
+	invalid.execute();
+	cout << invalid << endl;
 	*/
 	
 	
 	return 0;
 }
 
+
+//void IssueOrder{
+//	Order* theOrder = new Order();
+//	pointerToTheList->Add(obj);
+//	
+//}
