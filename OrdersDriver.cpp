@@ -8,86 +8,56 @@ using namespace std;
 
 //DRIVER TO TEST
 int main() {
-	//add new
-	Order ord = Order("");
 
+	//Creating objects
+	Order *ord = new Order("");
 	cout << "Order created" << endl;
-	deploy dep = deploy("");
-
-	cout << "deploy created" << endl;
-	Advance adv = Advance("");
-	cout << "advance created" << endl;
-	bomb bom = bomb("");
-	cout << "bomb created" << endl;
-	blockade blo = blockade("");
+	Deploy *dep = new Deploy("");
+	cout << "Deploy created" << endl;
+	Advance *adv =  new Advance("");
+	cout << "Advance created" << endl;
+	Bomb *bom = new Bomb("");
+	cout << "Bomb created" << endl;
+	Blockade *blo = new Blockade("");
 	cout << "blockade created" << endl;
-	airlift air = airlift("");
-	cout << "airlift created" << endl;
-	negotiate neg = negotiate("");
-	cout << "negotiate created" << endl;
+	Airlift *air = new Airlift("");
+	cout << "Airlift created" << endl;
+	Negotiate *neg = new Negotiate("");
+	cout << "Negotiate created" << endl;
 
-	Order invalid = Order("invalid");
+	Order *invalid = new Order("invalid");
 	cout << "invalid Order created" << endl;
 	
 	OrderList L = OrderList();
 
-	negotiate* n = new negotiate("");
+	//Adding object to the list
+	L.Add(ord);
+	L.Add(dep);
+	L.Add(adv);
+	L.Add(bom);
+	L.Add(blo);
+	L.Add(air);
+	L.Add(neg);
 
-	//remove &
-	L.Add(&ord);
-	L.Add(&dep);
-	L.Add(&adv);
-	L.Add(&bom);
-	L.Add(&blo);
-	L.Add(&air);
-	L.Add(&neg);
-
+	cout << "\nPrinting the list:" << endl;
 	L.print();
 
-	L.move(0, 1);
-	//L.remove(1);
 
-	cout << "After Modification:" << endl;
+	L.move(0, 1); //move first order to second
+	L.remove(1); //romve second item
+
+	cout << "\nAfter Modification:" << endl;
 	L.print();
+
+	//Execution
+	cout << "\nExecuting the Orders" << endl;
+	for (Order *obj : *L.getList() )
+	{
+		obj->execute();
+		cout << *obj << endl;
+	}
+
 	cout << "DONE";
-
-
-	/*
-	cout << "\n\n PRINTING OBJECTS:" << endl;
-	cout << ord << endl;
-	ord.execute();
-	cout << ord << endl;
-
-	cout << dep << endl;
-	dep.execute();
-	cout << dep << endl;
-
-	
-	cout << adv << endl;
-	adv.execute();
-	cout << adv << endl;
-	
-	cout << bom << endl;
-	bom.execute();
-	cout << bom << endl;
-
-	cout << blo << endl;
-	blo.execute();
-	cout << blo << endl;
-
-	cout << air << endl;
-	air.execute();
-	cout << air << endl;
-
-	cout << neg << endl;
-	neg.execute();
-	cout << neg << endl;
-
-	cout << invalid << endl;
-	invalid.execute();
-	cout << invalid << endl;
-	*/
-	
 	
 	return 0;
 }

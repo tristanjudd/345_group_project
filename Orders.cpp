@@ -8,48 +8,46 @@ using namespace std;
 
 //Order class
 Order::Order() {
-	description = new string("This is an Order.");
-	effect = new string("");
+	m_descriptionPtr = new string("This is an Order."); //Description of the Order
+	m_effectPtr = new string(""); //Effect of the Order after being executed
 }
 
-Order::Order(string execMessage) {
-	description = new string("This is an Order.");
-	effect = new string(execMessage);
+Order::Order(string _execMessage) {
+	m_descriptionPtr = new string("This is an Order.");
+	m_effectPtr = new string(_execMessage);
 }
 
 //copy constructor
 Order::Order(const Order& o) {
-	description = new string(o.getDesc());
-	effect = new string(o.getEffect());
+	m_descriptionPtr = new string(o.getDesc());
+	m_effectPtr = new string(o.getEffect());
 }
 
 Order::~Order() {
-	delete description;
-	delete effect;
+	delete m_descriptionPtr;
+	delete m_effectPtr;
 }
 
 string Order::getDesc() const{
-	if (description != NULL) {
-		return *description;
+	if (m_descriptionPtr != NULL) {
+		return *m_descriptionPtr;
 	}
 	return "null";
 }
 
-void Order::setDesc(string desc) {
-	delete description;
-	description = new string(desc);
+void Order::setDesc(string _desc) {
+	*m_descriptionPtr = _desc;
 }
 
 string Order::getEffect() const{
-	if (effect != NULL) {
-		return *effect;
+	if (m_effectPtr != NULL) {
+		return *m_effectPtr;
 	}
 	return "null";
 }
 
-void Order::setEffect(string execMessage) {
-	delete effect;
-	effect = new string(execMessage);
+void Order::setEffect(string _execMessage) {
+	*m_effectPtr = _execMessage;
 }
 
 //stream insertion operator
@@ -67,8 +65,8 @@ std::ostream& operator<<(std::ostream& OUT, const Order& theOrder) {
 //assignment operator
 void Order::operator= (Order const &obj)
 {
-	description = obj.description;
-	effect = obj.effect;
+	m_descriptionPtr = obj.m_descriptionPtr;
+	m_effectPtr = obj.m_effectPtr;
 }
 
 //invalid obj are created with "invalid" exec message
@@ -87,42 +85,42 @@ bool Order::execute() {
 	bool valid = validate();
 
 	if (valid) {
-		cout << "DEBUG: order executed" << endl;
+		cout << "DEBUG: Order executed" << endl;
 		cout << "DEBUG: did something no yet defined" << endl;
 		setEffect("did something");
 		return true;
 	}
 	else {
-		cout << "DEBUG: order not executed" << endl;
+		cout << "DEBUG: Order not executed" << endl;
 		return false;
 	}
 }
 
 //deploy class
-deploy::deploy()
+Deploy::Deploy()
 {
-	setDesc("This is a deploy order");
+	setDesc("This is a Deploy order");
 }
 
-deploy::deploy(string execMessage) : Order(execMessage)
+Deploy::Deploy(string _execMessage) : Order(_execMessage)
 {
-	setDesc("This is a deploy order");
-	setEffect(execMessage);
+	setDesc("This is a Deploy order");
+	setEffect(_execMessage);
 }
 
-deploy::deploy(const deploy& o) : Order(o)
+Deploy::Deploy(const Deploy& _o) : Order(_o)
 {
 
 }
 
-deploy::~deploy() 
+Deploy::~Deploy() 
 {
 
 }
 
 //invalid obj are created with "invalid" exec message
 //have to change when Orders are defined
-bool deploy::validate() {
+bool Deploy::validate() {
 	if (getEffect() == "invalid") {
 		return false;
 	}
@@ -132,17 +130,17 @@ bool deploy::validate() {
 
 //prints Order type + add exec message 
 //have to change when Orders are defined
-bool deploy::execute() {
+bool Deploy::execute() {
 	bool valid = validate();
 
 	if (valid) {
-		cout << "DEBUG: order executed" << endl;
+		cout << "DEBUG: Deploy order executed" << endl;
 		cout << "DEBUG: did something no yet defined" << endl;
 		setEffect("did something");
 		return true;
 	}
 	else {
-		cout << "DEBUG: deploy order not executed" << endl;
+		cout << "DEBUG: Deploy order not executed" << endl;
 		return false;
 	}
 }
@@ -150,16 +148,16 @@ bool deploy::execute() {
 //Advance class
 Advance::Advance()
 {
-	setDesc("This is an advance order");
+	setDesc("This is an Advance order");
 }
 
-Advance::Advance(string execMessage)
+Advance::Advance(string _execMessage)
 {
-	setDesc("This is an advance order");
-	setEffect(execMessage);
+	setDesc("This is an Advance order");
+	setEffect(_execMessage);
 }
 
-Advance::Advance(const Advance& o) : Order(o)
+Advance::Advance(const Advance& _o) : Order(_o)
 {
 
 }
@@ -184,7 +182,7 @@ bool Advance::execute() {
 	bool valid = validate();
 
 	if (valid) {
-		cout << "DEBUG: order executed" << endl;
+		cout << "DEBUG: Advance order executed" << endl;
 		cout << "DEBUG: did something no yet defined" << endl;
 		setEffect("did something");
 		return true;
@@ -196,29 +194,29 @@ bool Advance::execute() {
 }
 
 //bomb class
-bomb::bomb()
+Bomb::Bomb()
 {
-	setDesc("This is a bomb order");
+	setDesc("This is a Bomb order");
 }
 
-bomb::bomb(string execMessage) 
+Bomb::Bomb(string _execMessage) 
 {
-	setDesc("This is a bomb order");
-	setEffect(execMessage);
+	setDesc("This is a Bomb order");
+	setEffect(_execMessage);
 }
 
-bomb::bomb(const bomb& o) : Order(o)
+Bomb::Bomb(const Bomb& _o) : Order(_o)
 {
 
 }
 
-bomb::~bomb() {
+Bomb::~Bomb() {
 
 }
 
 //invalid obj are created with "invalid" exec message
 //have to change when Orders are defined
-bool bomb::validate() {
+bool Bomb::validate() {
 	if (getEffect() == "invalid") {
 		return false;
 	}
@@ -228,45 +226,45 @@ bool bomb::validate() {
 
 //prints Order type + add exec message 
 //have to change when Orders are defined
-bool bomb::execute() {
+bool Bomb::execute() {
 	bool valid = validate();
 
 	if (valid) {
-		cout << "DEBUG: order executed" << endl;
+		cout << "DEBUG: Bomb order executed" << endl;
 		cout << "DEBUG: did something no yet defined" << endl;
 		setEffect("did something");
 		return true;
 	}
 	else {
-		cout << "DEBUG: bomb order not executed" << endl;
+		cout << "DEBUG: Bomb order not executed" << endl;
 		return false;
 	}
 }
 
 //blockade class
-blockade::blockade()
+Blockade::Blockade()
 {
-	setDesc("This is a blockade order");
+	setDesc("This is a Blockade order");
 }
 
-blockade::blockade(string execMessage)
+Blockade::Blockade(string _execMessage)
 {
-	setDesc("This is a blockade order");
-	setEffect(execMessage);
+	setDesc("This is a Blockade order");
+	setEffect(_execMessage);
 }
 
-blockade::blockade(const blockade& o) : Order(o)
+Blockade::Blockade(const Blockade& o) : Order(o)
 {
 
 }
 
-blockade::~blockade() {
+Blockade::~Blockade() {
 
 }
 
 //invalid obj are created with "invalid" exec message
 //have to change when Orders are defined
-bool blockade::validate() {
+bool Blockade::validate() {
 	if (getEffect() == "invalid") {
 		return false;
 	}
@@ -276,45 +274,45 @@ bool blockade::validate() {
 
 //prints Order type + add exec message 
 //have to change when Orders are defined
-bool blockade::execute() {
+bool Blockade::execute() {
 	bool valid = validate();
 
 	if (valid) {
-		cout << "DEBUG: order executed" << endl;
+		cout << "DEBUG: Blockade order executed" << endl;
 		cout << "DEBUG: did something no yet defined" << endl;
 		setEffect("did something");
 		return true;
 	}
 	else {
-		cout << "DEBUG: blockade order not executed" << endl;
+		cout << "DEBUG: Blockade order not executed" << endl;
 		return false;
 	}
 }
 
 //airlift class
-airlift::airlift()
+Airlift::Airlift()
 {
-	setDesc("This is an airlift order");
+	setDesc("This is an Airlift order");
 }
 
-airlift::airlift(string execMessage)
+Airlift::Airlift(string execMessage)
 {
-	setDesc("This is an airlift order");
+	setDesc("This is an Airlift order");
 	setEffect(execMessage);
 }
 
-airlift::airlift(const airlift& o) : Order(o)
+Airlift::Airlift(const Airlift& _o) : Order(_o)
 {
 
 }
 
-airlift::~airlift() {
+Airlift::~Airlift() {
 
 }
 
 //invalid obj are created with "invalid" exec message
 //have to change when Orders are defined
-bool airlift::validate() {
+bool Airlift::validate() {
 	if (getEffect() == "invalid") {
 		return false;
 	}
@@ -324,45 +322,45 @@ bool airlift::validate() {
 
 //prints Order type + add exec message 
 //have to change when Orders are defined
-bool airlift::execute() {
+bool Airlift::execute() {
 	bool valid = validate();
 
 	if (valid) {
-		cout << "DEBUG: order executed" << endl;
+		cout << "DEBUG: Airlift order executed" << endl;
 		cout << "DEBUG: did something no yet defined" << endl;
 		setEffect("did something");
 		return true;
 	}
 	else {
-		cout << "DEBUG: airlift order not executed" << endl;
+		cout << "DEBUG: Airlift order not executed" << endl;
 		return false;
 	}
 }
 
 //negotiate class
-negotiate::negotiate()
+Negotiate::Negotiate()
 {
-	setDesc("This is a negotiate order");
+	setDesc("This is a Negotiate order");
 }
 
-negotiate::negotiate(string execMessage)
+Negotiate::Negotiate(string _execMessage)
 {
-	setDesc("This is a negotiate order");
-	setEffect(execMessage);
+	setDesc("This is a Negotiate order");
+	setEffect(_execMessage);
 }
 
-negotiate::negotiate(const negotiate& o) : Order(o)
+Negotiate::Negotiate(const Negotiate& _o) : Order(_o)
 {
 
 }
 
-negotiate::~negotiate() {
+Negotiate::~Negotiate() {
 
 }
 
 //invalid obj are created with "invalid" exec message
 //have to change when Orders are defined
-bool negotiate::validate() {
+bool Negotiate::validate() {
 	if (getEffect() == "invalid") {
 		return false;
 	}
@@ -372,17 +370,17 @@ bool negotiate::validate() {
 
 //prints Order type + add exec message 
 //have to change when Orders are defined
-bool negotiate::execute() {
+bool Negotiate::execute() {
 	bool valid = validate();
 
 	if (valid) {
-		cout << "DEBUG: negotiate order executed" << endl;
+		cout << "DEBUG: Negotiate order executed" << endl;
 		cout << "DEBUG: did something no yet defined" << endl;
 		setEffect("did something");
 		return true;
 	}
 	else {
-		cout << "DEBUG: order not executed" << endl;
+		cout << "DEBUG: Negotiate order not executed" << endl;
 		return false;
 	}
 }
@@ -390,60 +388,56 @@ bool negotiate::execute() {
 //OrderList class
 OrderList::OrderList()
 {
-	theList = new std::vector<Order*>;
+	m_theListPtr = new std::vector<Order*>;
 }
 
-//OrderList::OrderList(const OrderList& o)
-//{
-//	theList = new std::vector<Order> (*(o.getList()));
-//}
 
 OrderList::~OrderList()
 {
-	for (Order* obj : *theList)
+	for (Order* obj : *m_theListPtr)
 	{
 		delete obj;
 	}
-	delete theList;
+	delete m_theListPtr;
 }
 
-//vector<Order>* OrderList::getList() const
-//{
-//	return theList;
-//}
-
-bool OrderList::Add(Order* obj)
+vector<Order* >* OrderList::getList() const
 {
-	theList->push_back(obj);
+	return m_theListPtr;
+}
+
+bool OrderList::Add(Order* _obj)
+{
+	m_theListPtr->push_back(_obj);
 	return true;
 }
 
-bool OrderList::remove(int i)
+bool OrderList::remove(int _i)
 {
-	if (theList->size() <= i || i < 0) 
+	if (m_theListPtr->size() <= _i || _i < 0) 
 	{
 		cout << "DEBUG: out of index" << endl;
 		return false;
 	}
 	else 
 	{
-		theList->erase(theList->begin() + i);
+		m_theListPtr->erase(m_theListPtr->begin() + _i);
 		return true;
 	}	
 }
 
-bool OrderList::move(int _objIndex, int newIndex)
+bool OrderList::move(int _objIndex, int _newIndex)
 {
-	if (m_theList->size() <= objIndex || objIndex < 0 || theList->size() <= newIndex || newIndex < 0)
+	if (m_theListPtr->size() <= _objIndex || _objIndex < 0 || m_theListPtr->size() <= _newIndex || _newIndex < 0)
 	{
 		cout << "debug: out of index" << endl;
 		return false;
 	}
 	else
 	{
-		Order* temp = theList->at(objIndex);
-		theList->erase(theList->begin()+objIndex);
-		theList->insert(theList->begin() + newIndex, temp);
+		Order* temp = m_theListPtr->at(_objIndex);
+		m_theListPtr->erase(m_theListPtr->begin()+_objIndex);
+		m_theListPtr->insert(m_theListPtr->begin() + _newIndex, temp);
 		return true;
 	}
 	
@@ -451,7 +445,7 @@ bool OrderList::move(int _objIndex, int newIndex)
 
 void OrderList::print() 
 {
-	for (Order *obj : *theList)
+	for (Order *obj : *m_theListPtr)
 	{
 		cout << *obj;
 	}

@@ -17,8 +17,8 @@ class Order
 public:
 
 	Order();
-	Order(string execMessage);
-	Order(const Order& o);
+	Order(string _execMessage);
+	Order(const Order& _o);
 	~Order();
 
 	bool validate();
@@ -39,13 +39,13 @@ private:
 //stream insertion operator
 std::ostream& operator<<(std::ostream& OUT, const Order& theOrder);
 
-class deploy : public Order
+class Deploy : public Order
 {
 public:
-	deploy();
-	deploy(string execMessage);
-	deploy(const deploy& o);
-	~deploy();
+	Deploy();
+	Deploy(string _execMessage);
+	Deploy(const Deploy& _o);
+	~Deploy();
 
 	bool validate();
 	bool execute();
@@ -57,8 +57,8 @@ class Advance : public Order
 {
 public:
 	Advance();
-	Advance(string execMessage);
-	Advance(const Advance& o);
+	Advance(string _execMessage);
+	Advance(const Advance& _o);
 	~Advance();
 
 	bool validate();
@@ -68,13 +68,13 @@ private:
 
 };
 
-class bomb : public Order
+class Bomb : public Order
 {
 public:
-	bomb();
-	bomb(string message);
-	bomb(const bomb& o);
-	~bomb();
+	Bomb();
+	Bomb(string _execMessage);
+	Bomb(const Bomb& _o);
+	~Bomb();
 
 	bool validate();
 	bool execute();
@@ -83,13 +83,13 @@ private:
 
 };
 
-class blockade : public Order
+class Blockade : public Order
 {
 public:
-	blockade();
-	blockade(string execMessage);
-	blockade(const blockade& o);
-	~blockade();
+	Blockade();
+	Blockade(string _execMessage);
+	Blockade(const Blockade& _o);
+	~Blockade();
 
 	bool validate();
 	bool execute();
@@ -99,13 +99,13 @@ private:
 };
 
 
-class airlift : public Order
+class Airlift : public Order
 {
 public:
-	airlift();
-	airlift(string execMessage);
-	airlift(const airlift& o);
-	~airlift();
+	Airlift();
+	Airlift(string _execMessage);
+	Airlift(const Airlift& _o);
+	~Airlift();
 
 	bool validate();
 	bool execute();
@@ -114,13 +114,13 @@ private:
 
 };
 
-class negotiate : public Order
+class Negotiate : public Order
 {
 public:
-	negotiate();
-	negotiate(string execMessage);
-	negotiate(const negotiate& negotiate);
-	~negotiate();
+	Negotiate();
+	Negotiate(string _execMessage);
+	Negotiate(const Negotiate& _o);
+	~Negotiate();
 
 	bool validate();
 	bool execute();
@@ -137,12 +137,12 @@ public:
 	//OrderList(const OrderList& o);
 	~OrderList();
 
-	bool Add(Order* obj);
-	bool remove(int i);
-	bool move(int objIndex, int newIndex);
-	//vector<Order>* getList() const;
+	bool Add(Order* _obj);
+	bool remove(int _i);
+	bool move(int _objIndex, int _newIndex);
+	vector<Order* >* getList() const;
 	void print();
 
 private:
-	vector<Order* >* theList;
+	vector<Order* >* m_theListPtr;
 };
