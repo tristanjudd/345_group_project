@@ -61,6 +61,12 @@ ostream &operator<<(ostream &out, const Territory &c) {
 
 // destructor
 Territory::~Territory() {
+    delete id;
+    delete continentId;
+    delete armyCount;
+    delete territoryName;
+    delete borders;
+    // delete owner;
     cout << "Territory destructor called" << endl;
 }
 
@@ -150,7 +156,10 @@ ostream &operator<<(ostream &out, const Continent &c) {
 
 // destructors
 Continent::~Continent() {
-    cout << "Territory destructor called" << endl;
+    delete id;
+    delete continentName;
+    delete value;
+    cout << "Continent destructor called" << endl;
 }
 
 // getters and setters
@@ -274,6 +283,18 @@ ostream &operator<<(ostream &out, const Map &m) {
 
 // destructor
 Map::~Map() {
+    for (int i = 0; i < territories->size(); i++) {
+        delete[] territoryMatrix[i];
+    }
+    delete[] territoryMatrix;
+    for (int i = 0; i < continents->size(); i++) {
+        delete[] continentMatrix[i];
+    }
+    delete[] continentMatrix;
+    delete id;
+    delete name;
+    delete territories;
+    delete continents;
     cout << "Map destructor called" << endl;
 }
 
