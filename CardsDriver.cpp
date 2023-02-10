@@ -5,5 +5,6 @@ int cardDriver()
 	Card c = Card(bomb);
 
 	cout << (c.getType() == bomb) << endl;
+    return 0;
 }
 
