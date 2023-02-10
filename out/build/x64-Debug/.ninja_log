@@ -1,0 +1,16 @@
+# ninja log v5
+158	734	6977587731272233	CMakeFiles/Warzone.dir/Deck.cpp.obj	9ba165eb3e42bc56
+80	4439	6977587768389861	CMakeFiles/Warzone.dir/Card.cpp.obj	6a6a8e48bbcafbfd
+166	752	6977587731262618	CMakeFiles/Warzone.dir/Hand.cpp.obj	24c182e5f4c0439e
+59	2477	6977587748776904	CMakeFiles/Warzone.dir/Map/Map.cpp.obj	b5104cd1ba9ef37c
+43	2371	6977587747703538	CMakeFiles/Warzone.dir/Map/MapDriver.cpp.obj	6cb853bcb870732d
+33	4291	6977658117215654	CMakeFiles/Warzone.dir/main.cpp.obj	3e8b5c11aba200cb
+3984	4316	6977656920496410	Warzone.exe	da2a590c3eefdc81
+11	4409	6977588292233799	CMakeFiles/Warzone.dir/CardsDriver.cpp.obj	72a2cec7039d34aa
+31	352	0	CMakeFiles/install.util	d7e22cb833cc30dd
+49	2130	6977659820688495	CMakeFiles/Warzone.dir/OrdersDriver.cpp.obj	d83fcb787bd6a6ea
+5	1686	6977667546484832	CMakeFiles/Warzone.dir/Orders.cpp.obj	74ec46fe79f60044
+1687	2239	6977667550674316	Warzone.exe	cb9060bed31c5877
+28	206	0	CMakeFiles/install.util	d7e22cb833cc30dd
+6	4511	6977668234721255	CMakeFiles/Warzone.dir/main.cpp.obj	3e8b5c11aba200cb
+4512	4895	6977668237619142	Warzone.exe	cb9060bed31c5877

@@ -1,15 +1,9 @@
-#include "Orders.h"
-#include <iostream>
-using std::cout;
-#include <vector>
-using std::vector;
-#include <string>
-using namespace std;
+#include "OrdersDriver.h"
 
-//DRIVER TO TEST
 
-/*
-int main() {
+int ordersDriver() {
+
+	cout << "\nORDERS DRIVER:" << endl;
 
 	//Creating objects
 	Order *ord = new Order("");
@@ -40,16 +34,17 @@ int main() {
 	L.Add(blo);
 	L.Add(air);
 	L.Add(neg);
+	L.Add(invalid);
 
 	cout << "\nPrinting the list:" << endl;
-	L.print();
+	cout << L;
 
 
 	L.move(0, 1); //move first order to second
 	L.remove(1); //romve second item
 
-	cout << "\nAfter Modification:" << endl;
-	L.print();
+	cout << "\nAfter Modification (move first item to second place + remove second item):" << endl;
+	cout << L;
 
 	//Execution
 	cout << "\nExecuting the Orders" << endl;
@@ -64,13 +59,11 @@ int main() {
 	return 0;
 }
 
-*/
-
-//void IssueOrder
-//{
-//	Order* theOrder = new Order();
-//	pointerToTheList->Add(obj);
+//TEST DRIVER
+//int main(){
+//	OrdersDriver();
+//	return 0;
 //}
 
-// For the player destructor only delete the pointer to orderList 
-//and my destructor will take care of deleting the list and the objects in it
+
+

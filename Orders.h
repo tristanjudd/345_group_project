@@ -8,10 +8,6 @@ using std::vector;
 using namespace std;
 
 
-
-
-
-
 class Order
 {
 public:
@@ -33,11 +29,11 @@ public:
 private:
 	string* m_descriptionPtr;
 	string* m_effectPtr;
-	
 };
 
-//stream insertion operator
+//stream insertion operator ORDER
 std::ostream& operator<<(std::ostream& OUT, const Order& theOrder);
+
 
 class Deploy : public Order
 {
@@ -134,15 +130,20 @@ class OrderList
 public:
 
 	OrderList();
-	//OrderList(const OrderList& o);
+	OrderList(const OrderList& o);
 	~OrderList();
 
 	bool Add(Order* _obj);
 	bool remove(int _i);
 	bool move(int _objIndex, int _newIndex);
 	vector<Order* >* getList() const;
-	void print();
+	void operator= (OrderList const&);
 
 private:
 	vector<Order* >* m_theListPtr;
 };
+
+//stream insertion operator OrderList
+std::ostream& operator<<(std::ostream& OUT, const OrderList& theOrderList);
+
+

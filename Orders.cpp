@@ -1,10 +1,4 @@
 #include "Orders.h"
-#include <iostream>
-using std::cout;
-#include <vector>
-using std::vector;
-#include <string>
-using namespace std;
 
 //Order class
 Order::Order() {
@@ -391,6 +385,11 @@ OrderList::OrderList()
 	m_theListPtr = new std::vector<Order*>;
 }
 
+OrderList::OrderList(const OrderList& o)
+{
+	m_theListPtr = new vector<Order* >(*(o.getList()));
+}
+
 
 OrderList::~OrderList()
 {
@@ -400,6 +399,7 @@ OrderList::~OrderList()
 	}
 	delete m_theListPtr;
 }
+
 
 vector<Order* >* OrderList::getList() const
 {
@@ -443,12 +443,19 @@ bool OrderList::move(int _objIndex, int _newIndex)
 	
 }
 
-void OrderList::print() 
+std::ostream& operator<<(std::ostream& OUT, const OrderList& theOrderList)
 {
-	for (Order *obj : *m_theListPtr)
+	for (Order* obj : *(theOrderList.getList()) )
 	{
-		cout << *obj;
+		OUT << *obj;
 	}
+
+	return OUT;
+}
+
+void OrderList::operator= (OrderList const& _other)
+{
+	m_theListPtr = _other.m_theListPtr;
 }
 
 
