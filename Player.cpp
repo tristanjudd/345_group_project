@@ -1,14 +1,16 @@
 #include "Player.h"
+#include <vector>;
 
+using namespace std;
 
-class Player{
+//class Player{
 
 	/*
-	Player::Player(Territory* territories, Hand hand) {
+	Player::Player(Territory* territories, Hand hand, vector<Order> &orders) {
 
 		Player::territories = territories;
 		Player::hand = hand;
-
+		
 		
 	}*/
 
@@ -27,4 +29,6 @@ class Player{
 	* }
 	*/
 
-};
+	
+
+//};
