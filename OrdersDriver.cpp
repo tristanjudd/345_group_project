@@ -71,3 +71,6 @@ int main() {
 //	Order* theOrder = new Order();
 //	pointerToTheList->Add(obj);
 //}
+
+// For the player destructor only delete the pointer to orderList 
+//and my destructor will take care of deleting the list and the objects in it
