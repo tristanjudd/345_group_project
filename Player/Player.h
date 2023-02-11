@@ -1,6 +1,6 @@
 #pragma once
 //#include "Map.h"
-#include "Hand.h";
+#include "../Hand.h";
 #include <vector>;
 
 using namespace std;
