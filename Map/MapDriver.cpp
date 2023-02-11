@@ -2,7 +2,7 @@
 
 int mapDriver() {
     printf("Beginning map setup...\n");
-    map<int, Map> maps;
+    map<int, Map *> maps;
 
     printf("Initializing MapLoader...\n");
     MapLoader* myMapLoader = new MapLoader();
@@ -35,23 +35,23 @@ int mapDriver() {
 
         printf("Validating loaded map...\n");
         if (loadedMap.validate()) {
-            maps[mapCounter] = loadedMap;
+            maps[mapCounter] = new Map(loadedMap);
             printf("Saved \"%s\" with id %d.\n", loadedMap.getName()->c_str(), mapCounter++);
         } else {
-            printf("Could not validate map. Discarding...\n");
+            printf("Could xnot validate map. Discarding...\n");
         }
     }
 
-    Territory* tesTerritory = new Territory(*maps[0].getTerritories()->at(0));
+    Territory* tesTerritory = new Territory(*maps[0]->getTerritories()->at(0));
     cout << tesTerritory << endl;
-    cout << *maps[0].getTerritories()->at(0) << endl;
+    cout << *maps[0]->getTerritories()->at(0) << endl;
 
     cout << "Making change to tesTerritory..." << endl;
 
     tesTerritory->setBorders(new vector<int>());
 
     cout << tesTerritory << endl;
-    cout << *maps[0].getTerritories()->at(0) << endl;
+    cout << *maps[0]->getTerritories()->at(0) << endl;
 
     printf("Deleting MapLoader...\n");
     delete myMapLoader;
