@@ -4,7 +4,7 @@
 // default constructor
 Territory::Territory() {
     id = new int(0);
-    continentId = new int(0); //todo discuss with jay
+    continentId = new int(-1);
     armyCount = new int(0);
     territoryName = new string("");
     borders = new vector<int>();
@@ -18,7 +18,7 @@ Territory::Territory(int inId, int inContinentId, string inTerritoryName) {
     continentId = new int(inContinentId);
     armyCount = new int(0);
     territoryName = new string(inTerritoryName);
-    borders = new vector<int>(); //todo test
+    borders = new vector<int>();
     // owner = new Player(*inOwner); //todo
     cout << "Territory constructor called" << endl;
 }
@@ -29,7 +29,7 @@ Territory::Territory(const Territory &copy) {
     continentId = new int(*copy.continentId);
     armyCount = new int(*copy.armyCount);
     territoryName = new string(*copy.territoryName);
-    borders = new vector<int>(*copy.borders); //todo test
+    borders = new vector<int>(*copy.borders);
     cout << "Territory copy constructor called" << endl;
 }
 
@@ -60,17 +60,17 @@ ostream &operator<<(ostream &out, const Territory &c) {
 }
 
 // destructor
-Territory::~Territory() { //todo check if this is correct
-    delete id;
-    delete continentId;
-    delete armyCount;
-    delete territoryName;
-    // delete owner;
+Territory::~Territory() {
     id = nullptr;
     continentId = nullptr;
     armyCount = nullptr;
     territoryName = nullptr;
     // owner = nullptr;
+    delete id;
+    delete continentId;
+    delete armyCount;
+    delete territoryName;
+    // delete owner;
     cout << "Territory destructor called" << endl;
 }
 
@@ -159,14 +159,14 @@ ostream &operator<<(ostream &out, const Continent &c) {
 }
 
 // destructors
-Continent::~Continent() { //todo check if this is correct
-    delete id;
-    delete continentName;
-    delete value;
+Continent::~Continent() {
+    cout << "Continent destructor called" << endl;
     id = nullptr;
     continentName = nullptr;
     value = nullptr;
-    cout << "Continent destructor called" << endl;
+    delete id;
+    delete continentName;
+    delete value;
 }
 
 // getters and setters
@@ -307,14 +307,14 @@ ostream &operator<<(ostream &out, const Map &m) {
 // destructor
 Map::~Map() {
     cout << "Map destructor called" << endl;
-    delete id;
-    delete name;
-    delete territories;
-    delete continents;
     id = nullptr;
     name = nullptr;
     territories = nullptr;
     continents = nullptr;
+    delete id;
+    delete name;
+    delete territories;
+    delete continents;
 }
 
 // getters and setters
@@ -476,19 +476,22 @@ MapLoader::MapLoader(const MapLoader &mapLoader) {
 
 // assignment operator
 MapLoader &MapLoader::operator=(const MapLoader &mapLoader) {
-    path = mapLoader.path;
+    if (this != &mapLoader) {
+        path = mapLoader.path;
+    }
     return *this;
 }
 
 // stream insertion operator
 ostream &operator<<(ostream &out, const MapLoader &mapLoader) {
-    out << "MapLoader: " << mapLoader.path;
+    out << "MapLoader: " << *mapLoader.path;
     return out;
 }
 
 // destructor
 MapLoader::~MapLoader() {
     cout << "MapLoader destructor called" << endl;
+    path = nullptr;
     delete path;
 }
 
