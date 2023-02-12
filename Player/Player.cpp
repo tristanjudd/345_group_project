@@ -48,18 +48,18 @@ Player &Player::operator=(const Player &p) {
 //Stream insertion operator
 ostream &operator<<(ostream &os, const Player &player) {
 
-    os << "Player ID: " << player.id << endl;
+    os << "Player ID: " << *player.id << endl;
     os << "territories: " << endl;
     for (int i = 0; i < player.territories->size(); i++) {
-        os << player.territories->at(i) << endl;
+        os << *player.territories->at(i) << endl;
     }
 
-    os << " hand: " << player.hand << endl;
+    //os << " hand: " << *player.hand << endl;
 
-    os << " orders: " << player.orders << endl;
+    os << " orders: " << endl;
 
     for (int i = 0; i < player.orders->size(); i++) {
-        os << player.orders->at(i) << endl;
+        os << *player.orders->at(i) << endl;
     }
 
     return os;

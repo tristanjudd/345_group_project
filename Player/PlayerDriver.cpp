@@ -33,6 +33,8 @@ int playerDriver(){
 
     cout << "added Order: " << *p->getOrders()->at(0);
 
+    cout << endl;
+
     cout << "Deleting Player" << endl;
     delete p;
 
