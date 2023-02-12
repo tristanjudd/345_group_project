@@ -38,7 +38,7 @@ int mapDriver() {
             maps[mapCounter] = new Map(loadedMap);
             printf("Saved \"%s\" with id %d.\n", loadedMap.getName()->c_str(), mapCounter++);
         } else {
-            printf("Could xnot validate map. Discarding...\n");
+            printf("Could not validate map. Discarding...\n");
         }
     }
 
