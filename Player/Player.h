@@ -1,12 +1,14 @@
 #pragma once
 //#include "Map.h"
-#include "../Cards.h"
+#include "../Cards/Cards.h"
 #include <vector>
 #include <ostream>
 #include "../Map/Map.h"
-#include "../Orders.h"
+#include "../Orders/Orders.h"
 
 using std::vector;
+
+class Territory;
 
 class Player {
 

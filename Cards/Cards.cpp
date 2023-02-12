@@ -80,7 +80,7 @@ void Hand::remove(Card* card) {
 
 }
 
-// Deck class method delcarations 
+// Deck class method declarations
 
 // Default constructor creates 100 cards and adds their pointers to the deck
 Deck::Deck() {
@@ -122,7 +122,7 @@ void Deck::insert(Card* card) {
 // Re-arranges pointers in contents vector into random order
 void Deck::shuffle() {
 	std::srand(std::time(0));
-	std::random_shuffle(contents.begin(), contents.end());
+	//std::random_shuffle(contents.begin(), contents.end());
 	
 }
 

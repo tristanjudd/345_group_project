@@ -1,7 +1,7 @@
 #include <iostream>
 #include "Map/MapDriver.h"
-#include "CardsDriver.h"
-#include "OrdersDriver.h"
+#include "Cards/CardsDriver.h"
+#include "Orders/OrdersDriver.h"
 #include "Player/PlayerDriver.h"
 
 int main() {
