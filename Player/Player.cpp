@@ -1,8 +1,6 @@
 #include "Player.h"
-#include "../Hand.h";
 #include <vector>;
-#include "../Orders.h";
-
+#include "../Cards.h"
 
 //Default Constructor
 Player::Player() {
@@ -12,12 +10,12 @@ Player::Player() {
 }
 
 //Constructor
-Player::Player(vector<Territory *> *territories, Hand *hand, vector<Order *> *orders) {
-
-    Player::territories = territories;
-    Player::hand = hand;
-    Player::orders = orders;
-}
+//Player::Player(vector<Territory *> *territories, Hand *hand, vector<Order *> *orders) {
+//
+//    Player::territories = territories;
+//    Player::hand = hand;
+//    Player::orders = orders;
+//}
 
 //Copy Constructor
 Player::Player(const Player &p) {
