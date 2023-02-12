@@ -1,7 +1,9 @@
+class Player;
 #pragma once
 #include <string>
 #include <vector>
 #include "Player/Player.h"
+
 
 // Enum of the different card types
 enum CardType
