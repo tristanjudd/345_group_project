@@ -122,7 +122,7 @@ void Deck::insert(Card* card) {
 // Re-arranges pointers in contents vector into random order
 void Deck::shuffle() {
 	std::srand(std::time(0));
-	std::random_shuffle(contents.begin(), contents.end());
+	//std::random_shuffle(contents.begin(), contents.end());
 	
 }
 
