@@ -2,9 +2,9 @@
 
 int cardDriver()
 {
-	Card c = Card(bomb);
+	std::srand(time(0));
 
-	cout << (c.getType() == bomb) << endl;
-    return 0;
+
+	return 0;
 }
 
