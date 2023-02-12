@@ -80,7 +80,7 @@ void Hand::remove(Card* card) {
 
 }
 
-// Deck class method delcarations 
+// Deck class method declarations
 
 // Default constructor creates 100 cards and adds their pointers to the deck
 Deck::Deck() {
