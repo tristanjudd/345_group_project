@@ -1,21 +1,27 @@
 #include "Player.h"
 #include <vector>;
-#include "../Cards.h"
 
 //Default Constructor
 Player::Player() {
     territories = new vector<Territory *>();
     hand = new Hand();
     orders = new vector<Order *>();
+    id = new int(0);
 }
 
 //Constructor
-//Player::Player(vector<Territory *> *territories, Hand *hand, vector<Order *> *orders) {
-//
-//    Player::territories = territories;
-//    Player::hand = hand;
-//    Player::orders = orders;
-//}
+Player::Player(vector<Territory *> *territories, Hand *hand, vector<Order *> *orders, int *id) {
+    Player::id = id;
+    Player::territories = territories;
+    Player::hand = hand;
+    Player::orders = orders;
+}
+
+Player::Player(int id){
+
+    Player::id = new int(id);
+
+}
 
 //Copy Constructor
 Player::Player(const Player &p) {
@@ -23,6 +29,7 @@ Player::Player(const Player &p) {
     territories = new vector<Territory *>(*p.territories);
     hand = new Hand(*p.hand);
     orders = new vector<Order *>(*p.orders);
+    id = new int(*p.id);
 }
 
 
@@ -32,6 +39,8 @@ Player &Player::operator=(const Player &p) {
         territories = new vector<Territory *>(*p.territories);
         hand = new Hand(*p.hand);
         orders = new vector<Order *>(*p.orders);
+        id = new int(*p.id);
+
     }
     return *this;
 }
@@ -39,12 +48,13 @@ Player &Player::operator=(const Player &p) {
 //Stream insertion operator
 ostream &operator<<(ostream &os, const Player &player) {
 
+    os << "Player ID: " << player.id << endl;
     os << "territories: " << endl;
     for (int i = 0; i < player.territories->size(); i++) {
         os << player.territories->at(i) << endl;
     }
 
-    //os << " hand: " << player.hand << endl;
+    os << " hand: " << player.hand << endl;
 
     os << " orders: " << player.orders << endl;
 
@@ -61,6 +71,7 @@ Player::~Player() {
     delete territories;
     delete hand;
     delete orders;
+    delete id;
 }
 
 //Function creates an order and
@@ -133,6 +144,14 @@ vector<Order *> *Player::getOrders() const {
 
 void Player::setOrders(vector<Order *> *orders) {
     Player::orders = orders;
+}
+
+int *Player::getId() const {
+    return id;
+}
+
+void Player::setId(int *id) {
+    Player::id = id;
 }
 
 

@@ -13,6 +13,6 @@ add_executable(Warzone main.cpp
         Orders.h
         Orders.cpp
         OrdersDriver.h
-        OrdersDriver.cpp Player/Player.h Player/Player.cpp Player/PlayerDriver.h Player/PlayerDriver.cpp Cards.h)
+        OrdersDriver.cpp Player/Player.h Player/Player.cpp Player/PlayerDriver.h Player/PlayerDriver.cpp Cards.h Cards.cpp)
 
 install (TARGETS Warzone DESTINATION "warzone/bin")

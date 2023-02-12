@@ -15,12 +15,14 @@ private:
     vector<Territory *> *territories;
     Hand *hand;
     vector<Order *> *orders;
+    int * id;
 
 public:
 
     //Constructors
     Player(); //Default Constructor
-    //Player(vector<Territory *> *territories, Hand* hand, vector<Order*>* orders); //Constructor
+    Player(vector<Territory *> *territories, Hand* hand, vector<Order*>* orders, int *id); //Constructor
+    Player(int id);
     Player(const Player &p);//Copy Constructor
     ~Player(); //Destructor
     Player &operator=(const Player &p);//Assignment operator
@@ -48,4 +50,7 @@ public:
 
     void setOrders(vector<Order *> *orders);
 
+    int *getId() const;
+
+    void setId(int *id);
 };
