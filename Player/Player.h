@@ -1,10 +1,10 @@
 #pragma once
 //#include "Map.h"
-#include "../Hand.h";
-#include <vector>;
+#include "../Cards.h"
+#include <vector>
 #include <ostream>
-#include "../Map/Map.h";
-#include "../Orders.h";
+#include "../Map/Map.h"
+#include "../Orders.h"
 
 using std::vector;
 
@@ -20,7 +20,7 @@ public:
 
     //Constructors
     Player(); //Default Constructor
-    Player(vector<Territory *> *territories, Hand* hand, vector<Order*>* orders); //Constructor
+    //Player(vector<Territory *> *territories, Hand* hand, vector<Order*>* orders); //Constructor
     Player(const Player &p);//Copy Constructor
     ~Player(); //Destructor
     Player &operator=(const Player &p);//Assignment operator
@@ -47,6 +47,5 @@ public:
     vector<Order *> *getOrders() const;
 
     void setOrders(vector<Order *> *orders);
-
 
 };
