@@ -8,14 +8,10 @@ add_executable(Warzone main.cpp
         Map/Map.cpp
         Map/Map.h
         Map/MapDriver.h
-        Card.cpp
-        Card.h
         CardsDriver.cpp
-        Deck.cpp
-        Deck.h
-        Hand.cpp
-        Hand.h 
-        CardsDriver.h 
+        CardsDriver.h
+        Cards.cpp
+        Cards.h
         Orders.h
         Orders.cpp
         OrdersDriver.h
