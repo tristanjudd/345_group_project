@@ -1,10 +1,10 @@
 #pragma once
 //#include "Map.h"
-#include "../Hand.h";
-#include <vector>;
+#include "../Hand.h"
+#include <vector>
 #include <ostream>
-#include "../Map/Map.h";
-#include "../Orders.h";
+#include "../Map/Map.h"
+#include "../Orders.h"
 
 using std::vector;
 

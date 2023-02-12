@@ -1,7 +1,7 @@
 #include "Player.h"
-#include "../Hand.h";
-#include <vector>;
-#include "../Orders.h";
+#include "../Hand.h"
+#include <vector>
+#include "../Orders.h"
 
 
 //Default Constructor
