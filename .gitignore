@@ -2,5 +2,5 @@
 x64/*
 .idea
 /cmake-build-debug
-/out
 CMakeSettings.json
+/out/
