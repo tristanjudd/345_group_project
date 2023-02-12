@@ -2,27 +2,51 @@
 //#include "Map.h"
 #include "../Hand.h";
 #include <vector>;
+#include <ostream>
+#include "../Map/Map.h";
+#include "../Orders.h";
 
-using namespace std;
+using std::vector;
+
 class Player {
 
 private:
 
-	//Territory territories[];
-	Hand *hand;
-	//vector<Order> orders;
+    vector<Territory *> *territories;
+    Hand *hand;
+    vector<Order *> *orders;
 
 public:
 
-	Player();
-	//Player(Territory* territories, Hand hand);
-	//Territory* toAttack();
-	//Territory* toDefend();
+    //Constructors
+    Player(); //Default Constructor
+    Player(vector<Territory *> *territories, Hand* hand, vector<Order*>* orders); //Constructor
+    Player(const Player &p);//Copy Constructor
+    ~Player(); //Destructor
+    Player &operator=(const Player &p);//Assignment operator
 
-	void issueOrder();
+    friend ostream &operator<<(ostream &os, const Player &player);
 
-	void setHand(Hand);
-		Hand getHand();
+    //Player functions
+    vector<Territory*> *toAttack();
 
-	//Territory getTerritory();
+    vector<Territory*> *toDefend();
+
+    void issueOrder();
+
+    //getters and setters
+    Hand *getHand();
+
+    void setHand(Hand *hand);
+
+    vector<Territory *> *getTerritories() const;
+
+    void setTerritories(vector<Territory *> *territories);
+
+
+    vector<Order *> *getOrders() const;
+
+    void setOrders(vector<Order *> *orders);
+
+
 };
