@@ -10,6 +10,8 @@
 #include <fstream>
 #include <sstream>
 
+#include "../Player/Player.h"
+
 using std::string;
 using std::vector;
 using std::cout;
@@ -21,6 +23,7 @@ using std::stoi;
 using std::ifstream;
 using std::stringstream;
 
+class Player;
 
 class Territory {
 private:
@@ -29,7 +32,7 @@ private:
     int *armyCount;
     string *territoryName; //name of territory
     vector<int> *borders;  // ids of adjacent territories
-    //Player *owner; //owner of the territory
+    Player *owner; //owner of the territory
 public:
     //constructors
     Territory(); //default constructor
@@ -50,6 +53,8 @@ public:
     string *getTerritoryName() const;
     void setBorders(vector<int> *inBorders);
     vector<int> *getBorders() const;
+    void setOwner(Player *inPlayer);
+    Player *getOwner() const;
 };
 
 class Continent {
