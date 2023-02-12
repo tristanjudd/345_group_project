@@ -1,6 +1,6 @@
 #include "Player.h"
 #include <vector>
-#include "../Cards.h"
+#include "../Cards/Cards.h"
 
 //Default Constructor
 Player::Player() {
