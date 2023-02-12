@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
-// #include "Player.h"
+#include "Player/Player.h"
 
 // Enum of the different card types
 enum CardType
@@ -34,11 +34,12 @@ public:
 // A Hand object is a collection of Card objects
 class Hand {
 private:
-	/*Player* owner;*/
+	Player* owner;
 	std::vector<Card *> contents;
 
 public:
 	Hand(); // Default constructor with no cards
+	Hand(Player* p);
 	std::vector<Card *> getHand(); // Returns the player's hand as a vector of Card objects
 	void insert(Card* card); // Inserts a card into the contents vector
 	void remove(Card* card); // Used when a card is played, removes card from hand

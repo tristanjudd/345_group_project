@@ -43,8 +43,15 @@ void Card::play() {
 }
 
 // Hand class method declarations
+
+// Hand default constructor pointing to no player
 Hand::Hand() {
-	
+	owner = NULL;
+}
+
+// Hand constructor with Player to whom the hand is pointing
+Hand::Hand(Player* p) {
+	owner = p;
 }
 
 std::vector<Card *> Hand::getHand() {
