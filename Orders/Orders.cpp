@@ -182,7 +182,7 @@ bool Advance::execute() {
 		return true;
 	}
 	else {
-		cout << "DEBUG: Avance order not executed" << endl;
+		cout << "DEBUG: Advance order not executed" << endl;
 		return false;
 	}
 }

@@ -8,7 +8,7 @@ Territory::Territory() {
     armyCount = new int(0);
     territoryName = new string("");
     borders = new vector<int>();
-    //owner = new Player(); //todo
+    owner = nullptr;
     cout << "Territory default constructor called" << endl;
 }
 
@@ -19,7 +19,7 @@ Territory::Territory(int inId, int inContinentId, string inTerritoryName) {
     armyCount = new int(0);
     territoryName = new string(inTerritoryName);
     borders = new vector<int>();
-    // owner = new Player(*inOwner); //todo
+    owner = nullptr;
     cout << "Territory constructor called" << endl;
 }
 
@@ -30,6 +30,7 @@ Territory::Territory(const Territory &copy) {
     armyCount = new int(*copy.armyCount);
     territoryName = new string(*copy.territoryName);
     borders = new vector<int>(*copy.borders);
+    owner = copy.owner;
     cout << "Territory copy constructor called" << endl;
 }
 
@@ -41,6 +42,7 @@ Territory &Territory::operator=(const Territory &t) {
         armyCount = t.armyCount;
         territoryName = t.territoryName;
         borders = t.borders;
+        owner = t.owner;
     }
     return *this;
 }
@@ -51,6 +53,11 @@ ostream &operator<<(ostream &out, const Territory &c) {
     out << "Continent ID: " << *c.continentId << endl;
     out << "Army Count: " << *c.armyCount << endl;
     out << "Territory Name: " << *c.territoryName << endl;
+    if (c.owner == nullptr) {
+        out << "Territory Owner: None" << endl;
+    } else {
+        out << "Territory Owner: " << *c.owner << endl;
+    }
     out << "Borders: ";
     for (int i = 0; i < c.borders->size(); i++) {
         out << c.borders->at(i) << " ";
@@ -70,7 +77,7 @@ Territory::~Territory() {
     delete continentId;
     delete armyCount;
     delete territoryName;
-    // delete owner;
+    delete owner;
     cout << "Territory destructor called" << endl;
 }
 
@@ -113,6 +120,14 @@ void Territory::setBorders(vector<int> *inBorders) {
 
 vector<int> *Territory::getBorders() const {
     return borders;
+}
+
+void Territory::setOwner(Player *inOwner) {
+    owner = inOwner;
+}
+
+Player *Territory::getOwner() const {
+    return owner;
 }
 
 // Continent class
