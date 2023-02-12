@@ -8,6 +8,8 @@
 
 using std::vector;
 
+class Territory;
+
 class Player {
 
 private:
