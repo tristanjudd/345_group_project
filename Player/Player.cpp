@@ -69,7 +69,7 @@ Player::~Player() {
 //Adds it to the list of orders
 void Player::issueOrder() {
 
-    Order *order = new Order("HelloWorld");
+    Order *order = new Order("Specific order");
     orders->push_back(order);
 }
 
