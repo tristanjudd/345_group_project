@@ -426,7 +426,7 @@ bool Map::isConnectedGraph() {
             }
         }
     }
-    if (*terrCount == territories->size()) { //if all territories have a connection
+    if (*terrCount == territories->size() && *terrCount != 0) { //if all territories have a connection
         return true;
     }
     return false;
@@ -443,7 +443,7 @@ bool Map::isConnectedSubgraph() {
             }
         }
     }
-    if (*contCount == continents->size()) { //if all continents have a connection
+    if (*contCount == continents->size() && *contCount != 0) { //if all continents have a connection
         return true;
     }
     return false;
@@ -469,7 +469,7 @@ bool Map::oneContinentPerTerritory() {
     }
     //return true if territory size = terrCount meaning that all territories are in a continent
     //return true if continent size = contCount meaning that all continents have at least 1 territory
-    if (*terrCount == territories->size() && *contCount == continents->size()) {
+    if (*terrCount == territories->size() && *contCount == continents->size() && *terrCount != 0 && *contCount != 0) {
         return true;
     }
     return false;
