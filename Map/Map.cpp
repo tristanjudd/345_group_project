@@ -553,6 +553,9 @@ Map MapLoader::load(int mapNumber) {
                 break;
             }
             case TERRITORIES: {
+                if (stoi(tokens[0]) < territories->size()) {
+                    throw std::exception();  // if the first token is bad, exit and cannot parse
+                }
                 printf("Parsing territory %s...\n", tokens[1].c_str());
                 territories->push_back(new Territory(stoi(tokens[0]) - 1,
                                                      stoi(tokens[2]) - 1,
