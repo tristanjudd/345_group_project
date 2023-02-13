@@ -31,12 +31,18 @@ int mapDriver() {
         printf("Reading %s...\n", filePath.c_str());
         myMapLoader->setPath(&filePath);
 
-        Map loadedMap = myMapLoader->load(mapCounter);
+        Map* loadedMap;
+        try {
+            loadedMap = new Map(myMapLoader->load(mapCounter));
+        } catch (...) {
+            printf("Could not parse map file. Discarding...\n");
+            continue;
+        }
 
         printf("Validating loaded map...\n");
-        if (loadedMap.validate()) {
-            maps[mapCounter] = new Map(loadedMap);
-            printf("Saved \"%s\" with id %d.\n", loadedMap.getName()->c_str(), mapCounter++);
+        if (loadedMap->validate()) {
+            maps[mapCounter] = loadedMap;
+            printf("Saved \"%s\" with id %d.\n", loadedMap->getName()->c_str(), mapCounter++);
         } else {
             printf("Could not validate map. Discarding...\n");
         }
