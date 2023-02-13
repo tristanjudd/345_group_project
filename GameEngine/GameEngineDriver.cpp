@@ -9,7 +9,7 @@ int gameEngineDriver() {
     cout << "Assigning countries to players" << endl;
     int *winner = new int(-1);
     while (*winner == -1) {
-        cout << "Assign reinforcements to countries" << endl;
+        cout << "Assign reinforcements to territories" << endl;
         cout << "Issuing orders" << endl;
         cout << "Executing orders" << endl;
         *winner = 0;
