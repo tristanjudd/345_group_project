@@ -6,13 +6,13 @@
 #include "GameEngine/GameEngineDriver.h"
 
 int main() {
-    // Call the map driver
+    std::cout << "Welcome to our bootleg Warzone!" << std::endl;
+
+    mapDriver();  // For now, just goes through the prompt, but we will have to return the map objects here eventually
+    cardDriver();
+    ordersDriver();
+    playerDriver();
     gameEngineDriver();
-    //   mapDriver();  // For now, just goes through the prompt, but we will have to return the map objects here eventually
-    //   cardDriver();
-    //  ordersDriver();
-    // playerDriver();
- 
 
     return 0;
 }
