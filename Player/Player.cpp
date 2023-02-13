@@ -10,18 +10,19 @@ Player::Player() {
     id = new int(0);
 }
 
+Player::Player(int inId) {
+    territories = new vector<Territory *>();
+    hand = new Hand();
+    orders = new vector<Order *>();
+    id = new int(inId);
+}
+
 //Constructor
 Player::Player(vector<Territory *> *territories, Hand *hand, vector<Order *> *orders, int *id) {
     Player::id = id;
     Player::territories = territories;
     Player::hand = hand;
     Player::orders = orders;
-}
-
-Player::Player(int id){
-
-    Player::id = new int(id);
-
 }
 
 //Copy Constructor
@@ -154,15 +155,3 @@ int *Player::getId() const {
 void Player::setId(int *id) {
     Player::id = id;
 }
-
-
-
-
-
-
-
-
-
-
-
-
