@@ -7,6 +7,7 @@ using std::cout;
 using std::endl;
 using std::string;
 using std::cin;
+using std::ostream;
 
 //enum of phases
 enum PHASE {
@@ -34,6 +35,11 @@ public:
     PHASE executeOrders();
     PHASE win();
     void end();
+    GameEngine(); //default constructor
+    GameEngine(const GameEngine &copy); //copy constructor
+    GameEngine& operator=(const GameEngine& t); //assignment operator
+    friend ostream& operator<<(ostream& os, const GameEngine& t);
+    ~GameEngine(); //destructor
 };
 
 #endif //WARZONE_GAMEENGINE_H

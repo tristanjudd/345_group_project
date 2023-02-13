@@ -3,7 +3,6 @@
 //Start phase
 PHASE GameEngine::start() {
     cout << "Welcome to our bootleg Warzone!" << endl;
-    winner = new int(-1); // -1 means no winner yet
     return MAP_LOADED; // go to load map phase
 }
 
@@ -140,4 +139,40 @@ PHASE GameEngine::win() {
 //End phase
 void GameEngine::end() {
     cout << "Bye again" << endl;
+}
+
+//default constructor
+GameEngine::GameEngine() {
+    cout << "GameEngine default constructor called" << endl;
+    winner = new int(-1);
+}
+
+//copy constructor
+GameEngine::GameEngine(const GameEngine& gameEngine) {
+    cout << "GameEngine copy constructor called" << endl;
+    winner = new int(*gameEngine.winner);
+}
+
+//assignment operator
+GameEngine& GameEngine::operator=(const GameEngine& gameEngine) {
+    cout << "GameEngine assignment operator called" << endl;
+    if (this != &gameEngine) {
+        delete this->winner;
+        this->winner = new int(*gameEngine.winner);
+    }
+    return *this;
+}
+
+//ostream operator
+ostream& operator<<(ostream& out, const GameEngine& gameEngine) {
+    cout << "GameEngine ostream operator called" << endl;
+    out << "Winner: " << *gameEngine.winner << endl;
+    return out;
+}
+
+//destructor
+GameEngine::~GameEngine() {
+    cout << "GameEngine destructor called" << endl;
+    winner = nullptr;
+    delete winner;
 }
