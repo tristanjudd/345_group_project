@@ -8,36 +8,40 @@
 // Card class method definitions
 Card::Card() {
 	int k = rand() % 5;
-	cardType = static_cast<CardType>(k);
+	cardType = new CardType;
+	*cardType = static_cast<CardType>(k);
 }
 
 Card::~Card() {
-	
+	delete cardType;
 }
 
 Card::Card(const Card& c) {
-	cardType = c.cardType;
+	cardType = new CardType(*c.cardType);
 	hand = c.hand;
 	deckIssuedFrom = c.deckIssuedFrom;
 }
 
 // Card constructor for a specific type (for dev purposes)
 Card::Card(CardType t) {
-	cardType = t;
+	cardType = new CardType;
+	*cardType = t;
 }
 
 // Card constructor taking a Hand pointer, the hand to which the card belongs
 Card::Card(Hand* h) {
 	hand = h;
 	int k = rand() % 5;
-	cardType = static_cast<CardType>(k);
+	cardType = new CardType;
+	*cardType = static_cast<CardType>(k);
 }
 
 // Card constructor taking a Deck pointer, the deck from which the card was issued
 Card::Card(Deck* d) {
 	deckIssuedFrom = d;
 	int k = rand() % 5;
-	cardType = static_cast<CardType>(k);
+	cardType = new CardType;
+	*cardType = static_cast<CardType>(k);
 }
 
 Card& Card::operator=(const Card& c) {
@@ -57,7 +61,8 @@ Card::Card(Deck* d, Hand* h) {
 	deckIssuedFrom = d;
 	hand = h;
 	int k = rand() % 5;
-	cardType = static_cast<CardType>(k);
+	cardType = new CardType;
+	*cardType = static_cast<CardType>(k);
 }
 
 // Stream operator
@@ -68,7 +73,7 @@ ostream &operator <<(ostream& os, const Card& c) {
 
 // Getter for enum CardType property of card
 CardType Card::getType() {
-	return cardType;
+	return *cardType;
 }
 
 // Method to assign a card to a hand

@@ -22,7 +22,7 @@ class Deck; // Foreward declaration
 // Card is an object containing details about a specific instance of a Warzone card
 class Card {
 private:
-	CardType cardType;
+	CardType* cardType;
 	
 public:
 	Deck* deckIssuedFrom;
