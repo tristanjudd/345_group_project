@@ -41,7 +41,7 @@ int ordersDriver() {
 
 
 	L.move(0, 1); //move first order to second
-	L.remove(1); //romve second item
+	L.remove(1); //remove second item
 
 	cout << "\nAfter Modification (move first item to second place + remove second item):" << endl;
 	cout << L;
