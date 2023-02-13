@@ -3,6 +3,7 @@
 #include "Cards/CardsDriver.h"
 #include "Orders/OrdersDriver.h"
 #include "Player/PlayerDriver.h"
+#include "GameEngine/GameEngineDriver.h"
 
 int main() {
     std::cout << "Welcome to our bootleg Warzone!" << std::endl;
