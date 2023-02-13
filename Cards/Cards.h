@@ -35,7 +35,7 @@ public:
 	Card(Deck* d);
 	Card(Deck* d, Hand* h);
 	Card &operator=(const Card& c); // Assignment operator
-	// friend std::ostream& operator<<(std::ostream& os, const Card& c);
+	friend std::ostream& operator<<(std::ostream& os, const Card& c);
 	void assignHand(Hand* hand);
 	void play();
 	CardType getType();
@@ -55,7 +55,7 @@ public:
 	Hand(const Hand& h); // copy constructor
 	Hand(Player* p);
 	Hand& operator=(const Hand& c); // Assignment operator
-	// friend ostream& operator<<(ostream& os, const Hand& c); // Stream operator
+	friend std::ostream& operator<<(std::ostream& os, const Hand& c); // Stream operator
 	std::vector<Card *> getHand(); // Returns the player's hand as a vector of Card objects
 	void insert(Card* card); // Inserts a card into the contents vector
 	void remove(Card* card); // Used when a card is played, removes card from hand
@@ -74,7 +74,7 @@ public:
 	Deck(const Deck& d); // copy constructor
 	Deck(int n);
 	Deck& operator=(const Deck& c); // Assignment operator
-	// friend ostream& operator<<(ostream& os, const Deck& c); // Stream operator
+	friend std::ostream& operator<<(std::ostream& os, const Deck& c); // Stream operator
 	Card* draw();
 	void insert(Card* card);
 	void shuffleDeck();

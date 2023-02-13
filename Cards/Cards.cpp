@@ -60,11 +60,11 @@ Card::Card(Deck* d, Hand* h) {
 	cardType = static_cast<CardType>(k);
 }
 
-//// Stream operator
-//ostream& operator<<(ostream& os, const Card& c) {
-//	os << "Card type: " << c.cardType << std::endl;
-//
-//}
+// Stream operator
+ostream &operator <<(ostream& os, const Card& c) {
+	os << "Card type: " << c.cardType << std::endl;
+    return os;
+}
 
 // Getter for enum CardType property of card
 CardType Card::getType() {
@@ -129,14 +129,16 @@ Hand& Hand::operator=(const Hand& h) {
 }
 
 
-//// Stream operator
-//ostream& operator<<(ostream& os, const Hand& h) {
-//	os << "Cards in hand: " << std::endl; 
-//
-//	for (int i = 0; i < h.contents.size(); i++) {
-//		os << "Card 1 type: " << h.contents.at(i)->getType() << std::endl;
-//	}
-//}
+// Stream operator
+ostream& operator<<(ostream& os, const Hand& h) {
+	os << "Cards in hand: " << std::endl;
+
+	for (int i = 0; i < h.contents.size(); i++) {
+		os << "Card 1 type: " << h.contents.at(i)->getType() << std::endl;
+	}
+
+    return os;
+}
 
 // Get contents of hand, returns vector of Card objects
 std::vector<Card *> Hand::getHand() {
@@ -214,14 +216,15 @@ Deck& Deck::operator=(const Deck& d) {
 }
 
 
-//// Stream operator
-//ostream& operator<<(ostream& os, const Deck& d) {
-//	os << "Cards in hand: " << std::endl;
-//
-//	for (int i = 0; i < d.contents.size(); i++) {
-//		os << "Card 1 type: " << d.contents.at(i)->getType() << std::endl;
-//	}
-//}
+// Stream operator
+ostream& operator<<(ostream& os, const Deck& d) {
+	os << "Cards in hand: " << std::endl;
+
+	for (int i = 0; i < d.contents.size(); i++) {
+		os << "Card 1 type: " << d.contents.at(i)->getType() << std::endl;
+	}
+    return os;
+}
 
 // Parameterized constructor for custom deck size
 // Takes int n input and returns deck of size n
