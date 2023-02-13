@@ -3,7 +3,7 @@ class Player; // foreward declaration to avoid circular dependency
 #include <string>
 #include <vector>
 #include <ostream>
-#include "Player/Player.h"
+#include "../Player/Player.h"
 
 // Enum of the different card types
 enum CardType
