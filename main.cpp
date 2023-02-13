@@ -12,6 +12,7 @@ int main() {
     cardDriver();
     ordersDriver();
     playerDriver();
+    gameEngineDriver();
 
     return 0;
 }
