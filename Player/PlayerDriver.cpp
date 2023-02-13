@@ -34,7 +34,7 @@ int playerDriver(){
         cout << *attacking->at(i) << endl;
     }
 
-    cout << "added Order: " << *p->getOrders()->at(0) << endl;
+    cout << "added Order: " << *p->getOrders()->getList()->at(0) << endl;
 
     cout << endl;
 
