@@ -713,4 +713,5 @@ int mapTest() {
     delete continent1;
     delete continent2;
     delete continent3;
+    return 0;
 }
