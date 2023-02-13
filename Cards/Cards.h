@@ -1,7 +1,9 @@
+class Player; // foreward declaration to avoid circular dependency
 #pragma once
 #include <string>
 #include <vector>
-// #include "Player.h"
+#include <ostream>
+#include "../Player/Player.h"
 
 // Enum of the different card types
 enum CardType
@@ -13,18 +15,27 @@ enum CardType
 	diplomacy
 };
 
-class Hand;
+class Hand; // Foreward declaration
+class Deck; // Foreward declaration
 
 // Card class header
 // Card is an object containing details about a specific instance of a Warzone card
 class Card {
 private:
 	CardType cardType;
-	Hand* hand;
+	
 public:
+	Deck* deckIssuedFrom;
+	Hand* hand;
 	Card();
+	~Card(); // destructor
+	Card(const Card& c); //copy constructor
 	Card(CardType t);
 	Card(Hand* h);
+	Card(Deck* d);
+	Card(Deck* d, Hand* h);
+	Card &operator=(const Card& c); // Assignment operator
+	// friend std::ostream& operator<<(std::ostream& os, const Card& c);
 	void assignHand(Hand* hand);
 	void play();
 	CardType getType();
@@ -34,14 +45,21 @@ public:
 // A Hand object is a collection of Card objects
 class Hand {
 private:
-	/*Player* owner;*/
+	
 	std::vector<Card *> contents;
 
 public:
+	Player* owner;
 	Hand(); // Default constructor with no cards
+	~Hand();
+	Hand(const Hand& h); // copy constructor
+	Hand(Player* p);
+	Hand& operator=(const Hand& c); // Assignment operator
+	// friend ostream& operator<<(ostream& os, const Hand& c); // Stream operator
 	std::vector<Card *> getHand(); // Returns the player's hand as a vector of Card objects
 	void insert(Card* card); // Inserts a card into the contents vector
 	void remove(Card* card); // Used when a card is played, removes card from hand
+	int size();
 
 };
 
@@ -49,16 +67,17 @@ public:
 // A deck is a collection of Card objects
 class Deck {
 private:
-	int count;
 	std::vector<Card *> contents;
 public:
 	Deck();
+	~Deck();
+	Deck(const Deck& d); // copy constructor
 	Deck(int n);
+	Deck& operator=(const Deck& c); // Assignment operator
+	// friend ostream& operator<<(ostream& os, const Deck& c); // Stream operator
 	Card* draw();
 	void insert(Card* card);
-	void shuffle();
+	void shuffleDeck();
 	int size();
 	Card* peek(int n);
 };
-
-bool cardTypeSame(Card* c1, Card* c2);

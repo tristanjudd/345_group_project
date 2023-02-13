@@ -1,3 +1,4 @@
+class Hand;
 #pragma once
 //#include "Map.h"
 #include "../Cards/Cards.h"
