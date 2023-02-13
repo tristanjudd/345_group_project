@@ -55,7 +55,7 @@ ostream &operator<<(ostream &os, const Player &player) {
         os << *player.territories->at(i) << endl;
     }
 
-    //os << " hand: " << *player.hand << endl;
+    os << " hand: " << *player.hand << endl;
 
     os << " orders: " << endl;
 
