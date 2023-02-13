@@ -19,8 +19,13 @@ int gameEngineDriver() {
     cout << "Play again? (y/n): ";
     char playAgain;
     cin >> playAgain;
-    if (playAgain == 'y') {
-        gameEngineDriver();
+    while (true) {
+        if (playAgain == 'y') {
+            gameEngineDriver();
+        } else if (playAgain != 'n') {
+            cout << "Invalid input" << endl << "Try again" << endl;
+        }
+        break;
     }
     cout << "Goodbye!" << endl;
     return 0;
