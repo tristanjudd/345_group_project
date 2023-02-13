@@ -6,12 +6,12 @@
 Player::Player() {
     territories = new vector<Territory *>();
     hand = new Hand(this);
-    orders = new vector<Order *>();
+    orders = new OrderList();
     id = new int(0);
 }
 
 //Constructor
-Player::Player(vector<Territory *> *territories, Hand *hand, vector<Order *> *orders, int *id) {
+Player::Player(vector<Territory *> *territories, Hand *hand, OrderList* orders, int *id) {
     Player::id = id;
     Player::territories = territories;
     Player::hand = hand;
@@ -29,7 +29,7 @@ Player::Player(const Player &p) {
 
     territories = new vector<Territory *>(*p.territories);
     hand = new Hand(*p.hand);
-    orders = new vector<Order *>(*p.orders);
+    orders = new OrderList(*p.orders);
     id = new int(*p.id);
 }
 
@@ -39,7 +39,7 @@ Player &Player::operator=(const Player &p) {
     if (this != &p) {
         territories = new vector<Territory *>(*p.territories);
         hand = new Hand(*p.hand);
-        orders = new vector<Order *>(*p.orders);
+        orders = new OrderList(*p.orders);
         id = new int(*p.id);
 
     }
@@ -59,8 +59,8 @@ ostream &operator<<(ostream &os, const Player &player) {
 
     os << " orders: " << endl;
 
-    for (int i = 0; i < player.orders->size(); i++) {
-        os << *player.orders->at(i) << endl;
+    for (int i = 0; i < player.orders->getList()->size(); i++) {
+        os << *player.orders->getList()->at(i) << endl;
     }
 
     return os;
@@ -80,7 +80,7 @@ Player::~Player() {
 void Player::issueOrder() {
 
     Order *order = new Order("Specific order");
-    orders->push_back(order);
+    orders->Add(order);
 }
 
 //Function creates  list of territories a player will defend
@@ -139,11 +139,11 @@ Hand *Player::getHand() {
     return hand;
 }
 
-vector<Order *> *Player::getOrders() const {
+OrderList *Player::getOrders() const {
     return orders;
 }
 
-void Player::setOrders(vector<Order *> *orders) {
+void Player::setOrders(OrderList *orders) {
     Player::orders = orders;
 }
 
