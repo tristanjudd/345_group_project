@@ -15,10 +15,10 @@ public:
 	Order();
 	Order(string _execMessage);
 	Order(const Order& _o);
-	~Order();
+	virtual ~Order();
 
-	bool validate();
-	bool execute();
+	virtual bool validate() = 0;
+	virtual bool execute() = 0;
 
 	string getEffect() const;
 	void setEffect(string _execMessage);

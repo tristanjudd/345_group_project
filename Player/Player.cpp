@@ -78,9 +78,9 @@ Player::~Player() {
 //Function creates an order and
 //Adds it to the list of orders
 void Player::issueOrder() {
-
-    Order *order = new Order("Specific order");
-    orders->Add(order);
+    //changed Order to abstract class need param to create specific order
+    //Order *order = new Order("Specific order");
+    //orders->Add(order);
 }
 
 //Function creates  list of territories a player will defend

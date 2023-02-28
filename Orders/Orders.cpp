@@ -65,30 +65,30 @@ void Order::operator= (Order const &obj)
 
 //invalid obj are created with "invalid" exec message
 //have to change when Orders are defined
-bool Order::validate() {
-	if (getEffect() == "invalid") {
-		return false;
-	}
-	
-	return true;
-}
+//bool Order::validate() {
+//	if (getEffect() == "invalid") {
+//		return false;
+//	}
+//	
+//	return true;
+//}
 
 //prints Order type + add exec message 
 //have to change when Orders are defined
-bool Order::execute() {
-	bool valid = validate();
-
-	if (valid) {
-		cout << "DEBUG: Order executed" << endl;
-		cout << "DEBUG: did something no yet defined" << endl;
-		setEffect("did something");
-		return true;
-	}
-	else {
-		cout << "DEBUG: Order not executed" << endl;
-		return false;
-	}
-}
+//bool Order::execute() {
+//	bool valid = validate();
+//
+//	if (valid) {
+//		cout << "DEBUG: Order executed" << endl;
+//		cout << "DEBUG: did something no yet defined" << endl;
+//		setEffect("did something");
+//		return true;
+//	}
+//	else {
+//		cout << "DEBUG: Order not executed" << endl;
+//		return false;
+//	}
+//}
 
 //deploy class
 Deploy::Deploy()
