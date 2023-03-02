@@ -79,8 +79,8 @@ Player::~Player() {
 //Adds it to the list of orders
 void Player::issueOrder() {
 
-    Order *order = new Order("Specific order");
-    orders->push_back(order);
+    /*Order *order = new Order("Specific order");
+    orders->push_back(order);*/
 }
 
 //Function creates  list of territories a player will defend
