@@ -56,6 +56,8 @@ public:
 	bool validate();
 	bool execute();
 
+	void operator= (Deploy const &);
+
 private:
 	int *nbArmies;
 	Territory* target;
@@ -76,7 +78,8 @@ public:
 	void setSource(Territory _source);
 	Territory getTarget() const;
 	void setTarget(Territory _target);
-		
+	
+	void operator= (Advance const &);
 
 	bool validate();
 	bool execute();
@@ -99,6 +102,8 @@ public:
 	Territory getTarget() const;
 	void setTarget(Territory _target);
 
+	void operator= (Bomb const &);
+
 	bool validate();
 	bool execute();
 
@@ -117,6 +122,8 @@ public:
 	//getter and setter
 	Territory getTarget() const;
 	void setTarget(Territory _target);
+
+	void operator= (Blockade const &);
 
 	bool validate();
 	bool execute();
@@ -142,6 +149,8 @@ public:
 	Territory getTarget() const;
 	void setTarget(Territory _target);
 
+	void operator= (Airlift const &);
+
 	bool validate();
 	bool execute();
 
@@ -164,6 +173,8 @@ public:
 	void setIssuer(Player _issuer);
 	Player getVictim() const;
 	void setVictim(Player _victim);
+
+	void operator= (Negotiate const &);
 
 	bool validate();
 	bool execute();

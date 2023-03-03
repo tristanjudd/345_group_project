@@ -153,6 +153,14 @@ bool Deploy::execute() {
 	}
 }
 
+//assign op
+void Deploy::operator= (Deploy const& obj)
+{
+	Order::operator=(obj);
+	nbArmies = obj.nbArmies;
+	target = obj.target;
+}
+
 //Advance class
 Advance::Advance()
 {
@@ -235,6 +243,15 @@ bool Advance::execute() {
 	}
 }
 
+//assign op
+void Advance::operator= (Advance const& obj)
+{
+	Order::operator=(obj);
+	nbArmies = obj.nbArmies;
+	source = obj.source;
+	target = obj.target;
+}
+
 //bomb class
 Bomb::Bomb()
 {
@@ -284,6 +301,13 @@ bool Bomb::execute() {
 		cout << "DEBUG: Bomb order not executed" << endl;
 		return false;
 	}
+}
+
+//assign op
+void Bomb::operator= (Bomb const& obj)
+{
+	Order::operator=(obj);
+	target = obj.target;
 }
 
 //blockade class
@@ -344,6 +368,13 @@ bool Blockade::execute() {
 		cout << "DEBUG: Blockade order not executed" << endl;
 		return false;
 	}
+}
+
+//assign op
+void Blockade::operator= (Blockade const& obj)
+{
+	Order::operator=(obj);
+	target = obj.target;
 }
 
 //airlift class
@@ -427,6 +458,15 @@ bool Airlift::execute() {
 	}
 }
 
+//assign op
+void Airlift::operator= (Airlift const& obj)
+{
+	Order::operator=(obj);
+	nbArmies = obj.nbArmies;
+	source = obj.source;
+	target = obj.target;
+}
+
 //negotiate class
 Negotiate::Negotiate()
 {
@@ -485,6 +525,13 @@ bool Negotiate::execute() {
 		cout << "DEBUG: Negotiate order not executed" << endl;
 		return false;
 	}
+}
+
+//assign op
+void Negotiate::operator= (Negotiate const& obj)
+{
+	Order::operator=(obj);
+	victim = obj.victim;
 }
 
 //OrderList class
