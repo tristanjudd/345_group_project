@@ -40,6 +40,13 @@ public:
     GameEngine& operator=(const GameEngine& t); //assignment operator
     friend ostream& operator<<(ostream& os, const GameEngine& t);
     ~GameEngine(); //destructor
+
+    // START OF ASSIGNMENT 2
+    void mainGameLoop(); // loops through game phases until win condition is met
+    void reinforcementPhase(); // called by mainGameLoop
+    void issueOrdersPhase(); // called by mainGameLoop
+    void executeOrdersPhase(); // called by mainGameLoop
+
 };
 
 #endif //WARZONE_GAMEENGINE_H
