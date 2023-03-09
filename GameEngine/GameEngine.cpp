@@ -176,3 +176,20 @@ GameEngine::~GameEngine() {
     winner = nullptr;
     delete winner;
 }
+
+// START OF ASSIGNMENT 2
+void GameEngine::mainGameLoop() {
+    // TODO
+};
+
+void GameEngine::reinforcementPhase() {
+    // TODO
+};
+
+void GameEngine::issueOrdersPhase() {
+    // TODO
+};
+
+void GameEngine::executeOrdersPhase() {
+    // TODO
+};
