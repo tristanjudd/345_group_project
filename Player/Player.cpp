@@ -8,6 +8,10 @@ Player::Player() {
     hand = new Hand(this);
     orders = new OrderList();
     id = new int(0);
+
+    // ASSIGNMENT 2
+    reinforcements = new int;
+    *reinforcements = 0;
 }
 
 //Constructor
@@ -73,6 +77,7 @@ Player::~Player() {
     delete hand;
     delete orders;
     delete id;
+    delete reinforcements;
 }
 
 //Function creates an order and
@@ -155,6 +160,17 @@ void Player::setId(int *id) {
     Player::id = id;
 }
 
+
+// ASSIGNMENT 2
+// get the number of troops in Player's reinforcement pool
+int Player::getReinforcements() {
+    return *reinforcements;
+}
+
+// set the number of troops in Player's reinforcement pool
+void Player::setReinforcements(int n) {
+    *reinforcements = n;
+}
 
 
 
