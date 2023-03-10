@@ -55,7 +55,7 @@ PHASE GameEngine::addPlayers() {
     return ASSIGN_REINFORCEMENT; //go to assign reinforcement phase
 }
 
-//Assign reinforcement phase
+//Assign reinforcement phase ***DEPRECATED FROM A1
 PHASE GameEngine::assignReinforcements() {
     while (true) {
         cout << "Assign reinforcements" << endl;
@@ -75,7 +75,7 @@ PHASE GameEngine::assignReinforcements() {
     }
 }
 
-//Issue orders phase
+//Issue orders phase ***DEPRECATED FROM A1
 PHASE GameEngine::issueOrders() {
     while (true) {
         cout << "Issue orders" << endl;
@@ -95,7 +95,7 @@ PHASE GameEngine::issueOrders() {
     }
 }
 
-//Execute orders phase
+//Execute orders phase ***DEPRECATED FROM A1
 PHASE GameEngine::executeOrders() {
     while (true) {
         cout << "Execute orders" << endl;
@@ -145,12 +145,14 @@ void GameEngine::end() {
 GameEngine::GameEngine() {
     cout << "GameEngine default constructor called" << endl;
     winner = new int(-1);
+    players = new vector<Player *>;
 }
 
 //copy constructor
 GameEngine::GameEngine(const GameEngine& gameEngine) {
     cout << "GameEngine copy constructor called" << endl;
     winner = new int(*gameEngine.winner);
+    players = gameEngine.players;
 }
 
 //assignment operator
@@ -175,21 +177,73 @@ GameEngine::~GameEngine() {
     cout << "GameEngine destructor called" << endl;
     winner = nullptr;
     delete winner;
+    delete [] players;
 }
 
 // START OF ASSIGNMENT 2
-void GameEngine::mainGameLoop() {
+PHASE GameEngine::mainGameLoop() {
     // TODO
 };
 
-void GameEngine::reinforcementPhase() {
-    // TODO
-};
+//Assign reinforcement phase
+PHASE GameEngine::reinforcementPhase() {
+    while (true) {
+        cout << "Assign reinforcements" << endl;
+        while (true) {
+            cout << "Continue? (y/n): ";
+            string continueAssigningReinforcements;
+            cin >> continueAssigningReinforcements;
+            if (continueAssigningReinforcements == "y") {
+                return ASSIGN_REINFORCEMENT; //assign more reinforcements
+            } else if (continueAssigningReinforcements == "n") {
+                return ISSUE_ORDERS; //go to issue orders phase
+            }
+            cout << "Invalid input" << endl << "Try again" << endl;
+            cin.clear(); //clear input stream
+            cin.ignore();
+        }
+    }
+}
 
-void GameEngine::issueOrdersPhase() {
-    // TODO
-};
+//Issue orders phase
+PHASE GameEngine::issueOrdersPhase() {
+    while (true) {
+        cout << "Issue orders" << endl;
+        while (true) {
+            cout << "Continue? (y/n): ";
+            string continueIssuingOrders;
+            cin >> continueIssuingOrders;
+            if (continueIssuingOrders == "y") {
+                return ISSUE_ORDERS; //issue more orders
+            } else if (continueIssuingOrders == "n") {
+                return EXECUTE_ORDERS; //go to execute orders phase
+            }
+            cout << "Invalid input" << endl << "Try again" << endl;
+            cin.clear(); //clear input stream
+            cin.ignore();
+        }
+    }
+}
 
-void GameEngine::executeOrdersPhase() {
-    // TODO
-};
+//Execute orders phase
+PHASE GameEngine::executeOrdersPhase() {
+    while (true) {
+        cout << "Execute orders" << endl;
+        while (true) {
+            if (*winner != -1) {
+                return WIN; //go to win phase
+            }
+            cout << "Continue? (y/n): ";
+            string continueExecutingOrders;
+            cin >> continueExecutingOrders;
+            if (continueExecutingOrders == "y") {
+                return EXECUTE_ORDERS; //execute more orders
+            } else if (continueExecutingOrders == "n") {
+                return ASSIGN_REINFORCEMENT; //go to assign reinforcement phase
+            } else if (continueExecutingOrders == "w") { //simulate winner
+                return WIN; //simulate win
+            }
+            cout << "Invalid input" << endl << "Try again" << endl;
+        }
+    }
+}
