@@ -77,6 +77,7 @@ Player::~Player() {
     delete hand;
     delete orders;
     delete id;
+    delete reinforcements;
 }
 
 //Function creates an order and
