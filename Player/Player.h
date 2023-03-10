@@ -20,6 +20,9 @@ private:
     OrderList* orders;
     int * id;
 
+    // ASSIGNMENT 2
+    int* reinforcements;
+
 public:
 
     //Constructors
@@ -56,4 +59,8 @@ public:
     int *getId() const;
 
     void setId(int *id);
+
+    // ASSIGNMENT 2
+    int getReinforcements();
+    void setReinforcements(int n);
 };
