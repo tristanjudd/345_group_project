@@ -8,7 +8,7 @@ Order::Order() {
 }
 
 Order::Order(Player& _issuer) {
-	m_playerPtr = &_issuer;
+	m_playerPtr = new Player(_issuer);
 	m_descriptionPtr = new string("This is an Order.");
 	m_effectPtr = new string("");
 }
@@ -85,8 +85,8 @@ Deploy::Deploy()
 
 Deploy::Deploy(Player& _issuer, int _nbArmies, Territory& _target) : Order( _issuer)
 {
-	//Have to change
-	string desc = "This is a Deploy order. Deploy " + to_string(_nbArmies) + " armies";
+
+	string desc = "Deploy order: Player " + to_string(*(_issuer.getId())) + "  deploys " + to_string(_nbArmies) + " armies to " + (*(_target.getTerritoryName()));
 	setDesc(desc);
 
 	nbArmies = new int(_nbArmies);
@@ -169,9 +169,9 @@ Advance::Advance()
 
 Advance::Advance(Player& _issuer, int _nbArmies, Territory& _source, Territory& _target) : Order(_issuer)
 {
-	//Have to change
-	string desc = "This is an Advance order. Advance " + to_string(_nbArmies) + " armies";
+	string desc = "Advance order: Player"+ to_string(*(_issuer.getId())) +" Advances" + to_string(_nbArmies) + " armies from "+ (*(_source.getTerritoryName())) + " to " + (*(_target.getTerritoryName()));
 	setDesc(desc);
+
 	nbArmies = new int(_nbArmies);
 	source = new Territory(_source);
 	target = new Territory(_target);
@@ -260,8 +260,8 @@ Bomb::Bomb()
 
 Bomb::Bomb(Player& _issuer, Territory& _target) : Order(_issuer)
 {
-	//Have to change
-	string desc = "This is a Bomb order.";
+
+	string desc = "Bomb order: Player " + to_string(*(_issuer.getId())) + " bombs " + (*(_target.getTerritoryName()));
 	setDesc(desc);
 	target = new Territory(_target);
 }
@@ -318,8 +318,7 @@ Blockade::Blockade()
 
 Blockade::Blockade(Player& _issuer, Territory& _target) : Order(_issuer)
 {
-	//Have to change
-	string desc = "This is a Blockade order.";
+	string desc = "Blockade order: Player "+ to_string(*(_issuer.getId())) + " blockades " + (*(_target.getTerritoryName()));
 	setDesc(desc);
 	target = new Territory(_target);
 }
@@ -385,8 +384,7 @@ Airlift::Airlift()
 
 Airlift::Airlift(Player& _issuer, int _nbArmies, Territory& _source, Territory& _target) : Order(_issuer)
 {
-	//Have to change
-	string desc = "This is an Airlift order. Airlift " + to_string(_nbArmies) + " armies";
+	string desc = "Airlift order: Player "+ to_string(*(_issuer.getId())) +" airlifts " + to_string(_nbArmies) + " armies from "+ (*(_source.getTerritoryName()))+ " to " + (*(_target.getTerritoryName()));
 	setDesc(desc);
 	nbArmies = new int(_nbArmies);
 	source = new Territory(_source);
@@ -475,8 +473,7 @@ Negotiate::Negotiate()
 
 Negotiate::Negotiate(Player& _issuer, Player& _victim) : Order(_issuer)
 {
-	//Have to change
-	string desc = "This is a Negotiate order.";
+	string desc = "Negotiate order: Player " + to_string(*(_issuer.getId())) + " negotiates with Player " + to_string(*(_victim.getId()));
 	setDesc(desc);
 	victim = new Player(_victim);
 	
