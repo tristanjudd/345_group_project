@@ -14,12 +14,12 @@ class Order
 public:
 
 	Order();
-	Order(Player& _issuer);
+	Order(Player* _issuer);
 	Order(const Order& _o);
 	~Order();
 
-	bool validate();
-	bool execute();
+	virtual bool validate() = 0;
+	virtual bool execute() = 0;
 
 	string getEffect() const;
 	void setEffect(string _execMessage);
@@ -44,7 +44,7 @@ class Deploy : public Order
 {
 public:
 	Deploy();
-	Deploy(Player& _issuer, int _nbArmies, Territory& _target);
+	Deploy(Player* _issuer, int _nbArmies, Territory* _target);
 	Deploy(const Deploy& _o);
 	~Deploy();
 
@@ -67,7 +67,7 @@ class Advance : public Order
 {
 public:
 	Advance();
-	Advance(Player& _issuer,int _nbArmies, Territory& _source, Territory& _target);
+	Advance(Player* _issuer,int _nbArmies, Territory* _source, Territory* _target);
 	Advance(const Advance& _o);
 	~Advance();
 
@@ -94,7 +94,7 @@ class Bomb : public Order
 {
 public:
 	Bomb();
-	Bomb(Player& _issuer, Territory& _target);
+	Bomb(Player* _issuer, Territory* _target);
 	Bomb(const Bomb& _o);
 	~Bomb();
 
@@ -115,7 +115,7 @@ class Blockade : public Order
 {
 public:
 	Blockade();
-	Blockade(Player& _issuer, Territory& _target);
+	Blockade(Player* _issuer, Territory* _target);
 	Blockade(const Blockade& _o);
 	~Blockade();
 
@@ -137,7 +137,7 @@ class Airlift : public Order
 {
 public:
 	Airlift();
-	Airlift(Player& _issuer, int _nbArmies, Territory& _source, Territory& _target);
+	Airlift(Player* _issuer, int _nbArmies, Territory* _source, Territory* _target);
 	Airlift(const Airlift& _o);
 	~Airlift();
 
@@ -164,13 +164,11 @@ class Negotiate : public Order
 {
 public:
 	Negotiate();
-	Negotiate(Player& _issuer, Player& _victim);
+	Negotiate(Player* _issuer, Player* _victim);
 	Negotiate(const Negotiate& _o);
 	~Negotiate();
 
-	//getter and setter
-	Player getIssuer() const;
-	void setIssuer(Player _issuer);
+	//getter and setter;
 	Player getVictim() const;
 	void setVictim(Player _victim);
 

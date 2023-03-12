@@ -7,21 +7,20 @@ Order::Order() {
 	m_effectPtr = new string(""); //Effect of the Order after being executed
 }
 
-Order::Order(Player& _issuer) {
-	m_playerPtr = new Player(_issuer);
+Order::Order(Player* _issuer) {
+	m_playerPtr = _issuer;
 	m_descriptionPtr = new string("This is an Order.");
 	m_effectPtr = new string("");
 }
 
 //copy constructor
 Order::Order(const Order& o) {
-	m_playerPtr = new Player(o.getPlayer());
+	m_playerPtr = &(o.getPlayer());
 	m_descriptionPtr = new string(o.getDesc());
 	m_effectPtr = new string(o.getEffect());
 }
 
 Order::~Order() {
-	delete m_playerPtr;
 	delete m_descriptionPtr;
 	delete m_effectPtr;
 }
@@ -83,21 +82,21 @@ Deploy::Deploy()
 	setDesc("This is a Deploy order");
 }
 
-Deploy::Deploy(Player& _issuer, int _nbArmies, Territory& _target) : Order( _issuer)
+Deploy::Deploy(Player* _issuer, int _nbArmies, Territory* _target) : Order( _issuer)
 {
 
-	string desc = "Deploy order: Player " + to_string(*(_issuer.getId())) + "  deploys " + to_string(_nbArmies) + " armies to " + (*(_target.getTerritoryName()));
+	string desc = "Deploy order: Player " + to_string(*(_issuer->getId())) + "  deploys " + to_string(_nbArmies) + " armies to " + (*(_target->getTerritoryName()));
 	setDesc(desc);
 
 	nbArmies = new int(_nbArmies);
-	target = new Territory(_target);
+	target = _target;
 }
 
 Deploy::Deploy(const Deploy& _o) : Order(_o)
 {
 	//copy nbArmies and target
 	nbArmies = new int(_o.getNbArmies());
-	target = new Territory(_o.getTarget());
+	target = &(_o.getTarget());
 
 }
 
@@ -120,7 +119,6 @@ void Deploy::setTarget(Territory _target) {
 
 Deploy::~Deploy() 
 {
-	delete target;
 	delete nbArmies;
 }
 
@@ -167,27 +165,25 @@ Advance::Advance()
 	setDesc("This is an Advance order");
 }
 
-Advance::Advance(Player& _issuer, int _nbArmies, Territory& _source, Territory& _target) : Order(_issuer)
+Advance::Advance(Player* _issuer, int _nbArmies, Territory* _source, Territory* _target) : Order(_issuer)
 {
-	string desc = "Advance order: Player"+ to_string(*(_issuer.getId())) +" Advances" + to_string(_nbArmies) + " armies from "+ (*(_source.getTerritoryName())) + " to " + (*(_target.getTerritoryName()));
+	string desc = "Advance order: Player"+ to_string(*(_issuer->getId())) +" Advances" + to_string(_nbArmies) + " armies from "+ (*(_source->getTerritoryName())) + " to " + (*(_target->getTerritoryName()));
 	setDesc(desc);
 
 	nbArmies = new int(_nbArmies);
-	source = new Territory(_source);
-	target = new Territory(_target);
+	source = _source;
+	target = _target;
 }
 
 Advance::Advance(const Advance& _o) : Order(_o)
 {
 	nbArmies = new int(_o.getNbArmies());
-	source = new Territory(_o.getSource());
-	target = new Territory(_o.getTarget());
+	source = &(_o.getSource());
+	target = &(_o.getTarget());
 }
 
 Advance::~Advance() {
 	delete nbArmies;
-	delete source;
-	delete target;
 }
 
 //GETTER AND SETTER ADVANCE
@@ -258,22 +254,31 @@ Bomb::Bomb()
 	setDesc("This is a Bomb order");
 }
 
-Bomb::Bomb(Player& _issuer, Territory& _target) : Order(_issuer)
+Bomb::Bomb(Player* _issuer, Territory* _target) : Order(_issuer)
 {
 
-	string desc = "Bomb order: Player " + to_string(*(_issuer.getId())) + " bombs " + (*(_target.getTerritoryName()));
+	string desc = "Bomb order: Player " + to_string(*(_issuer->getId())) + " bombs " + (*(_target->getTerritoryName()));
 	setDesc(desc);
-	target = new Territory(_target);
+	target = _target;
 }
 
 Bomb::Bomb(const Bomb& _o) : Order(_o)
 {
 	//copy target
-	target = new Territory(_o.getTarget());
+	target = &(_o.getTarget());
 }
 
 Bomb::~Bomb() {
-	delete target;
+	
+}
+
+//GETTE AND SETTER
+Territory Bomb::getTarget() const {
+	return *target;
+}
+
+void Bomb::setTarget(Territory _target) {
+	*target = _target;
 }
 
 //invalid obj are created with "invalid" exec message
@@ -316,21 +321,21 @@ Blockade::Blockade()
 	setDesc("This is a Blockade order");
 }
 
-Blockade::Blockade(Player& _issuer, Territory& _target) : Order(_issuer)
+Blockade::Blockade(Player* _issuer, Territory* _target) : Order(_issuer)
 {
-	string desc = "Blockade order: Player "+ to_string(*(_issuer.getId())) + " blockades " + (*(_target.getTerritoryName()));
+	string desc = "Blockade order: Player "+ to_string(*(_issuer->getId())) + " blockades " + (*(_target->getTerritoryName()));
 	setDesc(desc);
-	target = new Territory(_target);
+	target = _target;
 }
 
 Blockade::Blockade(const Blockade& o) : Order(o)
 {
 	//copy target
-	target = new Territory(o.getTarget());
+	target = &(o.getTarget());
 }
 
 Blockade::~Blockade() {
-	delete target;
+	
 }
 
 //GETTER AND SETTER BLOCKADE
@@ -382,26 +387,24 @@ Airlift::Airlift()
 	setDesc("This is an Airlift order");
 }
 
-Airlift::Airlift(Player& _issuer, int _nbArmies, Territory& _source, Territory& _target) : Order(_issuer)
+Airlift::Airlift(Player* _issuer, int _nbArmies, Territory* _source, Territory* _target) : Order(_issuer)
 {
-	string desc = "Airlift order: Player "+ to_string(*(_issuer.getId())) +" airlifts " + to_string(_nbArmies) + " armies from "+ (*(_source.getTerritoryName()))+ " to " + (*(_target.getTerritoryName()));
+	string desc = "Airlift order: Player "+ to_string(*(_issuer->getId())) +" airlifts " + to_string(_nbArmies) + " armies from "+ (*(_source->getTerritoryName()))+ " to " + (*(_target->getTerritoryName()));
 	setDesc(desc);
 	nbArmies = new int(_nbArmies);
-	source = new Territory(_source);
-	target = new Territory(_target);
+	source = _source;
+	target = _target;
 }
 
 Airlift::Airlift(const Airlift& _o) : Order(_o)
 {
 	nbArmies = new int(_o.getNbArmies());
-	source = new Territory(_o.getSource());
-	target = new Territory(_o.getTarget());
+	source = &(_o.getSource());
+	target = &(_o.getTarget());
 }
 
 Airlift::~Airlift() {
 	delete nbArmies;
-	delete source;
-	delete target;
 }
 
 //GETTER AND SETTER AIRLIFT
@@ -471,22 +474,32 @@ Negotiate::Negotiate()
 	setDesc("This is a Negotiate order");
 }
 
-Negotiate::Negotiate(Player& _issuer, Player& _victim) : Order(_issuer)
+Negotiate::Negotiate(Player* _issuer, Player* _victim) : Order(_issuer)
 {
-	string desc = "Negotiate order: Player " + to_string(*(_issuer.getId())) + " negotiates with Player " + to_string(*(_victim.getId()));
+	string desc = "Negotiate order: Player " + to_string(*(_issuer->getId())) + " negotiates with Player " + to_string(*(_victim->getId()));
 	setDesc(desc);
-	victim = new Player(_victim);
+	victim = _victim;
 	
 }
 
 Negotiate::Negotiate(const Negotiate& _o) : Order(_o)
 {
-	victim = new Player(_o.getVictim());
+	victim = &(_o.getVictim());
 }
 
 Negotiate::~Negotiate() {
-	delete victim;
+
 }
+
+//GETTER AND SETTER NEGOTIATE
+Player Negotiate::getVictim() const {
+	return *victim;
+}
+
+void Negotiate::setVictim(Player _victim) {
+	*victim = _victim;
+}
+
 
 //invalid obj are created with "invalid" exec message
 //have to change when Orders are defined
