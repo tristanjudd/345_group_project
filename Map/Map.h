@@ -10,6 +10,8 @@
 #include <fstream>
 #include <sstream>
 
+#include "../Player/Player.h"
+
 using std::string;
 using std::vector;
 using std::cout;
@@ -21,6 +23,7 @@ using std::stoi;
 using std::ifstream;
 using std::stringstream;
 
+class Player;
 
 class Territory {
 private:
@@ -29,7 +32,7 @@ private:
     int *armyCount;
     string *territoryName; //name of territory
     vector<int> *borders;  // ids of adjacent territories
-    //Player *owner; //owner of the territory
+    Player *owner; //owner of the territory
 public:
     //constructors
     Territory(); //default constructor
@@ -40,16 +43,18 @@ public:
     ~Territory(); //destructor
 
     //getters and setters
-    void setId(int inId);
-    int *getId();
-    void setContinentId(int inContinentId);
-    int *getContinentId();
-    void setArmyCount(int inArmyCount);
-    int *getArmyCount();
-    void setTerritoryName(string inTerritoryName);
-    string *getTerritoryName();
-    void setBorders(vector<int> inBorders);
-    vector<int> *getBorders();
+    void setId(int *inId);
+    int *getId() const;
+    void setContinentId(int *inContinentId);
+    int *getContinentId() const;
+    void setArmyCount(int *inArmyCount);
+    int *getArmyCount() const;
+    void setTerritoryName(string *inTerritoryName);
+    string *getTerritoryName() const;
+    void setBorders(vector<int> *inBorders);
+    vector<int> *getBorders() const;
+    void setOwner(Player *inPlayer);
+    Player *getOwner() const;
 };
 
 class Continent {
@@ -67,12 +72,12 @@ public:
     ~Continent(); //destructor
 
     //getters and setters
-    void setId(int inId);
-    int *getId();
-    void setContinentName(string inContinentName);
-    string *getContinentName();
-    void setValue(int inValue);
-    int *getValue();
+    void setId(int *inId);
+    int *getId() const;
+    void setContinentName(string *inContinentName);
+    string *getContinentName() const;
+    void setValue(int *inValue);
+    int *getValue() const;
 };
 
 class Map {
@@ -95,14 +100,14 @@ public:
     ~Map(); //destructor
 
     //getters and setters
-    void setId(int inId);
-    int *getId();
-    void setName(string inName);
-    string *getName();
-    void setContinents(vector<Continent *> inContinents);
-    vector<Continent *> *getContinents();
-    void setTerritories(vector<Territory *> inTerritories);
-    vector<Territory *> *getTerritories();
+    void setId(int *inId);
+    int *getId() const;
+    void setName(string *inName);
+    string *getName() const;
+    void setContinents(vector<Continent *> *inContinents);
+    vector<Continent *> *getContinents() const;
+    void setTerritories(vector<Territory *> *inTerritories);
+    vector<Territory *> *getTerritories() const;
 
     //validation methods
     bool validate();
@@ -118,6 +123,7 @@ public:
     void addContinentEdge(Continent *c1, Continent *c2);
     bool isContinentConnected(Continent *c1, Continent *c2);
     void printContinentMap();
+
 };
 
 enum PARSE_MODE {
@@ -131,7 +137,7 @@ enum PARSE_MODE {
 class MapLoader {
 private:
     // attributes
-    std::string* path;
+    string* path;
 
     // static methods
     static PARSE_MODE getMode(const string& inputString);
@@ -139,14 +145,18 @@ private:
 
 public:
     // Constructors
-    MapLoader();
+    MapLoader(); //default constructor
+    MapLoader(const MapLoader &copy); //copy constructor
+    MapLoader& operator=(const MapLoader& ml); //assignment operator
+    friend ostream& operator<<(ostream& os, const MapLoader& ml); //stream insertion operator
+    ~MapLoader(); //destructor
 
     // Getters & Setters
-    std::string getPath();
-    void setPath(std::string* inputPath);
+    void setPath(string *inputPath);
+    string *getPath() const;
 
     // Methods
     Map load(int mapNumber);
 };
-
+int mapTest();
 #endif //MAP_H
