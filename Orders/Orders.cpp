@@ -122,16 +122,15 @@ Deploy::~Deploy()
 	delete nbArmies;
 }
 
-//have to modify
+//check if territory belongs to player
 bool Deploy::validate() {
-	//check if target territory belongs to the issuer True if yes else False
-	/*if (getTarget().getOwner() == getPlayer()) {
-		return true;
-	}
-	else {
-		return false;
-	}*/
 	
+	if( (*(target->getOwner())->getId()) != (*(getPlayer().getId())) ){
+		cout << "DEBUG: Order not valid" << endl;
+		return false;
+	}
+
+	return true;
 }
 
 //prints Order type + add exec message 
@@ -212,14 +211,12 @@ void Advance::setTarget(Territory _target) {
 }
 
 
-//invalid obj are created with "invalid" exec message
-//have to change when Orders are defined
+//check if source belongs to player
+//check if source and target are adjacent
 bool Advance::validate() {
-	if (getEffect() == "invalid") {
-		return false;
-	}
+	
+	if()
 
-	return true;
 }
 
 //prints Order type + add exec message 
