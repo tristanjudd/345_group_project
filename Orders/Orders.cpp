@@ -215,8 +215,21 @@ void Advance::setTarget(Territory _target) {
 //check if source and target are adjacent
 bool Advance::validate() {
 	
-	if()
+	//check owner
+	if ((*(target->getOwner())->getId()) != (*(getPlayer().getId()))) {
+		cout << "DEBUG: Order not valid" << endl;
+		return false;
+	}
 
+	//check if adjacent
+	vector<int>* vec = source->getBorders();
+
+	if (find(vec->begin(), vec->end(), (*(target->getId())) ) != vec->end()) {
+		return true;
+	}
+
+	cout << "DEBUG: Order not valid" << endl;
+	return false;
 }
 
 //prints Order type + add exec message 
@@ -278,10 +291,32 @@ void Bomb::setTarget(Territory _target) {
 	*target = _target;
 }
 
-//invalid obj are created with "invalid" exec message
-//have to change when Orders are defined
+//check owner of target
+// check if adjacent
 bool Bomb::validate() {
-	if (getEffect() == "invalid") {
+	//check owner
+	if ((*(target->getOwner())->getId()) == (*(getPlayer().getId()))) {
+		cout << "DEBUG: Order not valid" << endl;
+		return false;
+	}
+
+	bool adjacent = false;
+	
+	//check if target is adjacent to one of the players territory
+	for (int i = 0; i < getPlayer().getTerritories()->size(); i++) 
+	{
+		vector<int>*bvec = (*(getPlayer().getTerritories()))[i]->getBorders();
+
+		if (find(bvec->begin(), bvec->end(), (*(target->getId()))) != bvec->end()) 
+		{
+			adjacent = true;
+			break;
+		}
+	}
+
+	if (!adjacent)
+	{
+		cout << "DEBUG: Order not valid" << endl;
 		return false;
 	}
 
@@ -344,10 +379,12 @@ void Blockade::setTarget(Territory _target) {
 	*target = _target;
 }
 
-//invalid obj are created with "invalid" exec message
-//have to change when Orders are defined
+//check owner of target
 bool Blockade::validate() {
-	if (getEffect() == "invalid") {
+	
+	//check owner
+	if ((*(target->getOwner())->getId()) != (*(getPlayer().getId()))) {
+		cout << "DEBUG: Order not valid" << endl;
 		return false;
 	}
 
@@ -429,13 +466,21 @@ void Airlift::setTarget(Territory _target) {
 	*target = _target;
 }
 
-//invalid obj are created with "invalid" exec message
-//have to change when Orders are defined
+//check if player owns source and target
 bool Airlift::validate() {
-	if (getEffect() == "invalid") {
+	
+	//check owner of target
+	if ((*(target->getOwner())->getId()) != (*(getPlayer().getId()))) {
+		cout << "DEBUG: Order not valid" << endl;
 		return false;
 	}
 
+	//check owner of source
+	if ((*(source->getOwner())->getId()) != (*(getPlayer().getId()))) {
+		cout << "DEBUG: Order not valid" << endl;
+		return false;
+	}
+	
 	return true;
 }
 
@@ -498,10 +543,12 @@ void Negotiate::setVictim(Player _victim) {
 }
 
 
-//invalid obj are created with "invalid" exec message
-//have to change when Orders are defined
+//check if player is negotating with himself
 bool Negotiate::validate() {
-	if (getEffect() == "invalid") {
+	
+	//check if player and victim are the same
+	if ((*(victim->getId())) == (*(getPlayer().getId()))) {
+		cout << "DEBUG: Order not valid" << endl;
 		return false;
 	}
 
