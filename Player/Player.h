@@ -1,3 +1,4 @@
+class Hand;
 #pragma once
 //#include "Map.h"
 #include "../Cards/Cards.h"
@@ -16,14 +17,17 @@ private:
 
     vector<Territory *> *territories;
     Hand *hand;
-    vector<Order *> *orders;
+    OrderList* orders;
     int * id;
+
+    // ASSIGNMENT 2
+    int* reinforcements;
 
 public:
 
     //Constructors
     Player(); //Default Constructor
-    Player(vector<Territory *> *territories, Hand* hand, vector<Order*>* orders, int *id); //Constructor
+    Player(vector<Territory *> *territories, Hand* hand, OrderList* orders, int *id); //Constructor
     Player(int id);
     Player(const Player &p);//Copy Constructor
     ~Player(); //Destructor
@@ -48,11 +52,15 @@ public:
     void setTerritories(vector<Territory *> *territories);
 
 
-    vector<Order *> *getOrders() const;
+    OrderList *getOrders() const;
 
-    void setOrders(vector<Order *> *orders);
+    void setOrders(OrderList* orders);
 
     int *getId() const;
 
     void setId(int *id);
+
+    // ASSIGNMENT 2
+    int getReinforcements();
+    void setReinforcements(int n);
 };

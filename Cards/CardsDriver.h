@@ -1,6 +1,4 @@
-#ifndef CARDSDRIVER_H
-#define CARDSDRIVER_H
-
+#pragma once
 #include <iostream>
 using std::cout;
 using std::endl;
@@ -9,5 +7,3 @@ using std::endl;
 #include "Cards.h"
 
 int cardDriver();
-
-#endif //CARDSDRIVER_H

@@ -6,7 +6,7 @@ int ordersDriver() {
 	cout << "\nORDERS DRIVER:" << endl;
 
 	//Creating objects
-	Order *ord = new Order("");
+	//Order *ord = new Order("");
 	cout << "Order created" << endl;
 	Deploy *dep = new Deploy("");
 	cout << "Deploy created" << endl;
@@ -21,20 +21,20 @@ int ordersDriver() {
 	Negotiate *neg = new Negotiate("");
 	cout << "Negotiate created" << endl;
 
-	Order *invalid = new Order("invalid");
+	//Order *invalid = new Order("invalid");
 	cout << "invalid Order created" << endl;
 	
 	OrderList L = OrderList();
 
 	//Adding object to the list
-	L.Add(ord);
+	//L.Add(ord);
 	L.Add(dep);
 	L.Add(adv);
 	L.Add(bom);
 	L.Add(blo);
 	L.Add(air);
 	L.Add(neg);
-	L.Add(invalid);
+	//L.Add(invalid);
 
 	cout << "\nPrinting the list:" << endl;
 	cout << L;
@@ -61,11 +61,6 @@ int ordersDriver() {
 	return 0;
 }
 
-//TEST DRIVER
-//int main(){
-//	OrdersDriver();
-//	return 0;
-//}
 
 
 

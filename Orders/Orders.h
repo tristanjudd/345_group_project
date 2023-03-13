@@ -16,7 +16,7 @@ public:
 	Order();
 	Order(Player* _issuer);
 	Order(const Order& _o);
-	~Order();
+	virtual ~Order();
 
 	virtual bool validate() = 0;
 	virtual bool execute() = 0;

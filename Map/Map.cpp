@@ -94,7 +94,7 @@ void Territory::setContinentId(int *inContinentId) {
     continentId = inContinentId;
 }
 
-int *Territory::getContinentId() const{
+int *Territory::getContinentId() const {
     return continentId;
 }
 
@@ -189,7 +189,7 @@ void Continent::setId(int *inId) {
     id = inId;
 }
 
-int *Continent::getId() const{
+int *Continent::getId() const {
     return id;
 }
 
@@ -336,18 +336,23 @@ Map::~Map() {
 void Map::setId(int *inId) {
     id = inId;
 }
+
 int *Map::getId() const {
     return id;
 }
+
 void Map::setName(string *inName) {
     name = inName;
 }
+
 string *Map::getName() const {
     return name;
 }
+
 void Map::setContinents(vector<Continent *> *inContinents) {
     continents = inContinents;
 }
+
 vector<Continent *> *Map::getContinents() const {
     return continents;
 }
@@ -421,7 +426,7 @@ bool Map::isConnectedGraph() {
             }
         }
     }
-    if (*terrCount == territories->size()) { //if all territories have a connection
+    if (*terrCount == territories->size() && *terrCount != 0) { //if all territories have a connection
         return true;
     }
     return false;
@@ -438,7 +443,7 @@ bool Map::isConnectedSubgraph() {
             }
         }
     }
-    if (*contCount == continents->size()) { //if all continents have a connection
+    if (*contCount == continents->size() && *contCount != 0) { //if all continents have a connection
         return true;
     }
     return false;
@@ -464,7 +469,7 @@ bool Map::oneContinentPerTerritory() {
     }
     //return true if territory size = terrCount meaning that all territories are in a continent
     //return true if continent size = contCount meaning that all continents have at least 1 territory
-    if (*terrCount == territories->size() && *contCount == continents->size()) {
+    if (*terrCount == territories->size() && *contCount == continents->size() && *terrCount != 0 && *contCount != 0) {
         return true;
     }
     return false;
@@ -514,6 +519,7 @@ MapLoader::~MapLoader() {
 void MapLoader::setPath(string *inputPath) {
     path = inputPath;
 }
+
 string *MapLoader::getPath() const {
     return path;
 }
@@ -525,14 +531,14 @@ Map MapLoader::load(int mapNumber) {
     ifstream file(path->c_str());
     PARSE_MODE mode = UNSPECIFIED;
 
-    vector<Territory *> *territories = new vector<Territory*>();  // countries
-    vector<Continent *> *continents = new vector<Continent*>();
+    vector<Territory *> *territories = new vector<Territory *>();  // countries
+    vector<Continent *> *continents = new vector<Continent *>();
     int continentCounter = 0;
 
     // Iterate over each line, and create object based on parsing mode
     string line;
     vector<string> tokens;
-    while (getline (file, line)) {
+    while (getline(file, line)) {
         if (line.starts_with('[')) {
             mode = getMode(line);
             continue;
@@ -553,6 +559,9 @@ Map MapLoader::load(int mapNumber) {
                 break;
             }
             case TERRITORIES: {
+                if (stoi(tokens[0]) < territories->size()) {
+                    throw std::exception();  // if the first token is bad, exit and cannot parse
+                }
                 printf("Parsing territory %s...\n", tokens[1].c_str());
                 territories->push_back(new Territory(stoi(tokens[0]) - 1,
                                                      stoi(tokens[2]) - 1,
@@ -568,35 +577,35 @@ Map MapLoader::load(int mapNumber) {
             }
             case BORDERS: {
                 printf("Parsing %s borders...\n", territories->at(stoi(tokens[0]) - 1)->getTerritoryName()->c_str());
-                vector<int>* borders = new vector<int>();
+                vector<int> *borders = new vector<int>();
 
                 for (int i = 1; i < tokens.size(); i++) {
                     borders->push_back(stoi(tokens[i]) - 1);
                 }
 
-                territories->at(stoi(tokens[0])-1)->setBorders(borders);
+                territories->at(stoi(tokens[0]) - 1)->setBorders(borders);
                 break;
             }
         }
     }
 
-    Map* map = new Map(mapNumber,
+    Map *map = new Map(mapNumber,
                        "Unnamed Map...",
                        *continents,
                        *territories);
 
     // Create territory and continent matrix
-    for (Territory* territory : *map->getTerritories()) {
-        for (int border : *territory->getBorders()) {
+    for (Territory *territory: *map->getTerritories()) {
+        for (int border: *territory->getBorders()) {
             // add a territory edge between each border territory
-            Territory* borderTerritory = map->getTerritories()->at(border);
+            Territory *borderTerritory = map->getTerritories()->at(border);
             map->addTerritoryEdge(territory, borderTerritory);
 
             // if the border territory is in a different continent than this territory, add a continent edge
             int territoryContinentId = *territory->getContinentId();
             int borderContinentId = *borderTerritory->getContinentId();
-            Continent* territoryContinent = map->getContinents()->at(territoryContinentId);
-            Continent* borderContinent = map->getContinents()->at(borderContinentId);
+            Continent *territoryContinent = map->getContinents()->at(territoryContinentId);
+            Continent *borderContinent = map->getContinents()->at(borderContinentId);
             if (borderContinentId != territoryContinentId) {
                 map->addContinentEdge(territoryContinent, borderContinent);
             }
@@ -610,7 +619,7 @@ Map MapLoader::load(int mapNumber) {
 }
 
 // Switch the parsing mode based on the [flag]
-PARSE_MODE MapLoader::getMode(const string& inputString) {
+PARSE_MODE MapLoader::getMode(const string &inputString) {
     if (inputString.find("files") != string::npos) {
         printf("Switching to 'files' input mode.\n");
         return FILES;
@@ -627,7 +636,7 @@ PARSE_MODE MapLoader::getMode(const string& inputString) {
 }
 
 // Split the line into each relevant token of information
-vector<string> MapLoader::getTokens(const string& inputString) {
+vector<string> MapLoader::getTokens(const string &inputString) {
     vector<string> tokens;
     char delimiter = ' ';
 
@@ -641,4 +650,68 @@ vector<string> MapLoader::getTokens(const string& inputString) {
     }
 
     return tokens;
+}
+
+int mapTest() {
+    vector<int> bord;
+    bord.push_back(2);
+    bord.push_back(3);
+    bord.push_back(4);
+    Territory *ter1 = new Territory(0, 1, "Alaska");
+    Territory *ter2 = new Territory(1, 2, "Ontario");
+    Territory *ter3 = new Territory(2, 1, "Eastern United States");
+    Territory *ter4 = new Territory(3, 0, "Western United States");
+    vector<Territory *> terr;
+    terr.push_back(ter1);
+    terr.push_back(ter2);
+    terr.push_back(ter3);
+    terr.push_back(ter4);
+
+    Continent *continent1 = new Continent(0, "North America", 5);
+    Continent *continent2 = new Continent(1, "South America", 2);
+    Continent *continent3 = new Continent(2, "Europe", 5);
+    vector<Continent *> cont;
+    cont.push_back(continent1);
+    cont.push_back(continent2);
+    cont.push_back(continent3);
+
+    Map *map = new Map(0, "World", cont, terr);
+    map->addTerritoryEdge(ter1, ter2);
+    map->addTerritoryEdge(ter2, ter1);
+    map->addTerritoryEdge(ter2, ter3);
+    map->addTerritoryEdge(ter3, ter2);
+    map->addTerritoryEdge(ter3, ter4);
+    map->addTerritoryEdge(ter4, ter3);
+    map->addContinentEdge(continent2, continent3);
+    map->addContinentEdge(continent3, continent2);
+    map->addContinentEdge(continent1, continent3);
+    map->addContinentEdge(continent3, continent1);
+
+    map->isContinentConnected(continent2, continent3) ? cout << "Yay" << endl : cout << "Bad" << endl;
+    map->isConnectedGraph() ? cout << "Yay1" << endl : cout << "Bad1" << endl;
+    map->isConnectedSubgraph() ? cout << "Yay2" << endl : cout << "Bad2" << endl;
+    map->oneContinentPerTerritory() ? cout << "Yay3" << endl : cout << "Bad3" << endl;
+    map->validate() ? cout << "Yay4" << endl : cout << "Bad4" << endl;
+    cout << endl;
+
+    cout << "TEST" << endl;
+    int id = 5;
+    map->setId(&id);
+    Territory *cow6 = new Territory(4, 1, "Alaska");
+    terr.pop_back();
+    terr.push_back(cow6);
+    map->setTerritories(&terr);
+
+    cout << *map;
+    cout << "TEST" << endl << endl;
+    delete map;
+    delete ter1;
+    delete ter2;
+    delete ter3;
+    delete ter4;
+    delete cow6;
+    delete continent1;
+    delete continent2;
+    delete continent3;
+    return 0;
 }
