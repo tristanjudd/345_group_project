@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <string>
+#include <algorithm>
 using std::cout;
 using std::endl;
 using std::string;
@@ -20,6 +21,7 @@ enum PHASE {
     MAP_LOADED,
     MAP_VALIDATED,
     PLAYERS_ADDED,
+    PLAY,
     ASSIGN_REINFORCEMENT,
     ISSUE_ORDERS,
     EXECUTE_ORDERS,
@@ -29,7 +31,10 @@ enum PHASE {
 
 class GameEngine {
 private:
-    int *winner; // id of the winner 
+    int *winner; // id of the winner
+    vector<Player *> *players; // list of players currently in the game, in order of turns
+    int* currentPlayer; // keeps track of the current player
+
 public:
     PHASE start();
     PHASE loadMap();
@@ -47,12 +52,14 @@ public:
     ~GameEngine(); //destructor
 
     // START OF ASSIGNMENT 2
-    void mainGameLoop(); // loops through game phases until win condition is met
-    void reinforcementPhase(); // called by mainGameLoop
-    void issueOrdersPhase(); // called by mainGameLoop
-    void executeOrdersPhase(); // called by mainGameLoop
+    PHASE mainGameLoop(); // loops through game phases until win condition is met
+    PHASE reinforcementPhase(); // called by mainGameLoop
+    PHASE issueOrdersPhase(); // called by mainGameLoop
+    PHASE executeOrdersPhase(); // called by mainGameLoop
 
 
 };
+
+int string_is_num_in_range(string str, int n, int m);
 
 #endif //WARZONE_GAMEENGINE_H
