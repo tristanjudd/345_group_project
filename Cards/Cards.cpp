@@ -6,6 +6,7 @@
 #include <iostream>
 
 #include "../Player/Player.h"
+#include "../Orders/Orders.h"
 
 // Card class method definitions
 Card::Card() {

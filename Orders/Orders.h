@@ -8,11 +8,10 @@ using std::vector;
 using namespace std;
 
 #include "../Map/Map.h"
-#include "../Cards/Cards.h"
+//#include "../Cards/Cards.h"
 //#include "../GameEngine/GameEngine.h"
 
-class GameEngine;
-
+//forward declaration
 class Player;
 
 class Order

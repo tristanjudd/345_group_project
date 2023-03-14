@@ -23,7 +23,7 @@ using std::stoi;
 using std::ifstream;
 using std::stringstream;
 
-class Player;
+class Player; //forward declaration
 
 class Territory {
 private:
