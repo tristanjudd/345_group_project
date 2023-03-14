@@ -1,4 +1,5 @@
 #include "Map.h"
+#include "../Player/Player.h"
 
 // Territory class
 // default constructor

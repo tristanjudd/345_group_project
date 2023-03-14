@@ -6,8 +6,14 @@ using std::cout;
 using std::vector;
 #include <string>
 using namespace std;
-#include "../Player/Player.h"
 
+#include "../Map/Map.h"
+#include "../Cards/Cards.h"
+//#include "../GameEngine/GameEngine.h"
+
+class GameEngine;
+
+class Player;
 
 class Order
 {
@@ -25,7 +31,7 @@ public:
 	void setEffect(string _execMessage);
 	string getDesc() const;
 	void setDesc(string _desc);
-	Player getPlayer() const;
+	Player* getPlayer() const;
 	void setPlayer(Player _player);
 
 	void operator= (Order const &);
@@ -50,7 +56,7 @@ public:
 
 	int getNbArmies() const;
 	void setNbArmies(int _nbArmies);
-	Territory getTarget() const;
+	Territory* getTarget() const;
 	void setTarget(Territory _target);
 
 	bool validate();
@@ -74,9 +80,9 @@ public:
 	//getter and setters
 	int getNbArmies() const;
 	void setNbArmies(int _nbArmies);
-	Territory getSource() const;
+	Territory* getSource() const;
 	void setSource(Territory _source);
-	Territory getTarget() const;
+	Territory* getTarget() const;
 	void setTarget(Territory _target);
 	
 	void operator= (Advance const &);
@@ -99,7 +105,7 @@ public:
 	~Bomb();
 
 	//getter and setter
-	Territory getTarget() const;
+	Territory* getTarget() const;
 	void setTarget(Territory _target);
 
 	void operator= (Bomb const &);
@@ -120,7 +126,7 @@ public:
 	~Blockade();
 
 	//getter and setter
-	Territory getTarget() const;
+	Territory* getTarget() const;
 	void setTarget(Territory _target);
 
 	void operator= (Blockade const &);
@@ -144,9 +150,9 @@ public:
 	//getter and setters
 	int getNbArmies() const;
 	void setNbArmies(int _nbArmies);
-	Territory getSource() const;
+	Territory* getSource() const;
 	void setSource(Territory _source);
-	Territory getTarget() const;
+	Territory* getTarget() const;
 	void setTarget(Territory _target);
 
 	void operator= (Airlift const &);
@@ -169,7 +175,7 @@ public:
 	~Negotiate();
 
 	//getter and setter;
-	Player getVictim() const;
+	Player* getVictim() const;
 	void setVictim(Player _victim);
 
 	void operator= (Negotiate const &);

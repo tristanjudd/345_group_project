@@ -9,6 +9,8 @@ using std::string;
 using std::cin;
 using std::ostream;
 
+#include "../Player/Player.h"
+
 //enum of phases
 enum PHASE {
     START,
@@ -24,7 +26,7 @@ enum PHASE {
 
 class GameEngine {
 private:
-    int *winner; // id of the winner
+    int *winner; // id of the winner 
 public:
     PHASE start();
     PHASE loadMap();
@@ -46,6 +48,7 @@ public:
     void reinforcementPhase(); // called by mainGameLoop
     void issueOrdersPhase(); // called by mainGameLoop
     void executeOrdersPhase(); // called by mainGameLoop
+
 
 };
 

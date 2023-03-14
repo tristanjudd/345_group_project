@@ -1,4 +1,6 @@
 #include "Orders.h"
+#include "../Player/Player.h"
+
 
 //Order class
 Order::Order() {
@@ -15,7 +17,7 @@ Order::Order(Player* _issuer) {
 
 //copy constructor
 Order::Order(const Order& o) {
-	m_playerPtr = &(o.getPlayer());
+	m_playerPtr = o.getPlayer();
 	m_descriptionPtr = new string(o.getDesc());
 	m_effectPtr = new string(o.getEffect());
 }
@@ -48,8 +50,8 @@ void Order::setEffect(string _execMessage) {
 	*m_effectPtr = _execMessage;
 }
 
-Player Order::getPlayer() const {
-	return *m_playerPtr;
+Player* Order::getPlayer() const {
+	return m_playerPtr;
 }
 
 void Order::setPlayer(Player _player) {
@@ -96,7 +98,7 @@ Deploy::Deploy(const Deploy& _o) : Order(_o)
 {
 	//copy nbArmies and target
 	nbArmies = new int(_o.getNbArmies());
-	target = &(_o.getTarget());
+	target = _o.getTarget();
 
 }
 
@@ -109,8 +111,8 @@ void Deploy::setNbArmies(int _nbArmies) {
 	*nbArmies = _nbArmies;
 }
 
-Territory Deploy::getTarget() const {
-	return *target;
+Territory* Deploy::getTarget() const {
+	return target;
 }
 
 void Deploy::setTarget(Territory _target) {
@@ -120,12 +122,14 @@ void Deploy::setTarget(Territory _target) {
 Deploy::~Deploy() 
 {
 	delete nbArmies;
+	nbArmies = nullptr;
 }
 
 //check if territory belongs to player
 bool Deploy::validate() {
+
 	
-	if( (*(target->getOwner())->getId()) != (*(getPlayer().getId())) ){
+	if( (*(target->getOwner())->getId()) != (*(getPlayer()->getId())) ){
 		cout << "DEBUG: Order not valid" << endl;
 		return false;
 	}
@@ -177,12 +181,13 @@ Advance::Advance(Player* _issuer, int _nbArmies, Territory* _source, Territory* 
 Advance::Advance(const Advance& _o) : Order(_o)
 {
 	nbArmies = new int(_o.getNbArmies());
-	source = &(_o.getSource());
-	target = &(_o.getTarget());
+	source = _o.getSource();
+	target = _o.getTarget();
 }
 
 Advance::~Advance() {
 	delete nbArmies;
+	nbArmies = nullptr;
 }
 
 //GETTER AND SETTER ADVANCE
@@ -194,16 +199,16 @@ void Advance::setNbArmies(int _nbArmies) {
 	*nbArmies = _nbArmies;
 }
 
-Territory Advance::getSource() const {
-	return *source;
+Territory* Advance::getSource() const {
+	return source;
 }
 
 void Advance::setSource(Territory _source) {
 	*source = _source;
 }
 
-Territory Advance::getTarget() const {
-	return *target;
+Territory* Advance::getTarget() const {
+	return target;
 }
 
 void Advance::setTarget(Territory _target) {
@@ -216,7 +221,7 @@ void Advance::setTarget(Territory _target) {
 bool Advance::validate() {
 	
 	//check owner
-	if ((*(target->getOwner())->getId()) != (*(getPlayer().getId()))) {
+	if ((*(target->getOwner())->getId()) != (*(getPlayer()->getId()))) {
 		cout << "DEBUG: Order not valid" << endl;
 		return false;
 	}
@@ -275,7 +280,7 @@ Bomb::Bomb(Player* _issuer, Territory* _target) : Order(_issuer)
 Bomb::Bomb(const Bomb& _o) : Order(_o)
 {
 	//copy target
-	target = &(_o.getTarget());
+	target = _o.getTarget();
 }
 
 Bomb::~Bomb() {
@@ -283,8 +288,8 @@ Bomb::~Bomb() {
 }
 
 //GETTE AND SETTER
-Territory Bomb::getTarget() const {
-	return *target;
+Territory* Bomb::getTarget() const {
+	return target;
 }
 
 void Bomb::setTarget(Territory _target) {
@@ -295,7 +300,7 @@ void Bomb::setTarget(Territory _target) {
 // check if adjacent
 bool Bomb::validate() {
 	//check owner
-	if ((*(target->getOwner())->getId()) == (*(getPlayer().getId()))) {
+	if ((*(target->getOwner())->getId()) == (*(getPlayer()->getId()))) {
 		cout << "DEBUG: Order not valid" << endl;
 		return false;
 	}
@@ -303,9 +308,9 @@ bool Bomb::validate() {
 	bool adjacent = false;
 	
 	//check if target is adjacent to one of the players territory
-	for (int i = 0; i < getPlayer().getTerritories()->size(); i++) 
+	for (int i = 0; i < getPlayer()->getTerritories()->size(); i++) 
 	{
-		vector<int>*bvec = (*(getPlayer().getTerritories()))[i]->getBorders();
+		vector<int>*bvec = (*(getPlayer()->getTerritories()))[i]->getBorders();
 
 		if (find(bvec->begin(), bvec->end(), (*(target->getId()))) != bvec->end()) 
 		{
@@ -363,7 +368,7 @@ Blockade::Blockade(Player* _issuer, Territory* _target) : Order(_issuer)
 Blockade::Blockade(const Blockade& o) : Order(o)
 {
 	//copy target
-	target = &(o.getTarget());
+	target = o.getTarget();
 }
 
 Blockade::~Blockade() {
@@ -371,8 +376,8 @@ Blockade::~Blockade() {
 }
 
 //GETTER AND SETTER BLOCKADE
-Territory Blockade::getTarget() const {
-	return *target;
+Territory* Blockade::getTarget() const {
+	return target;
 }
 
 void Blockade::setTarget(Territory _target) {
@@ -383,7 +388,7 @@ void Blockade::setTarget(Territory _target) {
 bool Blockade::validate() {
 	
 	//check owner
-	if ((*(target->getOwner())->getId()) != (*(getPlayer().getId()))) {
+	if ((*(target->getOwner())->getId()) != (*(getPlayer()->getId()))) {
 		cout << "DEBUG: Order not valid" << endl;
 		return false;
 	}
@@ -433,12 +438,13 @@ Airlift::Airlift(Player* _issuer, int _nbArmies, Territory* _source, Territory* 
 Airlift::Airlift(const Airlift& _o) : Order(_o)
 {
 	nbArmies = new int(_o.getNbArmies());
-	source = &(_o.getSource());
-	target = &(_o.getTarget());
+	source = _o.getSource();
+	target = _o.getTarget();
 }
 
 Airlift::~Airlift() {
 	delete nbArmies;
+	nbArmies = nullptr;
 }
 
 //GETTER AND SETTER AIRLIFT
@@ -450,16 +456,16 @@ void Airlift::setNbArmies(int _nbArmies) {
 	*nbArmies = _nbArmies;
 }
 
-Territory Airlift::getSource() const {
-	return *source;
+Territory* Airlift::getSource() const {
+	return source;
 }
 
 void Airlift::setSource(Territory _source) {
 	*source = _source;
 }
 
-Territory Airlift::getTarget() const {
-	return *target;
+Territory* Airlift::getTarget() const {
+	return target;
 }
 
 void Airlift::setTarget(Territory _target) {
@@ -470,13 +476,13 @@ void Airlift::setTarget(Territory _target) {
 bool Airlift::validate() {
 	
 	//check owner of target
-	if ((*(target->getOwner())->getId()) != (*(getPlayer().getId()))) {
+	if ((*(target->getOwner())->getId()) != (*(getPlayer()->getId()))) {
 		cout << "DEBUG: Order not valid" << endl;
 		return false;
 	}
 
 	//check owner of source
-	if ((*(source->getOwner())->getId()) != (*(getPlayer().getId()))) {
+	if ((*(source->getOwner())->getId()) != (*(getPlayer()->getId()))) {
 		cout << "DEBUG: Order not valid" << endl;
 		return false;
 	}
@@ -526,7 +532,7 @@ Negotiate::Negotiate(Player* _issuer, Player* _victim) : Order(_issuer)
 
 Negotiate::Negotiate(const Negotiate& _o) : Order(_o)
 {
-	victim = &(_o.getVictim());
+	victim = _o.getVictim();
 }
 
 Negotiate::~Negotiate() {
@@ -534,8 +540,8 @@ Negotiate::~Negotiate() {
 }
 
 //GETTER AND SETTER NEGOTIATE
-Player Negotiate::getVictim() const {
-	return *victim;
+Player* Negotiate::getVictim() const {
+	return victim;
 }
 
 void Negotiate::setVictim(Player _victim) {
@@ -547,7 +553,7 @@ void Negotiate::setVictim(Player _victim) {
 bool Negotiate::validate() {
 	
 	//check if player and victim are the same
-	if ((*(victim->getId())) == (*(getPlayer().getId()))) {
+	if ((*(victim->getId())) == (*(getPlayer()->getId()))) {
 		cout << "DEBUG: Order not valid" << endl;
 		return false;
 	}
@@ -555,14 +561,6 @@ bool Negotiate::validate() {
 	return true;
 }
 
-//GETTER AND SETTER NEGOTIATE
-Player Negotiate::getVictim() const {
-	return *victim;
-}
-
-void Negotiate::setVictim(Player _victim) {
-	*victim = _victim;
-}
 
 //prints Order type + add exec message 
 //have to change when Orders are defined
