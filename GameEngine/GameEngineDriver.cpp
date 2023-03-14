@@ -27,12 +27,12 @@ int gameEngineDriver() {
                 phase = g->addPlayers();
                 break;
             case ASSIGN_REINFORCEMENT:
-                cout << "Assign Reinforcement Phase" << endl;
-                phase = g->assignReinforcements();
+                // cout << "Assign Reinforcement Phase" << endl;
+                phase = g->reinforcementPhase();
                 break;
             case ISSUE_ORDERS:
-                cout << "Issue Orders Phase" << endl;
-                phase = g->issueOrders();
+                // cout << "Issue Orders Phase" << endl;
+                phase = g->issueOrdersPhase();
                 break;
             case EXECUTE_ORDERS:
                 cout << "Execute Orders Phase" << endl;

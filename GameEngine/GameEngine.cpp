@@ -184,6 +184,43 @@ GameEngine::~GameEngine() {
 // START OF ASSIGNMENT 2
 // Start of new turn
 PHASE GameEngine::mainGameLoop() {
+    // DUMMY CODE adding players for dev purposes
+    Territory* t1 = new Territory(1, 1, "A");
+    Territory* t2 = new Territory(2, 1, "B");
+    Territory* t3 = new Territory(3, 1, "C");
+    Territory* t4 = new Territory(4, 1, "D");
+    Territory* t5 = new Territory(5, 1, "E");
+    Territory* t6 = new Territory(6, 1, "F");
+    Territory* t7 = new Territory(7, 1, "G");
+    Territory* t8 = new Territory(8, 1, "H");
+    Territory* t9 = new Territory(9, 1, "I");
+
+    vector<Territory *>* list1 = new vector<Territory *>();
+    list1->push_back(t1);
+    list1->push_back(t2);
+    list1->push_back(t3);
+    vector<Territory *>* list2 = new vector<Territory *>();
+    list2->push_back(t4);
+    list2->push_back(t5);
+    list2->push_back(t6);
+    vector<Territory *>* list3 = new vector<Territory *>();
+    list3->push_back(t7);
+    list3->push_back(t8);
+    list3->push_back(t9);
+
+    Player *p1 = new Player();
+    p1->setTerritories(list1);
+    Player* p2 = new Player();
+    p2->setTerritories(list2);
+    Player* p3 = new Player();
+    p3->setTerritories(list3);
+
+    players->push_back(p1);
+    players->push_back(p2);
+    players->push_back(p3);
+
+    // END OF DUMMY CODE
+
     cout << "There are " << players->size() << " players" << endl;
 
     // check if there's a winner
@@ -200,80 +237,114 @@ PHASE GameEngine::mainGameLoop() {
 
 //Assign reinforcement phase
 PHASE GameEngine::reinforcementPhase() {
-    // if all players are done assigning reinforcements, move to assign order phase
-    if (*currentPlayer > players->size()) {
-        *currentPlayer = 0;
-        return ISSUE_ORDERS;
+    cout << "Assigning reinforcements to all players..." << endl;
+    cout << "Reinforcements assigned." << endl;
+    // loop through all current players and assign reinforcements based on game logic
+    for (int i = 0; i < players->size(); i++) {
+        // get pointer to current player object
+        Player* player = players->at(i);
+        // get current player's territories
+        vector<Territory *> playerTerritories = *(player->getTerritories());
+
+        // Assign troops based on game criteria
+        int newTroops = 3; // minimum new troops
+
+        // Add bonus of player's territories divided by 3, rounded down
+        newTroops += playerTerritories.size() / 3;
+
+        // Add continent bonus
+        // TODO
+
+        // Update player's reinforcement pool
+        player->setReinforcements(player->getReinforcements() + newTroops);
+
     }
 
-    // get pointer to current player object
-    Player* player = players->at(*currentPlayer);
-    vector<Territory *> playerTerritories = *(player->getTerritories());
-
-    // Assign troops based on game criteria
-    int newTroops = 3;
-
-    // Add bonus of player's territories divided by 3, rounded down
-    newTroops += playerTerritories.size() / 3;
-
-    // Add continent bonus
-    // TODO
-
-    // Update player's reinforcement pool
-    player->setReinforcements(player->getReinforcements() + newTroops);
-
-    // Print current player and available troops
-    cout << "Player " << *currentPlayer << " reinforcement phase." << endl;
-
-    while (true) {
-        // print remaining reinforcement pool
-        cout << "You have " << player->getReinforcements() << " troops to assign" << endl;
-        // print countries to deploy to
-        cout << "in the following territories: " ;
-
-        for (int i = 0; i < playerTerritories.size(); i++) {
-            cout << playerTerritories.at(i)->getTerritoryName() << " ";
-        }
-
-        cout << "." << endl;
-
-        while (player->getReinforcements() > 0) {
-            cout << "Continue? (y/n): ";
-            string continueAssigningReinforcements;
-            cin >> continueAssigningReinforcements;
-            if (continueAssigningReinforcements == "y") {
-
-                return ASSIGN_REINFORCEMENT; //assign more reinforcements
-            } else if (continueAssigningReinforcements == "n") {
-                // if player doesn't want to deploy any other troops, return
-                // to top of reinforcement phase for next player or next phase
-                return ASSIGN_REINFORCEMENT; //go to issue orders phase
-            }
-            cout << "Invalid input" << endl << "Try again" << endl;
-            cin.clear(); //clear input stream
-            cin.ignore();
-        }
-    }
+    return ISSUE_ORDERS;
 }
 
 //Issue orders phase
 PHASE GameEngine::issueOrdersPhase() {
-    while (true) {
-        cout << "Issue orders" << endl;
-        while (true) {
-            cout << "Continue? (y/n): ";
-            string continueIssuingOrders;
-            cin >> continueIssuingOrders;
-            if (continueIssuingOrders == "y") {
-                return ISSUE_ORDERS; //issue more orders
-            } else if (continueIssuingOrders == "n") {
-                return EXECUTE_ORDERS; //go to execute orders phase
+    // if all players are done issuing orders, move to order execution phase
+    // Note: currently 0-indexing players, might have to change this
+    if (*currentPlayer + 1 > players->size()) {
+        *currentPlayer = 0;
+        return EXECUTE_ORDERS;
+    }
+
+    // get pointer to current player object
+    Player* player = players->at(*currentPlayer);
+    // get current player's territories
+    vector<Territory *> playerTerritories = *(player->getTerritories()); // TODO use toDefend() here
+
+    cout << "PLAYER " << (*currentPlayer) << " ISSUE ORDERS PHASE" << endl;
+
+    // loop until player has deployed all troops
+    while (player->getReinforcements() > 0) {
+        // print remaining reinforcement pool
+        cout << "Player " << (*currentPlayer) << " has " << player->getReinforcements() << " troops to assign to the following territories: " << endl;
+        // print countries to deploy to
+        for (int i = 0; i < playerTerritories.size(); i++) {
+            cout << (i+1) << ". " << *(playerTerritories.at(i)->getTerritoryName()) << endl;
+        }
+
+        // get input for territory to deploy to
+        cout << "Enter the number of the territory to which you wish to deploy troops: " << endl;
+        string input;
+        cin >> input;
+
+        if (string_is_num_in_range(input, 1, playerTerritories.size())) {
+            // Get number of territory (index in player's territories vector)
+            int territoryNum = string_is_num_in_range(input, 1, playerTerritories.size());
+            // loop until valid input is received
+            while (true) {
+                // get user input
+                string numOfTroops;
+                cout << "Enter the number of troops you wish to assign to " << *(playerTerritories.at(territoryNum - 1)->getTerritoryName()) << ": " << endl;
+                cin >> numOfTroops;
+
+                // if input valid add order to order list
+                if (string_is_num_in_range(numOfTroops, 1, player->getReinforcements())) {
+                    // get number of troops assigned
+                    int troopsAssigned = string_is_num_in_range(numOfTroops, 1, player->getReinforcements());
+
+                    // TODO: actually assign troops to territory
+
+                    cout << troopsAssigned << " troops assigned to " << *(playerTerritories.at(territoryNum - 1)) << endl;
+                    // decrement player's reinforcement pool
+                    player->setReinforcements(player->getReinforcements() - troopsAssigned);
+                    // end get valid input loop, returning to deploy troops loop
+                    break;
+                } else {
+                    cout << "Invalid input, try again" << endl;
+                    //clear input stream
+                    cin.clear();
+                    cin.ignore();
+                }
             }
-            cout << "Invalid input" << endl << "Try again" << endl;
-            cin.clear(); //clear input stream
+
+            // player enters invalid input
+        } else {
+            cout << "Invalid input, try again" << endl;
+            //clear input stream
+            cin.clear();
             cin.ignore();
         }
+
     }
+
+    // ISSUE OTHER ORDERS
+
+
+
+    // END ISSUE ORDERS
+
+
+    // increment to next player
+    *currentPlayer = *currentPlayer + 1;
+    // return to top of reinforcement phase
+    return ISSUE_ORDERS;
+
 }
 
 //Execute orders phase
@@ -297,4 +368,22 @@ PHASE GameEngine::executeOrdersPhase() {
             cout << "Invalid input" << endl << "Try again" << endl;
         }
     }
+}
+
+// function for checking whether input is a number within a certain range
+int string_is_num_in_range(string str, int n, int m) {
+    // check that string is not empty and all chars are digits
+    if (!str.empty() && std::all_of(str.begin(), str.end(), ::isdigit)) {
+        // convert string to int and return
+        int num = std::stoi(str);
+        // if num in range return num
+        if (num >= n && num <= m) return num;
+            // else return false
+        else return 0;
+
+    } else {
+        // return false
+        return 0;
+    }
+
 }
