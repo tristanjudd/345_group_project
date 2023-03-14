@@ -18,6 +18,10 @@ int gameEngineDriver() {
                 cout << "Validate Map Phase" << endl;
                 phase = g->validateMap();
                 break;
+            case PLAY:
+                cout << "New turn" << endl;
+                phase = g->mainGameLoop();
+                break;
             case PLAYERS_ADDED:
                 cout << "Add Players Phase" << endl;
                 phase = g->addPlayers();
