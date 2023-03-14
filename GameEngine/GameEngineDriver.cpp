@@ -18,13 +18,13 @@ int gameEngineDriver() {
                 cout << "Validate Map Phase" << endl;
                 phase = g->validateMap();
                 break;
+            case PLAY:
+                cout << "New turn" << endl;
+                phase = g->mainGameLoop();
+                break;
             case PLAYERS_ADDED:
                 cout << "Add Players Phase" << endl;
                 phase = g->addPlayers();
-                break;
-            case PLAY:
-                cout << "New turn starts" << endl;
-                phase = g->mainGameLoop();
                 break;
             case ASSIGN_REINFORCEMENT:
                 cout << "Assign Reinforcement Phase" << endl;

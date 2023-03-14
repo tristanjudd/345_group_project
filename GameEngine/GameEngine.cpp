@@ -182,7 +182,6 @@ GameEngine::~GameEngine() {
 }
 
 // START OF ASSIGNMENT 2
-
 // Start of new turn
 PHASE GameEngine::mainGameLoop() {
     cout << "There are " << players->size() << " players" << endl;
