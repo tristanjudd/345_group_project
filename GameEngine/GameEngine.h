@@ -54,4 +54,6 @@ public:
 
 };
 
+int string_is_num_in_range(string str, int n, int m);
+
 #endif //WARZONE_GAMEENGINE_H
