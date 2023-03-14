@@ -22,6 +22,10 @@ int gameEngineDriver() {
                 cout << "Add Players Phase" << endl;
                 phase = g->addPlayers();
                 break;
+            case PLAY:
+                cout << "New turn starts" << endl;
+                phase = g->mainGameLoop();
+                break;
             case ASSIGN_REINFORCEMENT:
                 cout << "Assign Reinforcement Phase" << endl;
                 phase = g->assignReinforcements();
