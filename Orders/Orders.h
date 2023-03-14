@@ -6,6 +6,8 @@ using std::cout;
 using std::vector;
 #include <string>
 using namespace std;
+#include <cstdlib>
+using std::rand;
 
 #include "../Map/Map.h"
 //#include "../Cards/Cards.h"

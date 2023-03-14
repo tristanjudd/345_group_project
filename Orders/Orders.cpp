@@ -128,7 +128,6 @@ Deploy::~Deploy()
 
 //check if territory belongs to player
 bool Deploy::validate() {
-
 	
 	if( (*(target->getOwner())->getId()) != (*(getPlayer()->getId())) ){
 		cout << "DEBUG: Order not valid" << endl;
@@ -145,8 +144,14 @@ bool Deploy::execute() {
 
 	if (valid) {
 		cout << "DEBUG: Deploy order executed" << endl;
-		cout << "DEBUG: did something no yet defined" << endl;
-		setEffect("did something");
+		
+		//calc new nb of armies and assign it to target
+		int* armies = new int( *(target->getArmyCount()) + *nbArmies );
+		target->setArmyCount(armies);
+		
+		//create exec effect
+		string execEffect = *(target->getTerritoryName()) + " now has " + to_string(*armies) + "armies";
+		setEffect(execEffect);
 		return true;
 	}
 	else {
@@ -238,15 +243,79 @@ bool Advance::validate() {
 	return false;
 }
 
-//prints Order type + add exec message 
-//have to change when Orders are defined
+//move army to ally territtory or battle for a target territory
 bool Advance::execute() {
 	bool valid = validate();
 
 	if (valid) {
 		cout << "DEBUG: Advance order executed" << endl;
-		cout << "DEBUG: did something no yet defined" << endl;
-		setEffect("did something");
+
+		//create exec effect string
+		string execEffect = "";
+		
+		//if target and source are owned by same player
+		if (*(source->getOwner()->getId()) == *(target->getOwner()->getId()))
+		{
+			//calc new nb of armies
+			int* leave = new int(*(source->getArmyCount()) - *nbArmies);
+			int* arrive = new int(*(target->getArmyCount()) + *nbArmies);
+
+			source->setArmyCount(leave);
+			target->setArmyCount(arrive);
+			execEffect = *(target->getTerritoryName()) + " now has " + to_string(*arrive) + "armies";
+		}
+
+		// battle between 2 armies
+		else 
+		{
+			int attackingArmies = *(source->getArmyCount());
+			int defendingArmies = *(target->getArmyCount());
+
+			while (attackingArmies != 0 && defendingArmies != 0)
+			{
+				//attack kills and defending unit
+				if (rand() % 100 < 60) {
+					defendingArmies--;
+				}
+
+				//defender still has a unit and kill an attacking unit
+				if (defendingArmies != 0 && rand() % 100 < 70)
+				{
+					attackingArmies--;
+				}
+			}
+
+			//check winner
+			if (defendingArmies == 0) //attack won
+			{
+				//remove army from source
+				int* leave = new int(*(source->getArmyCount()) - *nbArmies);
+				source->setArmyCount(leave);
+
+				//move army and change owner of target
+				target->setArmyCount(new int(attackingArmies)); //change army count
+				target->setOwner(getPlayer()); //change ownership
+
+				execEffect = "Player " + to_string(*(getPlayer()->getId())) + " conquered " + *(target->getTerritoryName());
+			}
+
+			else //defender won
+			{
+				//remove army from source
+				int* leave = new int(*(source->getArmyCount()) - *nbArmies);
+				source->setArmyCount(leave);
+
+				//remove defender that died
+				target->setArmyCount(new int(defendingArmies)); //change army count
+
+				execEffect = ("Defender won the battle");
+			}
+
+
+		}
+
+		//set effect
+		setEffect(execEffect);
 		return true;
 	}
 	else {
@@ -329,15 +398,19 @@ bool Bomb::validate() {
 	return true;
 }
 
-//prints Order type + add exec message 
-//have to change when Orders are defined
+//Removes half of the armies
 bool Bomb::execute() {
 	bool valid = validate();
 
 	if (valid) {
 		cout << "DEBUG: Bomb order executed" << endl;
-		cout << "DEBUG: did something no yet defined" << endl;
-		setEffect("did something");
+		
+		//calc new nb of armies
+		int* survive = new int((*(target->getArmyCount())) / 2);
+		target->setArmyCount(survive);
+
+		string execEffect = *(target->getTerritoryName()) + " now has " + to_string(*survive) + "armies";
+		setEffect(execEffect);
 		return true;
 	}
 	else {
@@ -404,8 +477,18 @@ bool Blockade::execute() {
 
 	if (valid) {
 		cout << "DEBUG: Blockade order executed" << endl;
-		cout << "DEBUG: did something no yet defined" << endl;
-		setEffect("did something");
+		
+		//double nb of armies
+		int* doubled = new int((*(target->getArmyCount())) * 2);
+		target->setArmyCount(doubled);
+
+		string execEffect = *(target->getTerritoryName()) + " now has " + to_string(*doubled) + "armies";
+		setEffect(execEffect);
+
+		//GIVE TERRITORY TO NEUTRAL PLAYER
+		
+
+
 		return true;
 	}
 	else {
@@ -491,15 +574,23 @@ bool Airlift::validate() {
 	return true;
 }
 
-//prints Order type + add exec message 
-//have to change when Orders are defined
+//moves player to another territory
 bool Airlift::execute() {
 	bool valid = validate();
 
 	if (valid) {
 		cout << "DEBUG: Airlift order executed" << endl;
-		cout << "DEBUG: did something no yet defined" << endl;
-		setEffect("did something");
+
+		//calc new nb of armies
+		int* fly = new int(*(source->getArmyCount()) - *nbArmies);
+		int* land = new int(*(target->getArmyCount()) + *nbArmies);
+
+		source->setArmyCount(fly);
+		target->setArmyCount(land);
+		
+		//create exec effect string
+		string execEffect = *(target->getTerritoryName()) + " now has " + to_string(*land) + "armies";
+		setEffect(execEffect);
 		return true;
 	}
 	else {
