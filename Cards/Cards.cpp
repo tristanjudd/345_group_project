@@ -5,6 +5,9 @@
 #include <random>
 #include <iostream>
 
+#include "../Player/Player.h"
+#include "../Orders/Orders.h"
+
 // Card class method definitions
 Card::Card() {
 	int k = rand() % 5;

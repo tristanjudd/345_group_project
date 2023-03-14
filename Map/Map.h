@@ -10,7 +10,7 @@
 #include <fstream>
 #include <sstream>
 
-#include "../Player/Player.h"
+//#include "../Player/Player.h"
 
 using std::string;
 using std::vector;
@@ -23,7 +23,7 @@ using std::stoi;
 using std::ifstream;
 using std::stringstream;
 
-class Player;
+class Player; //forward declaration
 
 class Territory {
 private:

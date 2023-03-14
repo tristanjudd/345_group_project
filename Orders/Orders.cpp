@@ -1,18 +1,24 @@
 #include "Orders.h"
+#include "../Player/Player.h"
+#include "../GameEngine/GameEngine.h"
+
 
 //Order class
 Order::Order() {
+	m_playerPtr = NULL; //player issuing the order
 	m_descriptionPtr = new string("This is an Order."); //Description of the Order
 	m_effectPtr = new string(""); //Effect of the Order after being executed
 }
 
-Order::Order(string _execMessage) {
+Order::Order(Player* _issuer) {
+	m_playerPtr = _issuer;
 	m_descriptionPtr = new string("This is an Order.");
-	m_effectPtr = new string(_execMessage);
+	m_effectPtr = new string("");
 }
 
 //copy constructor
 Order::Order(const Order& o) {
+	m_playerPtr = o.getPlayer();
 	m_descriptionPtr = new string(o.getDesc());
 	m_effectPtr = new string(o.getEffect());
 }
@@ -22,6 +28,7 @@ Order::~Order() {
 	delete m_effectPtr;
 }
 
+//GETTER AND SETTER ORDER
 string Order::getDesc() const{
 	if (m_descriptionPtr != NULL) {
 		return *m_descriptionPtr;
@@ -44,6 +51,14 @@ void Order::setEffect(string _execMessage) {
 	*m_effectPtr = _execMessage;
 }
 
+Player* Order::getPlayer() const {
+	return m_playerPtr;
+}
+
+void Order::setPlayer(Player _player) {
+	*m_playerPtr = _player;
+}
+
 //stream insertion operator
 std::ostream& operator<<(std::ostream& OUT, const Order& theOrder) {
 	OUT << theOrder.getDesc() <<endl;
@@ -59,36 +74,10 @@ std::ostream& operator<<(std::ostream& OUT, const Order& theOrder) {
 //assignment operator
 void Order::operator= (Order const &obj)
 {
+	m_playerPtr = obj.m_playerPtr;
 	m_descriptionPtr = obj.m_descriptionPtr;
 	m_effectPtr = obj.m_effectPtr;
 }
-
-//invalid obj are created with "invalid" exec message
-//have to change when Orders are defined
-//bool Order::validate() {
-//	if (getEffect() == "invalid") {
-//		return false;
-//	}
-//	
-//	return true;
-//}
-
-//prints Order type + add exec message 
-//have to change when Orders are defined
-//bool Order::execute() {
-//	bool valid = validate();
-//
-//	if (valid) {
-//		cout << "DEBUG: Order executed" << endl;
-//		cout << "DEBUG: did something no yet defined" << endl;
-//		setEffect("did something");
-//		return true;
-//	}
-//	else {
-//		cout << "DEBUG: Order not executed" << endl;
-//		return false;
-//	}
-//}
 
 //deploy class
 Deploy::Deploy()
@@ -96,26 +85,53 @@ Deploy::Deploy()
 	setDesc("This is a Deploy order");
 }
 
-Deploy::Deploy(string _execMessage) : Order(_execMessage)
+Deploy::Deploy(Player* _issuer, int _nbArmies, Territory* _target) : Order( _issuer)
 {
-	setDesc("This is a Deploy order");
-	setEffect(_execMessage);
+
+	string desc = "Deploy order: Player " + to_string(*(_issuer->getId())) + "  deploys " + to_string(_nbArmies) + " armies to " + (*(_target->getTerritoryName()));
+	setDesc(desc);
+
+	nbArmies = new int(_nbArmies);
+	target = _target;
 }
 
 Deploy::Deploy(const Deploy& _o) : Order(_o)
 {
+	//copy nbArmies and target
+	nbArmies = new int(_o.getNbArmies());
+	target = _o.getTarget();
 
+}
+
+//GETTER AND SETTER DEPLOY
+int Deploy::getNbArmies() const {
+	return *nbArmies;
+}
+
+void Deploy::setNbArmies(int _nbArmies) {
+	*nbArmies = _nbArmies;
+}
+
+Territory* Deploy::getTarget() const {
+	return target;
+}
+
+void Deploy::setTarget(Territory _target) {
+	*target = _target;
 }
 
 Deploy::~Deploy() 
 {
-
+	delete nbArmies;
+	nbArmies = nullptr;
 }
 
-//invalid obj are created with "invalid" exec message
-//have to change when Orders are defined
+//check if territory belongs to player
 bool Deploy::validate() {
-	if (getEffect() == "invalid") {
+
+	
+	if( (*(target->getOwner())->getId()) != (*(getPlayer()->getId())) ){
+		cout << "DEBUG: Order not valid" << endl;
 		return false;
 	}
 
@@ -139,35 +155,87 @@ bool Deploy::execute() {
 	}
 }
 
+//assign op
+void Deploy::operator= (Deploy const& obj)
+{
+	Order::operator=(obj);
+	nbArmies = obj.nbArmies;
+	target = obj.target;
+}
+
 //Advance class
 Advance::Advance()
 {
 	setDesc("This is an Advance order");
 }
 
-Advance::Advance(string _execMessage)
+Advance::Advance(Player* _issuer, int _nbArmies, Territory* _source, Territory* _target) : Order(_issuer)
 {
-	setDesc("This is an Advance order");
-	setEffect(_execMessage);
+	string desc = "Advance order: Player"+ to_string(*(_issuer->getId())) +" Advances" + to_string(_nbArmies) + " armies from "+ (*(_source->getTerritoryName())) + " to " + (*(_target->getTerritoryName()));
+	setDesc(desc);
+
+	nbArmies = new int(_nbArmies);
+	source = _source;
+	target = _target;
 }
 
 Advance::Advance(const Advance& _o) : Order(_o)
 {
-
+	nbArmies = new int(_o.getNbArmies());
+	source = _o.getSource();
+	target = _o.getTarget();
 }
 
 Advance::~Advance() {
-
+	delete nbArmies;
+	nbArmies = nullptr;
 }
 
-//invalid obj are created with "invalid" exec message
-//have to change when Orders are defined
+//GETTER AND SETTER ADVANCE
+int Advance::getNbArmies() const {
+	return *nbArmies;
+}
+
+void Advance::setNbArmies(int _nbArmies) {
+	*nbArmies = _nbArmies;
+}
+
+Territory* Advance::getSource() const {
+	return source;
+}
+
+void Advance::setSource(Territory _source) {
+	*source = _source;
+}
+
+Territory* Advance::getTarget() const {
+	return target;
+}
+
+void Advance::setTarget(Territory _target) {
+	*target = _target;
+}
+
+
+//check if source belongs to player
+//check if source and target are adjacent
 bool Advance::validate() {
-	if (getEffect() == "invalid") {
+	
+	//check owner
+	if ((*(target->getOwner())->getId()) != (*(getPlayer()->getId()))) {
+		cout << "DEBUG: Order not valid" << endl;
 		return false;
 	}
 
-	return true;
+	//check if adjacent
+	vector<int>* vec = source->getBorders();
+
+	if (find(vec->begin(), vec->end(), (*(target->getId())) ) != vec->end()) {
+		return true;
+	}
+
+	cout << "DEBUG: Order not valid" << endl;
+	return false;
 }
 
 //prints Order type + add exec message 
@@ -187,31 +255,74 @@ bool Advance::execute() {
 	}
 }
 
+//assign op
+void Advance::operator= (Advance const& obj)
+{
+	Order::operator=(obj);
+	nbArmies = obj.nbArmies;
+	source = obj.source;
+	target = obj.target;
+}
+
 //bomb class
 Bomb::Bomb()
 {
 	setDesc("This is a Bomb order");
 }
 
-Bomb::Bomb(string _execMessage) 
+Bomb::Bomb(Player* _issuer, Territory* _target) : Order(_issuer)
 {
-	setDesc("This is a Bomb order");
-	setEffect(_execMessage);
+
+	string desc = "Bomb order: Player " + to_string(*(_issuer->getId())) + " bombs " + (*(_target->getTerritoryName()));
+	setDesc(desc);
+	target = _target;
 }
 
 Bomb::Bomb(const Bomb& _o) : Order(_o)
 {
-
+	//copy target
+	target = _o.getTarget();
 }
 
 Bomb::~Bomb() {
-
+	
 }
 
-//invalid obj are created with "invalid" exec message
-//have to change when Orders are defined
+//GETTE AND SETTER
+Territory* Bomb::getTarget() const {
+	return target;
+}
+
+void Bomb::setTarget(Territory _target) {
+	*target = _target;
+}
+
+//check owner of target
+// check if adjacent
 bool Bomb::validate() {
-	if (getEffect() == "invalid") {
+	//check owner
+	if ((*(target->getOwner())->getId()) == (*(getPlayer()->getId()))) {
+		cout << "DEBUG: Order not valid" << endl;
+		return false;
+	}
+
+	bool adjacent = false;
+	
+	//check if target is adjacent to one of the players territory
+	for (int i = 0; i < getPlayer()->getTerritories()->size(); i++) 
+	{
+		vector<int>*bvec = (*(getPlayer()->getTerritories()))[i]->getBorders();
+
+		if (find(bvec->begin(), bvec->end(), (*(target->getId()))) != bvec->end()) 
+		{
+			adjacent = true;
+			break;
+		}
+	}
+
+	if (!adjacent)
+	{
+		cout << "DEBUG: Order not valid" << endl;
 		return false;
 	}
 
@@ -235,31 +346,51 @@ bool Bomb::execute() {
 	}
 }
 
+//assign op
+void Bomb::operator= (Bomb const& obj)
+{
+	Order::operator=(obj);
+	target = obj.target;
+}
+
 //blockade class
 Blockade::Blockade()
 {
 	setDesc("This is a Blockade order");
 }
 
-Blockade::Blockade(string _execMessage)
+Blockade::Blockade(Player* _issuer, Territory* _target) : Order(_issuer)
 {
-	setDesc("This is a Blockade order");
-	setEffect(_execMessage);
+	string desc = "Blockade order: Player "+ to_string(*(_issuer->getId())) + " blockades " + (*(_target->getTerritoryName()));
+	setDesc(desc);
+	target = _target;
 }
 
 Blockade::Blockade(const Blockade& o) : Order(o)
 {
-
+	//copy target
+	target = o.getTarget();
 }
 
 Blockade::~Blockade() {
-
+	
 }
 
-//invalid obj are created with "invalid" exec message
-//have to change when Orders are defined
+//GETTER AND SETTER BLOCKADE
+Territory* Blockade::getTarget() const {
+	return target;
+}
+
+void Blockade::setTarget(Territory _target) {
+	*target = _target;
+}
+
+//check owner of target
 bool Blockade::validate() {
-	if (getEffect() == "invalid") {
+	
+	//check owner
+	if ((*(target->getOwner())->getId()) != (*(getPlayer()->getId()))) {
+		cout << "DEBUG: Order not valid" << endl;
 		return false;
 	}
 
@@ -283,34 +414,80 @@ bool Blockade::execute() {
 	}
 }
 
+//assign op
+void Blockade::operator= (Blockade const& obj)
+{
+	Order::operator=(obj);
+	target = obj.target;
+}
+
 //airlift class
 Airlift::Airlift()
 {
 	setDesc("This is an Airlift order");
 }
 
-Airlift::Airlift(string execMessage)
+Airlift::Airlift(Player* _issuer, int _nbArmies, Territory* _source, Territory* _target) : Order(_issuer)
 {
-	setDesc("This is an Airlift order");
-	setEffect(execMessage);
+	string desc = "Airlift order: Player "+ to_string(*(_issuer->getId())) +" airlifts " + to_string(_nbArmies) + " armies from "+ (*(_source->getTerritoryName()))+ " to " + (*(_target->getTerritoryName()));
+	setDesc(desc);
+	nbArmies = new int(_nbArmies);
+	source = _source;
+	target = _target;
 }
 
 Airlift::Airlift(const Airlift& _o) : Order(_o)
 {
-
+	nbArmies = new int(_o.getNbArmies());
+	source = _o.getSource();
+	target = _o.getTarget();
 }
 
 Airlift::~Airlift() {
-
+	delete nbArmies;
+	nbArmies = nullptr;
 }
 
-//invalid obj are created with "invalid" exec message
-//have to change when Orders are defined
+//GETTER AND SETTER AIRLIFT
+int Airlift::getNbArmies() const {
+	return *nbArmies;
+}
+
+void Airlift::setNbArmies(int _nbArmies) {
+	*nbArmies = _nbArmies;
+}
+
+Territory* Airlift::getSource() const {
+	return source;
+}
+
+void Airlift::setSource(Territory _source) {
+	*source = _source;
+}
+
+Territory* Airlift::getTarget() const {
+	return target;
+}
+
+void Airlift::setTarget(Territory _target) {
+	*target = _target;
+}
+
+//check if player owns source and target
 bool Airlift::validate() {
-	if (getEffect() == "invalid") {
+	
+	//check owner of target
+	if ((*(target->getOwner())->getId()) != (*(getPlayer()->getId()))) {
+		cout << "DEBUG: Order not valid" << endl;
 		return false;
 	}
 
+	//check owner of source
+	if ((*(source->getOwner())->getId()) != (*(getPlayer()->getId()))) {
+		cout << "DEBUG: Order not valid" << endl;
+		return false;
+	}
+	
 	return true;
 }
 
@@ -331,36 +508,60 @@ bool Airlift::execute() {
 	}
 }
 
+//assign op
+void Airlift::operator= (Airlift const& obj)
+{
+	Order::operator=(obj);
+	nbArmies = obj.nbArmies;
+	source = obj.source;
+	target = obj.target;
+}
+
 //negotiate class
 Negotiate::Negotiate()
 {
 	setDesc("This is a Negotiate order");
 }
 
-Negotiate::Negotiate(string _execMessage)
+Negotiate::Negotiate(Player* _issuer, Player* _victim) : Order(_issuer)
 {
-	setDesc("This is a Negotiate order");
-	setEffect(_execMessage);
+	string desc = "Negotiate order: Player " + to_string(*(_issuer->getId())) + " negotiates with Player " + to_string(*(_victim->getId()));
+	setDesc(desc);
+	victim = _victim;
+	
 }
 
 Negotiate::Negotiate(const Negotiate& _o) : Order(_o)
 {
-
+	victim = _o.getVictim();
 }
 
 Negotiate::~Negotiate() {
 
 }
 
-//invalid obj are created with "invalid" exec message
-//have to change when Orders are defined
+//GETTER AND SETTER NEGOTIATE
+Player* Negotiate::getVictim() const {
+	return victim;
+}
+
+void Negotiate::setVictim(Player _victim) {
+	*victim = _victim;
+}
+
+
+//check if player is negotating with himself
 bool Negotiate::validate() {
-	if (getEffect() == "invalid") {
+	
+	//check if player and victim are the same
+	if ((*(victim->getId())) == (*(getPlayer()->getId()))) {
+		cout << "DEBUG: Order not valid" << endl;
 		return false;
 	}
 
 	return true;
 }
+
 
 //prints Order type + add exec message 
 //have to change when Orders are defined
@@ -377,6 +578,13 @@ bool Negotiate::execute() {
 		cout << "DEBUG: Negotiate order not executed" << endl;
 		return false;
 	}
+}
+
+//assign op
+void Negotiate::operator= (Negotiate const& obj)
+{
+	Order::operator=(obj);
+	victim = obj.victim;
 }
 
 //OrderList class
