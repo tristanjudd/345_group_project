@@ -10,7 +10,7 @@
 #include <fstream>
 #include <sstream>
 
-#include "../Player/Player.h"
+//#include "../Player/Player.h"
 
 using std::string;
 using std::vector;
@@ -23,7 +23,7 @@ using std::stoi;
 using std::ifstream;
 using std::stringstream;
 
-class Player;
+class Player; //forward declaration
 
 class Territory {
 private:
@@ -33,6 +33,7 @@ private:
     string *territoryName; //name of territory
     vector<int> *borders;  // ids of adjacent territories
     Player *owner; //owner of the territory
+    vector<Territory *> *borderedTerritories; //adjacent territories
 public:
     //constructors
     Territory(); //default constructor
@@ -55,6 +56,8 @@ public:
     vector<int> *getBorders() const;
     void setOwner(Player *inPlayer);
     Player *getOwner() const;
+    static void setBorderedTerritories(Territory *inTerritory, vector<Territory *> *Territories);
+    vector<Territory *> *getBorderedTerritories() const;
 };
 
 class Continent {

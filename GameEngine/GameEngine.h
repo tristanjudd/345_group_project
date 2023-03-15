@@ -11,6 +11,11 @@ using std::string;
 using std::cin;
 using std::ostream;
 
+#include "../Player/Player.h"
+#include "../Map/Map.h"
+#include "../Orders/Orders.h"
+#include "../Cards/Cards.h"
+
 //enum of phases
 enum PHASE {
     START,

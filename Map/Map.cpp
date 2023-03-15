@@ -1,4 +1,5 @@
 #include "Map.h"
+#include "../Player/Player.h"
 
 // Territory class
 // default constructor
@@ -128,6 +129,20 @@ void Territory::setOwner(Player *inOwner) {
 
 Player *Territory::getOwner() const {
     return owner;
+}
+
+void Territory::setBorderedTerritories(Territory *inTerritory, vector<Territory *> *territories) {
+    vector<Territory *> *tempTerritory = new vector<Territory *>();
+    for (int i = 0; i < inTerritory->getBorders()->size(); i++) {
+        tempTerritory->push_back(territories->at(inTerritory->getBorders()->at(i)));
+    }
+    inTerritory->borderedTerritories = tempTerritory;
+    tempTerritory->clear();
+    delete tempTerritory;
+}
+
+vector<Territory *> *Territory::getBorderedTerritories() const {
+    return borderedTerritories;
 }
 
 // Continent class
@@ -610,6 +625,10 @@ Map MapLoader::load(int mapNumber) {
                 map->addContinentEdge(territoryContinent, borderContinent);
             }
         }
+    }
+
+    for (int i = 0; i < map->getTerritories()->size(); i++) {
+        Territory::setBorderedTerritories(map->getTerritories()->at(i), map->getTerritories());
     }
 
     printf("Closing %s...\n", path->c_str());
