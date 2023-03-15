@@ -230,10 +230,18 @@ PHASE GameEngine::reinforcementPhase() {
 
 //Issue orders phase
 PHASE GameEngine::issueOrdersPhase() {
-
 // TODO
-// Left intentionally blank as I'm working on this and needed to push
+// Left intentionally commented out as I'm working on this and needed to push
 // something that will compile in order to push other updates
+//    for (Player* player : *players) {
+//        bool stillPlaying = true;
+//
+//        while (stillPlaying) {
+//            stillPlaying = player->issueOrder();
+//        }
+//
+//    }
+
 return EXECUTE_ORDERS;
 
 }

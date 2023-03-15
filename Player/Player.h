@@ -42,7 +42,7 @@ public:
 
     vector<Territory*> *toDefend();
 
-    Order* issueOrder();
+    bool issueOrder();
 
     //getters and setters
     Hand *getHand();
