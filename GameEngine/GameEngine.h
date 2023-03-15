@@ -2,8 +2,9 @@
 #define WARZONE_GAMEENGINE_H
 
 #include <iostream>
-#include <string>
 #include <algorithm>
+#include <unordered_map>
+#include <string>
 using std::cout;
 using std::endl;
 using std::string;
@@ -57,7 +58,10 @@ public:
     PHASE issueOrdersPhase(); // called by mainGameLoop
     PHASE executeOrdersPhase(); // called by mainGameLoop
 
-
+    //MEMBERS USED IN ORDERS
+    static Player* neutral; //neutral player
+    static std::unordered_map<string, bool>* peaceStatus;
+    static vector<int>* conqStatus;
 };
 
 int string_is_num_in_range(string str, int n, int m);

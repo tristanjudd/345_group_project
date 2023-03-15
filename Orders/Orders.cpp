@@ -473,6 +473,9 @@ bool Blockade::validate() {
 //prints Order type + add exec message 
 //have to change when Orders are defined
 bool Blockade::execute() {
+
+	//GameEngine::neutral->getId(); anhtu
+
 	bool valid = validate();
 
 	if (valid) {
@@ -486,7 +489,7 @@ bool Blockade::execute() {
 		setEffect(execEffect);
 
 		//GIVE TERRITORY TO NEUTRAL PLAYER
-		
+		GameEngine::neutral;
 
 
 		return true;

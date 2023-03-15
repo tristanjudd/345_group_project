@@ -1,5 +1,10 @@
 #include "GameEngine.h"
 
+//CREATING THE STATIC NEUTRAL PLAYER ID = -1
+Player* GameEngine::neutral = new Player(-1);
+std::unordered_map<string, bool>* GameEngine::peaceStatus = new std::unordered_map<string, bool>();
+vector<int>* GameEngine::conqStatus = new vector<int>();
+
 //Start phase
 PHASE GameEngine::start() {
     cout << "Welcome to our bootleg Warzone!" << endl;
