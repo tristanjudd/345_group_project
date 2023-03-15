@@ -57,6 +57,7 @@ public:
     void setOwner(Player *inPlayer);
     Player *getOwner() const;
     static void setBorderedTerritories(Territory *inTerritory, vector<Territory *> *Territories);
+    vector<Territory *> *getBorderedTerritories() const;
 };
 
 class Continent {

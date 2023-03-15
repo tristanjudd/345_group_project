@@ -141,6 +141,10 @@ void Territory::setBorderedTerritories(Territory *inTerritory, vector<Territory 
     delete tempTerritory;
 }
 
+vector<Territory *> *Territory::getBorderedTerritories() const {
+    return borderedTerritories;
+}
+
 // Continent class
 // default constructor
 Continent::Continent() {
