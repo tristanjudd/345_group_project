@@ -369,19 +369,46 @@ PHASE GameEngine::executeOrdersPhase() {
    vector<Order *> currentOrderList;
    // flag indicating whether an order has been executed
    // initialized to true so that we can enter the execution loop
-   bool mod = true;
-   bool deployMod = true;
+   bool modFlag = true;
+   // flag indicating whether a deployment was executed
+   // initialized to true to make sure all deployments are executed before other orders
+   bool deployFlag = true;
 
    // loop executing orders until there are no orders left
-   while (mod) {
+   while (modFlag) {
        // set flag to false at the beginning of each round-robin
-       mod = false;
+       modFlag = false;
        // go through each player and execute the first order in their list
        for (Player* player : *players) {
            // get current player's order list
            currentOrderList = *(player->getOrders()->getList());
+
            // if there is at least one order left to execute
-           if (currentOrderList.size() > 0) currentOrderList.at(0)->execute();
+           if (currentOrderList.size() > 0) {
+               //get top order
+               Order* toExecute = currentOrderList.at(0);
+               // check if order is a deploy order
+               auto* isDeploy = dynamic_cast<Deploy *>(toExecute);
+
+               // if order is deploy, nothing needs to be checked and it can be executed right away
+               if (isDeploy) {
+                   toExecute->execute();
+                   // set deploy flag to true to indicate there was a deployment this round
+                   deployFlag = true;
+               } else {
+                   // if this is set, either another player deployed this turn
+                   // or a player deployed last turn and we need to run through a round-robin to make sure no others deploy
+                   if (deployFlag) {
+                       // set to false so that if nobody else deploys this turn, next turn other orders execute
+                       deployFlag = false;
+                   } else {
+                       // if flag is false, nobody deployed for a whole turn so non-deploy orders are now
+                       // safe to execute
+                       toExecute->execute();
+                   }
+               }
+
+           }
        }
 
    }
