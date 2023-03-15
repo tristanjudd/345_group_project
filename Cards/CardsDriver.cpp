@@ -20,6 +20,7 @@ int cardDriver()
 
 	// Draw cards from deck
 	for (int i = 0; i < 7; i++) {
+
 		h->insert(deck.draw());
 	}
 

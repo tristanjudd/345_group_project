@@ -81,7 +81,7 @@ Player::~Player() {
 
 //Function creates an order and
 //Adds it to the list of orders
-void Player::issueOrder() {
+Order* Player::issueOrder() {
 
     /*Order *order = new Order("Specific order");
     orders->push_back(order);*/

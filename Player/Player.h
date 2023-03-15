@@ -42,7 +42,7 @@ public:
 
     vector<Territory*> *toDefend();
 
-    void issueOrder();
+    Order* issueOrder();
 
     //getters and setters
     Hand *getHand();
