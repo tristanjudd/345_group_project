@@ -1,4 +1,5 @@
 #include "GameEngine.h"
+#include <set>
 
 //Start phase
 PHASE GameEngine::start() {
@@ -195,29 +196,120 @@ PHASE GameEngine::mainGameLoop() {
     Territory* t8 = new Territory(8, 1, "H");
     Territory* t9 = new Territory(9, 1, "I");
 
-    vector<Territory *>* list1 = new vector<Territory *>();
+    vector<int>* borders1 = new vector<int>;
+    borders1->push_back(2);
+    borders1->push_back(4);
+    t1->setBorders(borders1);
+
+    vector<int>* borders2 = new vector<int>;
+    borders2->push_back(1);
+    borders2->push_back(3);
+    borders2->push_back(5);
+    t2->setBorders(borders2);
+
+    vector<int>* borders3 = new vector<int>;
+    borders3->push_back(2);
+    borders3->push_back(6);
+    t3->setBorders(borders3);
+
+    vector<int>* borders4 = new vector<int>;
+    borders4->push_back(1);
+    borders4->push_back(5);
+    borders4->push_back(7);
+    t4->setBorders(borders4);
+
+    vector<int>* borders5 = new vector<int>;
+    borders5->push_back(2);
+    borders5->push_back(4);
+    borders5->push_back(6);
+    borders5->push_back(8);
+    t5->setBorders(borders5);
+
+    vector<int>* borders6 = new vector<int>;
+    borders6->push_back(3);
+    borders6->push_back(5);
+    borders6->push_back(9);
+    t6->setBorders(borders6);
+
+    vector<int>* borders7 = new vector<int>;
+    borders7->push_back(4);
+    borders7->push_back(8);
+    t7->setBorders(borders7);
+
+    vector<int>* borders8 = new vector<int>;
+    borders8->push_back(5);
+    borders8->push_back(7);
+    borders8->push_back(9);
+    t8->setBorders(borders8);
+
+    vector<int>* borders9 = new vector<int>;
+    borders9->push_back(6);
+    borders9->push_back(8);
+    t9->setBorders(borders9);
+
+    vector<Territory *>* list1 = new vector<Territory *>;
     list1->push_back(t1);
     list1->push_back(t2);
     list1->push_back(t3);
-    vector<Territory *>* list2 = new vector<Territory *>();
+    vector<Territory *>* list2 = new vector<Territory *>;
     list2->push_back(t4);
     list2->push_back(t5);
     list2->push_back(t6);
-    vector<Territory *>* list3 = new vector<Territory *>();
+    vector<Territory *>* list3 = new vector<Territory *>;
     list3->push_back(t7);
     list3->push_back(t8);
     list3->push_back(t9);
 
     Player *p1 = new Player();
     p1->setTerritories(list1);
+    for (Territory* t : *list1) {
+        t->setOwner(p1);
+    }
     Player* p2 = new Player();
     p2->setTerritories(list2);
+    for (Territory* t : *list2) {
+        t->setOwner(p2);
+    }
     Player* p3 = new Player();
     p3->setTerritories(list3);
+    for (Territory* t : *list3) {
+        t->setOwner(p3);
+    }
+
+    Deck* deck = new Deck();
+    Hand* h1 = new Hand();
+    Hand* h2 = new Hand();
+    Hand* h3 = new Hand();
+
+    h1->insert(deck->draw());
+    h1->insert(deck->draw());
+    p1->setHand(h1);
+    h2->insert(deck->draw());
+    h2->insert(deck->draw());
+    p2->setHand(h2);
+    h3->insert(deck->draw());
+    h3->insert(deck->draw());
+    p2->setHand(h3);
+
 
     players->push_back(p1);
     players->push_back(p2);
     players->push_back(p3);
+
+    vector<Territory *>* mapList = new vector<Territory *>;
+    mapList->push_back(t1);
+    mapList->push_back(t2);
+    mapList->push_back(t3);
+    mapList->push_back(t4);
+    mapList->push_back(t5);
+    mapList->push_back(t6);
+    mapList->push_back(t7);
+    mapList->push_back(t8);
+    mapList->push_back(t9);
+    // create map for dev purposes
+    map = new Map();
+    //
+    map->setTerritories(mapList);
 
     // END OF DUMMY CODE
 
@@ -265,109 +357,63 @@ PHASE GameEngine::reinforcementPhase() {
 
 //Issue orders phase
 PHASE GameEngine::issueOrdersPhase() {
-    // if all players are done issuing orders, move to order execution phase
-    // Note: currently 0-indexing players, might have to change this
-    if (*currentPlayer + 1 > players->size()) {
-        *currentPlayer = 0;
-        return EXECUTE_ORDERS;
-    }
 
-    // get pointer to current player object
-    Player* player = players->at(*currentPlayer);
-    // get current player's territories
-    vector<Territory *> playerTerritories = *(player->getTerritories()); // TODO use toDefend() here
-
-    cout << "PLAYER " << (*currentPlayer) << " ISSUE ORDERS PHASE" << endl;
-
-    // loop until player has deployed all troops
-    while (player->getReinforcements() > 0) {
-        // print remaining reinforcement pool
-        cout << "Player " << (*currentPlayer) << " has " << player->getReinforcements() << " troops to assign to the following territories: " << endl;
-        // print countries to deploy to
-        for (int i = 0; i < playerTerritories.size(); i++) {
-            cout << (i+1) << ". " << *(playerTerritories.at(i)->getTerritoryName()) << endl;
-        }
-
-        // get input for territory to deploy to
-        cout << "Enter the number of the territory to which you wish to deploy troops: " << endl;
-        string input;
-        cin >> input;
-
-        if (string_is_num_in_range(input, 1, playerTerritories.size())) {
-            // Get number of territory (index in player's territories vector)
-            int territoryNum = string_is_num_in_range(input, 1, playerTerritories.size());
-            // loop until valid input is received
-            while (true) {
-                // get user input
-                string numOfTroops;
-                cout << "Enter the number of troops you wish to assign to " << *(playerTerritories.at(territoryNum - 1)->getTerritoryName()) << ": " << endl;
-                cin >> numOfTroops;
-
-                // if input valid add order to order list
-                if (string_is_num_in_range(numOfTroops, 1, player->getReinforcements())) {
-                    // get number of troops assigned
-                    int troopsAssigned = string_is_num_in_range(numOfTroops, 1, player->getReinforcements());
-
-                    // TODO: actually assign troops to territory
-
-                    cout << troopsAssigned << " troops assigned to " << *(playerTerritories.at(territoryNum - 1)) << endl;
-                    // decrement player's reinforcement pool
-                    player->setReinforcements(player->getReinforcements() - troopsAssigned);
-                    // end get valid input loop, returning to deploy troops loop
-                    break;
-                } else {
-                    cout << "Invalid input, try again" << endl;
-                    //clear input stream
-                    cin.clear();
-                    cin.ignore();
-                }
-            }
-
-            // player enters invalid input
-        } else {
-            cout << "Invalid input, try again" << endl;
-            //clear input stream
-            cin.clear();
-            cin.ignore();
-        }
-
-    }
-
-    // ISSUE OTHER ORDERS
-
-
-
-    // END ISSUE ORDERS
-
-
-    // increment to next player
-    *currentPlayer = *currentPlayer + 1;
-    // return to top of reinforcement phase
-    return ISSUE_ORDERS;
+// TODO
 
 }
 
 //Execute orders phase
 PHASE GameEngine::executeOrdersPhase() {
-    while (true) {
-        cout << "Execute orders" << endl;
-        while (true) {
-            if (*winner != -1) {
-                return WIN; //go to win phase
-            }
-            cout << "Continue? (y/n): ";
-            string continueExecutingOrders;
-            cin >> continueExecutingOrders;
-            if (continueExecutingOrders == "y") {
-                return EXECUTE_ORDERS; //execute more orders
-            } else if (continueExecutingOrders == "n") {
-                return ASSIGN_REINFORCEMENT; //go to assign reinforcement phase
-            } else if (continueExecutingOrders == "w") { //simulate winner
-                return WIN; //simulate win
-            }
-            cout << "Invalid input" << endl << "Try again" << endl;
-        }
-    }
+   // make sure current player is set to starting player
+   *currentPlayer = 0;
+   vector<Order *> currentOrderList;
+   // flag indicating whether an order has been executed
+   // initialized to true so that we can enter the execution loop
+   bool modFlag = true;
+   // flag indicating whether a deployment was executed
+   // initialized to true to make sure all deployments are executed before other orders
+   bool deployFlag = true;
+
+   // loop executing orders until there are no orders left
+   while (modFlag) {
+       // set flag to false at the beginning of each round-robin
+       modFlag = false;
+       // go through each player and execute the first order in their list
+       for (Player* player : *players) {
+           // get current player's order list
+           currentOrderList = *(player->getOrders()->getList());
+
+           // if there is at least one order left to execute
+           if (currentOrderList.size() > 0) {
+               //get top order
+               Order* toExecute = currentOrderList.at(0);
+               // check if order is a deploy order
+               auto* isDeploy = dynamic_cast<Deploy *>(toExecute);
+
+               // if order is deploy, nothing needs to be checked and it can be executed right away
+               if (isDeploy) {
+                   toExecute->execute();
+                   // set deploy flag to true to indicate there was a deployment this round
+                   deployFlag = true;
+               } else {
+                   // if this is set, either another player deployed this turn
+                   // or a player deployed last turn and we need to run through a round-robin to make sure no others deploy
+                   if (deployFlag) {
+                       // set to false so that if nobody else deploys this turn, next turn other orders execute
+                       deployFlag = false;
+                   } else {
+                       // if flag is false, nobody deployed for a whole turn so non-deploy orders are now
+                       // safe to execute
+                       toExecute->execute();
+                   }
+               }
+
+           }
+       }
+
+   }
+
+
 }
 
 // function for checking whether input is a number within a certain range
@@ -385,5 +431,11 @@ int string_is_num_in_range(string str, int n, int m) {
         // return false
         return 0;
     }
+}
 
+void invalidInput() {
+    cout << "Invalid input, try again" << endl;
+    //clear input stream
+    cin.clear();
+    cin.ignore();
 }

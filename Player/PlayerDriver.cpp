@@ -9,7 +9,8 @@ int playerDriver(){
     cout << endl;
 
     cout << "Generating Territories to attack" << endl;
-    vector<Territory*>* attacking = p->toAttack();
+    // Tristan commented this out for dev purposes
+    // vector<Territory*>* attacking = p->toAttack();
 
     cout << endl;
     cout << "Generating Territories to defend" << endl;
@@ -29,10 +30,11 @@ int playerDriver(){
 
     cout << "Attacking Territories:" << endl;
 
-    for (int i = 0; i < attacking->size(); i++){
+    // Tristan commented out for dev purposes
+    /*for (int i = 0; i < attacking->size(); i++){
 
         cout << *attacking->at(i) << endl;
-    }
+    }*/
 
     cout << "added Order: " << *p->getOrders()->getList()->at(0) << endl;
 
@@ -47,7 +49,8 @@ int playerDriver(){
     delete p;
 
     cout << "Deleting Attacking Territories" << endl;
-    delete attacking;
+    // Tristan commented out for dev purposes
+    // delete attacking;
 
     cout << "Deleting Defending Territories" << endl;
     delete defending;
