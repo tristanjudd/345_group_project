@@ -4,7 +4,7 @@
 //Default Constructor
 Player::Player() {
     territories = new vector<Territory *>();
-    hand = new Hand(this);
+    hand = new Hand();
     orders = new OrderList();
     id = new int(0);
 

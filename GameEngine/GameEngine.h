@@ -58,6 +58,7 @@ public:
     PHASE reinforcementPhase(); // called by mainGameLoop
     PHASE issueOrdersPhase(); // called by mainGameLoop
     PHASE executeOrdersPhase(); // called by mainGameLoop
+    void initGameDummy(); // method that creates map, players, etc. for dev purposes
 
 };
 
