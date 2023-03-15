@@ -131,6 +131,16 @@ Player *Territory::getOwner() const {
     return owner;
 }
 
+void Territory::setBorderedTerritories(Territory *inTerritory, vector<Territory *> *territories) {
+    vector<Territory *> *tempTerritory = new vector<Territory *>();
+    for (int i = 0; i < inTerritory->getBorders()->size(); i++) {
+        tempTerritory->push_back(territories->at(inTerritory->getBorders()->at(i)));
+    }
+    inTerritory->borderedTerritories = tempTerritory;
+    tempTerritory->clear();
+    delete tempTerritory;
+}
+
 // Continent class
 // default constructor
 Continent::Continent() {
@@ -611,6 +621,10 @@ Map MapLoader::load(int mapNumber) {
                 map->addContinentEdge(territoryContinent, borderContinent);
             }
         }
+    }
+
+    for (int i = 0; i < map->getTerritories()->size(); i++) {
+        Territory::setBorderedTerritories(map->getTerritories()->at(i), map->getTerritories());
     }
 
     printf("Closing %s...\n", path->c_str());
