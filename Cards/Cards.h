@@ -3,6 +3,7 @@
 #include <vector>
 #include <ostream>
 //#include "../Player/Player.h"
+#include "../Orders/Orders.h"
 
 // class Player; // foreward declaration to avoid circular dependency
 
@@ -39,7 +40,7 @@ public:
 	Card &operator=(const Card& c); // Assignment operator
 	friend std::ostream& operator<<(std::ostream& os, const Card& c);
 	void assignHand(Hand* hand);
-	void play();
+	CardType play();
 	CardType getType();
 };
 
@@ -48,14 +49,13 @@ public:
 class Hand {
 private:
 	
-	std::vector<Card *> contents;
+	std::vector<Card *>* contents;
 
 public:
-	// Player* owner;
 	Hand(); // Default constructor with no cards
 	~Hand();
 	Hand(const Hand& h); // copy constructor
-	// Hand(Player* p);
+	Hand(Player* p);
 	Hand& operator=(const Hand& c); // Assignment operator
 	friend std::ostream& operator<<(std::ostream& os, const Hand& c); // Stream operator
 	std::vector<Card *> getHand(); // Returns the player's hand as a vector of Card objects
