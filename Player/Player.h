@@ -36,7 +36,9 @@ public:
     friend ostream &operator<<(ostream &os, const Player &player);
 
     //Player functions
-    vector<Territory*> *toAttack();
+
+    // changed return type to int because had to use territory ids for comparison
+    vector<Territory *> *toAttack();
 
     vector<Territory*> *toDefend();
 

@@ -89,9 +89,12 @@ void Player::issueOrder() {
 }
 
 //Function creates  list of territories a player will defend
+// the
 vector<Territory *> *Player::toDefend() {
+    return territories;
 
-    vector<Territory *> *territories = new vector<Territory *>();
+    // Tristan commented out dummy code
+    /*vector<Territory *> *territories = new vector<Territory *>();
     Territory *t1 = new Territory(1, 1, "France");
     Territory *t2 = new Territory(2, 2, "England");
     Territory *t3 = new Territory(3, 3, "Spain");
@@ -104,13 +107,12 @@ vector<Territory *> *Player::toDefend() {
     territories->push_back(t4);
     territories->push_back(t5);
 
-    return territories;
+    return territories; */
 
 }
 
-//Function creates a list of territories a player will attack
+/*//Function creates a list of territories a player will attack
 vector<Territory *> *Player::toAttack() {
-
     vector<Territory *> *territories = new vector<Territory *>();
     Territory *t1 = new Territory(1, 1, "Japan");
     Territory *t2 = new Territory(2, 2, "China");
@@ -125,6 +127,12 @@ vector<Territory *> *Player::toAttack() {
     territories->push_back(t5);
 
     return territories;
+}*/
+
+//Function creates a list of territories a player will attack
+vector<Territory *> *Player::toAttack() {
+    return territories;
+
 }
 
 //Getters and Setters
