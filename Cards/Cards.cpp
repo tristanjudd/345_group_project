@@ -159,27 +159,6 @@ void Hand::remove(Card* card) {
         contents->erase(cardToRemove);
     }
 
-//	// std::vector<Card*>::iterator it = contents.begin();
-//	int i = 0;
-//	bool cardFound = false;
-//
-//	for (i; i < contents.size(); i++) {
-//		if (card == contents[i]) {
-//			cardFound = true;
-//			break;
-//		}
-//	}
-//
-//	std::vector<Card*>::iterator it = contents.begin() + i;
-//
-//	if (cardFound) {
-//		contents.erase(it);
-//	}
-//	else {
-//		std::cout << "card not found" << std::endl;
-//	}
-
-
 }
 
 // Get size of hand
