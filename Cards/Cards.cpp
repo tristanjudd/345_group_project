@@ -86,17 +86,17 @@ void Card::assignHand(Hand* h) {
 
 // Method issues an order to the player who owns the card and card is returned to the deck
 void Card::play() {
-	std::cout << "PLAYING" << std::endl;
-
-	// Issue order
-	this->hand->owner->issueOrder();
-	std::cout << "order issued" << std::endl;
-
-	// Remove this card from hand
-	this->hand->remove(this);
-
-	// Insert card back into deck
-	this->deckIssuedFrom->insert(this);
+//	std::cout << "PLAYING" << std::endl;
+//
+//	// Issue order
+//	this->hand->owner->issueOrder();
+//	std::cout << "order issued" << std::endl;
+//
+//	// Remove this card from hand
+//	this->hand->remove(this);
+//
+//	// Insert card back into deck
+//	this->deckIssuedFrom->insert(this);
 	
 	
 }
@@ -105,7 +105,7 @@ void Card::play() {
 
 // Hand default constructor pointing to no player
 Hand::Hand() {
-	owner = NULL;
+	// owner = NULL;
 }
 
 Hand::~Hand() {
@@ -118,19 +118,19 @@ Hand::~Hand() {
 }
 
 Hand::Hand(const Hand& h) {
-	owner = h.owner;
+	// owner = h.owner;
 	contents = h.contents;
 }
 
 // Hand constructor with Player to whom the hand is pointing
-Hand::Hand(Player* p) {
-	owner = p;
-}
+//Hand::Hand(Player* p) {
+//	owner = p;
+//}
 
 // Hand assignment operator
 Hand& Hand::operator=(const Hand& h) {
 	if (this != &h) {
-		owner = h.owner;
+		// owner = h.owner;
 		contents = h.contents;
 	}
 	return *this;

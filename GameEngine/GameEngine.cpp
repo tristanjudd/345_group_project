@@ -185,6 +185,139 @@ GameEngine::~GameEngine() {
 // START OF ASSIGNMENT 2
 // Start of new turn
 PHASE GameEngine::mainGameLoop() {
+
+    cout << "There are " << players->size() << " players" << endl;
+
+    // check if there's a winner
+    if (players->size() == 1) {
+        return WIN;
+    }
+
+    // set the current player to first player in the players list
+    *currentPlayer = 0;
+
+    return ASSIGN_REINFORCEMENT;
+
+};
+
+//Assign reinforcement phase
+PHASE GameEngine::reinforcementPhase() {
+    cout << "Assigning reinforcements to all players..." << endl;
+    cout << "Reinforcements assigned." << endl;
+    // loop through all current players and assign reinforcements based on game logic
+    for (int i = 0; i < players->size(); i++) {
+        // get pointer to current player object
+        Player* player = players->at(i);
+        // get current player's territories
+        vector<Territory *> playerTerritories = *(player->getTerritories());
+
+        // Assign troops based on game criteria
+        int newTroops = 3; // minimum new troops
+
+        // Add bonus of player's territories divided by 3, rounded down
+        newTroops += playerTerritories.size() / 3;
+
+        // Add continent bonus
+        // TODO
+
+        // Update player's reinforcement pool
+        player->setReinforcements(player->getReinforcements() + newTroops);
+
+    }
+
+    return ISSUE_ORDERS;
+}
+
+//Issue orders phase
+PHASE GameEngine::issueOrdersPhase() {
+
+// TODO
+// Left intentionally blank as I'm working on this and needed to push
+// something that will compile in order to push other updates
+return EXECUTE_ORDERS;
+
+}
+
+//Execute orders phase
+PHASE GameEngine::executeOrdersPhase() {
+   // make sure current player is set to starting player
+   *currentPlayer = 0;
+   vector<Order *> currentOrderList;
+   // flag indicating whether an order has been executed
+   // initialized to true so that we can enter the execution loop
+   bool modFlag = true;
+   // flag indicating whether a deployment was executed
+   // initialized to true to make sure all deployments are executed before other orders
+   bool deployFlag = true;
+
+   // loop executing orders until there are no orders left
+   while (modFlag) {
+       // set flag to false at the beginning of each round-robin
+       modFlag = false;
+       // go through each player and execute the first order in their list
+       for (Player* player : *players) {
+           // get current player's order list
+           currentOrderList = *(player->getOrders()->getList());
+
+           // if there is at least one order left to execute
+           if (currentOrderList.size() > 0) {
+               //get top order
+               Order* toExecute = currentOrderList.at(0);
+               // check if order is a deploy order
+               auto* isDeploy = dynamic_cast<Deploy *>(toExecute);
+
+               // if order is deploy, nothing needs to be checked and it can be executed right away
+               if (isDeploy) {
+                   toExecute->execute();
+                   // set deploy flag to true to indicate there was a deployment this round
+                   deployFlag = true;
+               } else {
+                   // if this is set, either another player deployed this turn
+                   // or a player deployed last turn and we need to run through a round-robin to make sure no others deploy
+                   if (deployFlag) {
+                       // set to false so that if nobody else deploys this turn, next turn other orders execute
+                       deployFlag = false;
+                   } else {
+                       // if flag is false, nobody deployed for a whole turn so non-deploy orders are now
+                       // safe to execute
+                       toExecute->execute();
+                   }
+               }
+
+           }
+       }
+
+   }
+
+    return PLAY;
+}
+
+// function for checking whether input is a number within a certain range
+int string_is_num_in_range(string str, int n, int m) {
+    // check that string is not empty and all chars are digits
+    if (!str.empty() && std::all_of(str.begin(), str.end(), ::isdigit)) {
+        // convert string to int and return
+        int num = std::stoi(str);
+        // if num in range return num
+        if (num >= n && num <= m) return num;
+            // else return false
+        else return 0;
+
+    } else {
+        // return false
+        return 0;
+    }
+}
+
+void invalidInput() {
+    cout << "Invalid input, try again" << endl;
+    //clear input stream
+    cin.clear();
+    cin.ignore();
+}
+
+// inits a bunch of objects to have something to test with in dev phase
+void GameEngine::initGameDummy() {
     // DUMMY CODE adding players for dev purposes
     Territory* t1 = new Territory(1, 1, "A");
     Territory* t2 = new Territory(2, 1, "B");
@@ -312,130 +445,4 @@ PHASE GameEngine::mainGameLoop() {
     map->setTerritories(mapList);
 
     // END OF DUMMY CODE
-
-    cout << "There are " << players->size() << " players" << endl;
-
-    // check if there's a winner
-    if (players->size() == 1) {
-        return WIN;
-    }
-
-    // set the current player to first player in the players list
-    *currentPlayer = 0;
-
-    return ASSIGN_REINFORCEMENT;
-
-};
-
-//Assign reinforcement phase
-PHASE GameEngine::reinforcementPhase() {
-    cout << "Assigning reinforcements to all players..." << endl;
-    cout << "Reinforcements assigned." << endl;
-    // loop through all current players and assign reinforcements based on game logic
-    for (int i = 0; i < players->size(); i++) {
-        // get pointer to current player object
-        Player* player = players->at(i);
-        // get current player's territories
-        vector<Territory *> playerTerritories = *(player->getTerritories());
-
-        // Assign troops based on game criteria
-        int newTroops = 3; // minimum new troops
-
-        // Add bonus of player's territories divided by 3, rounded down
-        newTroops += playerTerritories.size() / 3;
-
-        // Add continent bonus
-        // TODO
-
-        // Update player's reinforcement pool
-        player->setReinforcements(player->getReinforcements() + newTroops);
-
-    }
-
-    return ISSUE_ORDERS;
-}
-
-//Issue orders phase
-PHASE GameEngine::issueOrdersPhase() {
-
-// TODO
-
-}
-
-//Execute orders phase
-PHASE GameEngine::executeOrdersPhase() {
-   // make sure current player is set to starting player
-   *currentPlayer = 0;
-   vector<Order *> currentOrderList;
-   // flag indicating whether an order has been executed
-   // initialized to true so that we can enter the execution loop
-   bool modFlag = true;
-   // flag indicating whether a deployment was executed
-   // initialized to true to make sure all deployments are executed before other orders
-   bool deployFlag = true;
-
-   // loop executing orders until there are no orders left
-   while (modFlag) {
-       // set flag to false at the beginning of each round-robin
-       modFlag = false;
-       // go through each player and execute the first order in their list
-       for (Player* player : *players) {
-           // get current player's order list
-           currentOrderList = *(player->getOrders()->getList());
-
-           // if there is at least one order left to execute
-           if (currentOrderList.size() > 0) {
-               //get top order
-               Order* toExecute = currentOrderList.at(0);
-               // check if order is a deploy order
-               auto* isDeploy = dynamic_cast<Deploy *>(toExecute);
-
-               // if order is deploy, nothing needs to be checked and it can be executed right away
-               if (isDeploy) {
-                   toExecute->execute();
-                   // set deploy flag to true to indicate there was a deployment this round
-                   deployFlag = true;
-               } else {
-                   // if this is set, either another player deployed this turn
-                   // or a player deployed last turn and we need to run through a round-robin to make sure no others deploy
-                   if (deployFlag) {
-                       // set to false so that if nobody else deploys this turn, next turn other orders execute
-                       deployFlag = false;
-                   } else {
-                       // if flag is false, nobody deployed for a whole turn so non-deploy orders are now
-                       // safe to execute
-                       toExecute->execute();
-                   }
-               }
-
-           }
-       }
-
-   }
-
-
-}
-
-// function for checking whether input is a number within a certain range
-int string_is_num_in_range(string str, int n, int m) {
-    // check that string is not empty and all chars are digits
-    if (!str.empty() && std::all_of(str.begin(), str.end(), ::isdigit)) {
-        // convert string to int and return
-        int num = std::stoi(str);
-        // if num in range return num
-        if (num >= n && num <= m) return num;
-            // else return false
-        else return 0;
-
-    } else {
-        // return false
-        return 0;
-    }
-}
-
-void invalidInput() {
-    cout << "Invalid input, try again" << endl;
-    //clear input stream
-    cin.clear();
-    cin.ignore();
 }
