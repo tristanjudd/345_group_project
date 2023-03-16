@@ -318,6 +318,15 @@ bool Advance::validate() {
 		return false;
 	}
 
+	//check if players at peace
+	string peaceDuo1 = to_string(*(getPlayer()->getId())) + "/" + to_string(*(target->getOwner()->getId()));
+	string peaceDuo2 = to_string(*(target->getOwner()->getId())) + "/" + to_string(*(getPlayer()->getId()));
+
+	if (GameEngine::peaceStatus->count(peaceDuo1) > 0 || GameEngine::peaceStatus->count(peaceDuo2) > 0) {
+		cout << "DEBUG: Order not valid, players at peace" << endl;
+		return false;
+	}
+
 	//check if adjacent
 	vector<int>* vec = source->getBorders();
 
@@ -381,6 +390,20 @@ bool Advance::execute() {
 				//move army and change owner of target
 				target->setArmyCount(new int(attackingArmies)); //change army count
 				target->setOwner(getPlayer()); //change ownership
+
+				//remove territory from defender
+				Player* otherPlayer = target->getOwner();
+
+				vector<Territory*>* newTerritories = otherPlayer->getTerritories();
+				auto it = std::find(newTerritories->begin(), newTerritories->end(), target);
+				if (it != newTerritories->end()) {
+					newTerritories->erase(it);
+				}
+
+				otherPlayer->setTerritories(newTerritories);
+
+
+				//Give card to player
 
 				execEffect = "Player " + to_string(*(getPlayer()->getId())) + " conquered " + *(target->getTerritoryName());
 			}
@@ -461,8 +484,16 @@ bool Bomb::validate() {
 		return false;
 	}
 
+	//check if players at peace
+	string peaceDuo1 = to_string(*(getPlayer()->getId())) + "/" + to_string(*(target->getOwner()->getId()));
+	string peaceDuo2 = to_string(*(target->getOwner()->getId())) + "/" + to_string(*(getPlayer()->getId()));
+
+	if (GameEngine::peaceStatus->count(peaceDuo1) > 0 || GameEngine::peaceStatus->count(peaceDuo2) > 0) {
+		cout << "DEBUG: Order not valid, players at peace" << endl;
+		return false;
+	}
+
 	bool adjacent = false;
-	
 	//check if target is adjacent to one of the players territory
 	for (int i = 0; i < getPlayer()->getTerritories()->size(); i++) 
 	{
@@ -574,8 +605,19 @@ bool Blockade::execute() {
 		string execEffect = *(target->getTerritoryName()) + " now has " + to_string(*doubled) + "armies";
 		setEffect(execEffect);
 
+		//REMOVE territory from player
+		vector<Territory*> *newTerritories = getPlayer()->getTerritories();
+
+		auto it = std::find(newTerritories->begin(), newTerritories->end(), target);
+		if (it != newTerritories->end()) {
+			newTerritories->erase(it);
+		}
+
+		getPlayer()->setTerritories(newTerritories);
+
 		//GIVE TERRITORY TO NEUTRAL PLAYER
-		GameEngine::neutral;
+		GameEngine::neutral->getTerritories()->push_back(target);
+		target->setOwner(GameEngine::neutral);
 
 
 		return true;
@@ -750,8 +792,11 @@ bool Negotiate::execute() {
 
 	if (valid) {
 		cout << "DEBUG: Negotiate order executed" << endl;
-		cout << "DEBUG: did something no yet defined" << endl;
-		setEffect("did something");
+		string peaceDuo = to_string(*getPlayer()->getId()) + "/" + to_string(*victim->getId()); //Create a string with both IDs
+		GameEngine::peaceStatus->insert(make_pair(peaceDuo, true)); //add duo to peaceStatus map
+
+		string execEffect = "Players " + to_string(*getPlayer()->getId()) + " and " + to_string(*victim->getId()) + " are at peace for the rest of the round.";
+		setEffect(execEffect);
 		return true;
 	}
 	else {
