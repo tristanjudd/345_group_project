@@ -33,6 +33,7 @@ private:
     string *territoryName; //name of territory
     vector<int> *borders;  // ids of adjacent territories
     Player *owner; //owner of the territory
+    vector<Territory *> *borderedTerritories; //adjacent territories
 public:
     //constructors
     Territory(); //default constructor
@@ -55,6 +56,10 @@ public:
     vector<int> *getBorders() const;
     void setOwner(Player *inPlayer);
     Player *getOwner() const;
+    static void setBorderedTerritories(Territory *inTerritory, vector<Territory *> *Territories);
+    vector<Territory *> *getBorderedTerritories() const;
+
+    void testSetBorders(vector<Territory *>* b); // Tristan: for dev purposes, delete later
 };
 
 class Continent {
@@ -62,6 +67,7 @@ private:
     int *id;
     string *continentName;
     int *value;
+    vector<Territory *> *territoriesInContinent; //territories that are a part of this continent
 public:
     //constructors
     Continent(); //default constructor
@@ -78,6 +84,8 @@ public:
     string *getContinentName() const;
     void setValue(int *inValue);
     int *getValue() const;
+    static void setTerritoriesInContinent(Continent *inContinent, vector<Territory *> *inTerritoriesInContinent);
+    vector<Territory *> *getTerritoriesInContinent() const;
 };
 
 class Map {
