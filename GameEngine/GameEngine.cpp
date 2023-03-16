@@ -222,7 +222,25 @@ PHASE GameEngine::reinforcementPhase() {
         newTroops += playerTerritories.size() / 3;
 
         // Add continent bonus
-        // TODO
+        // loop through all continents
+        for (Continent* c : *(map->getContinents())) {
+            // get all member territories of continent
+            vector<Territory *> conts = *(c->getTerritoriesInContinent());
+
+            int matches = 0;
+            // for each territory in continent, check if it's also in player's territories
+            // if so, increment matches
+            for (Territory* t : conts) {
+                if (std::find(playerTerritories.begin(), playerTerritories.end(), t) != playerTerritories.end()) {
+                    matches++;
+                }
+            }
+
+            // if matches == size of continent territories, player has whole continent
+            if (matches == conts.size()) {
+                newTroops += 5;
+            }
+        }
 
         // Update player's reinforcement pool
         player->setReinforcements(player->getReinforcements() + newTroops);
@@ -460,6 +478,13 @@ void GameEngine::initGameDummy() {
     map = new Map();
     //
     map->setTerritories(mapList);
+
+    Continent* cont = new Continent();
+    vector<Continent *>* contVector = new vector<Continent *>;
+    contVector->push_back(cont);
+
+    cont->testSetTerritories(list1);
+    map->setContinents(contVector);
 
     // END OF DUMMY CODE
 }
