@@ -67,6 +67,7 @@ private:
     int *id;
     string *continentName;
     int *value;
+    vector<Territory *> *territoriesInContinent; //territories that are a part of this continent
 public:
     //constructors
     Continent(); //default constructor
@@ -83,6 +84,8 @@ public:
     string *getContinentName() const;
     void setValue(int *inValue);
     int *getValue() const;
+    static void setTerritoriesInContinent(Continent *inContinent, vector<Territory *> *inTerritoriesInContinent);
+    vector<Territory *> *getTerritoriesInContinent() const;
 };
 
 class Map {
