@@ -34,7 +34,6 @@ class GameEngine {
 private:
     int *winner; // id of the winner
     vector<Player *> *players; // list of players currently in the game, in order of turns
-    int* currentPlayer; // keeps track of the current player
     Map* map; // the game map
 
 public:
@@ -62,7 +61,7 @@ public:
 
 };
 
-int string_is_num_in_range(string str, int n, int m);
-void invalidInput();
+//int string_is_num_in_range(string str, int n, int m);
+//void invalidInput();
 
 #endif //WARZONE_GAMEENGINE_H

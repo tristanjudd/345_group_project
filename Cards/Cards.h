@@ -42,6 +42,7 @@ public:
 	void assignHand(Hand* hand);
 	CardType play();
 	CardType getType();
+    string getCardName();
 };
 
 // Hand class header

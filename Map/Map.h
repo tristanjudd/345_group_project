@@ -58,6 +58,8 @@ public:
     Player *getOwner() const;
     static void setBorderedTerritories(Territory *inTerritory, vector<Territory *> *Territories);
     vector<Territory *> *getBorderedTerritories() const;
+
+    void testSetBorders(vector<Territory *>* b); // Tristan: for dev purposes, delete later
 };
 
 class Continent {

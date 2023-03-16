@@ -53,6 +53,8 @@ PHASE GameEngine::addPlayers() {
         return PLAYERS_ADDED; //go back to add players phase
     }
     cout << "Players created" << endl;
+
+    initGameDummy();
     return PLAY; //go to assign reinforcement phase
 }
 
@@ -121,7 +123,7 @@ PHASE GameEngine::executeOrders() {
 
 //Win phase
 PHASE GameEngine::win() {
-    cout << "Player " << *winner << " wins!" << endl;
+    cout << "Player " << *(players->at(0)->getId()) << " wins!" << endl;
     cout << "Game Over" << endl;
     while (true) {
         cout << "Play again? (y/n): ";
@@ -147,7 +149,6 @@ GameEngine::GameEngine() {
     cout << "GameEngine default constructor called" << endl;
     winner = new int(-1);
     players = new vector<Player *>;
-    currentPlayer = new int;
 }
 
 //copy constructor
@@ -193,9 +194,6 @@ PHASE GameEngine::mainGameLoop() {
         return WIN;
     }
 
-    // set the current player to first player in the players list
-    *currentPlayer = 0;
-
     return ASSIGN_REINFORCEMENT;
 
 };
@@ -203,11 +201,9 @@ PHASE GameEngine::mainGameLoop() {
 //Assign reinforcement phase
 PHASE GameEngine::reinforcementPhase() {
     cout << "Assigning reinforcements to all players..." << endl;
-    cout << "Reinforcements assigned." << endl;
+
     // loop through all current players and assign reinforcements based on game logic
-    for (int i = 0; i < players->size(); i++) {
-        // get pointer to current player object
-        Player* player = players->at(i);
+    for (Player* player : *players) {
         // get current player's territories
         vector<Territory *> playerTerritories = *(player->getTerritories());
 
@@ -225,22 +221,26 @@ PHASE GameEngine::reinforcementPhase() {
 
     }
 
+    cout << "Reinforcements assigned.\n" << endl;
+
     return ISSUE_ORDERS;
 }
 
 //Issue orders phase
 PHASE GameEngine::issueOrdersPhase() {
-// TODO
-// Left intentionally commented out as I'm working on this and needed to push
-// something that will compile in order to push other updates
-//    for (Player* player : *players) {
-//        bool stillPlaying = true;
-//
-//        while (stillPlaying) {
-//            stillPlaying = player->issueOrder();
-//        }
-//
-//    }
+// loop through each player and call issueOrder method
+    for (Player* player : *players) {
+        cout << "PLAYER " << *(player->getId()) << " ISSUING ORDERS" << endl;
+        bool stillPlaying = true;
+
+        while (stillPlaying) {
+            // issue order method returns a bool
+            // it will return true for any move except when
+            // player selects the end turn choice
+            stillPlaying = player->issueOrder();
+        }
+
+    }
 
 return EXECUTE_ORDERS;
 
@@ -248,8 +248,7 @@ return EXECUTE_ORDERS;
 
 //Execute orders phase
 PHASE GameEngine::executeOrdersPhase() {
-   // make sure current player is set to starting player
-   *currentPlayer = 0;
+
    vector<Order *> currentOrderList;
    // flag indicating whether an order has been executed
    // initialized to true so that we can enter the execution loop
@@ -271,6 +270,8 @@ PHASE GameEngine::executeOrdersPhase() {
            if (currentOrderList.size() > 0) {
                //get top order
                Order* toExecute = currentOrderList.at(0);
+               // remove order from front of list
+               currentOrderList.erase(currentOrderList.begin());
                // check if order is a deploy order
                auto* isDeploy = dynamic_cast<Deploy *>(toExecute);
 
@@ -300,29 +301,29 @@ PHASE GameEngine::executeOrdersPhase() {
     return PLAY;
 }
 
-// function for checking whether input is a number within a certain range
-int string_is_num_in_range(string str, int n, int m) {
-    // check that string is not empty and all chars are digits
-    if (!str.empty() && std::all_of(str.begin(), str.end(), ::isdigit)) {
-        // convert string to int and return
-        int num = std::stoi(str);
-        // if num in range return num
-        if (num >= n && num <= m) return num;
-            // else return false
-        else return 0;
-
-    } else {
-        // return false
-        return 0;
-    }
-}
-
-void invalidInput() {
-    cout << "Invalid input, try again" << endl;
-    //clear input stream
-    cin.clear();
-    cin.ignore();
-}
+//// function for checking whether input is a number within a certain range
+//int string_is_num_in_range(string str, int n, int m) {
+//    // check that string is not empty and all chars are digits
+//    if (!str.empty() && std::all_of(str.begin(), str.end(), ::isdigit)) {
+//        // convert string to int and return
+//        int num = std::stoi(str);
+//        // if num in range return num
+//        if (num >= n && num <= m) return num;
+//            // else return false
+//        else return 0;
+//
+//    } else {
+//        // return false
+//        return 0;
+//    }
+//}
+//
+//void invalidInput() {
+//    cout << "Invalid input, try again" << endl;
+//    //clear input stream
+//    cin.clear();
+//    cin.ignore();
+//}
 
 // inits a bunch of objects to have something to test with in dev phase
 void GameEngine::initGameDummy() {
@@ -337,56 +338,56 @@ void GameEngine::initGameDummy() {
     Territory* t8 = new Territory(8, 1, "H");
     Territory* t9 = new Territory(9, 1, "I");
 
-    vector<int>* borders1 = new vector<int>;
-    borders1->push_back(2);
-    borders1->push_back(4);
-    t1->setBorders(borders1);
+    vector<Territory *>* borders1 = new vector<Territory *>;
+    borders1->push_back(t2);
+    borders1->push_back(t4);
+    t1->testSetBorders(borders1);
 
-    vector<int>* borders2 = new vector<int>;
-    borders2->push_back(1);
-    borders2->push_back(3);
-    borders2->push_back(5);
-    t2->setBorders(borders2);
+    vector<Territory *>* borders2 = new vector<Territory *>;
+    borders2->push_back(t1);
+    borders2->push_back(t3);
+    borders2->push_back(t5);
+    t2->testSetBorders(borders2);
 
-    vector<int>* borders3 = new vector<int>;
-    borders3->push_back(2);
-    borders3->push_back(6);
-    t3->setBorders(borders3);
+    vector<Territory *>* borders3 = new vector<Territory *>;
+    borders3->push_back(t2);
+    borders3->push_back(t6);
+    t3->testSetBorders(borders3);
 
-    vector<int>* borders4 = new vector<int>;
-    borders4->push_back(1);
-    borders4->push_back(5);
-    borders4->push_back(7);
-    t4->setBorders(borders4);
+    vector<Territory *>* borders4 = new vector<Territory *>;
+    borders4->push_back(t1);
+    borders4->push_back(t5);
+    borders4->push_back(t7);
+    t4->testSetBorders(borders4);
 
-    vector<int>* borders5 = new vector<int>;
-    borders5->push_back(2);
-    borders5->push_back(4);
-    borders5->push_back(6);
-    borders5->push_back(8);
-    t5->setBorders(borders5);
+    vector<Territory *>* borders5 = new vector<Territory *>;
+    borders5->push_back(t2);
+    borders5->push_back(t4);
+    borders5->push_back(t6);
+    borders5->push_back(t8);
+    t5->testSetBorders(borders5);
 
-    vector<int>* borders6 = new vector<int>;
-    borders6->push_back(3);
-    borders6->push_back(5);
-    borders6->push_back(9);
-    t6->setBorders(borders6);
+    vector<Territory *>* borders6 = new vector<Territory *>;
+    borders6->push_back(t3);
+    borders6->push_back(t5);
+    borders6->push_back(t9);
+    t6->testSetBorders(borders6);
 
-    vector<int>* borders7 = new vector<int>;
-    borders7->push_back(4);
-    borders7->push_back(8);
-    t7->setBorders(borders7);
+    vector<Territory *>* borders7 = new vector<Territory *>;
+    borders7->push_back(t4);
+    borders7->push_back(t8);
+    t7->testSetBorders(borders7);
 
-    vector<int>* borders8 = new vector<int>;
-    borders8->push_back(5);
-    borders8->push_back(7);
-    borders8->push_back(9);
-    t8->setBorders(borders8);
+    vector<Territory *>* borders8 = new vector<Territory *>;
+    borders8->push_back(t5);
+    borders8->push_back(t7);
+    borders8->push_back(t9);
+    t8->testSetBorders(borders8);
 
-    vector<int>* borders9 = new vector<int>;
-    borders9->push_back(6);
-    borders9->push_back(8);
-    t9->setBorders(borders9);
+    vector<Territory *>* borders9 = new vector<Territory *>;
+    borders9->push_back(t6);
+    borders9->push_back(t8);
+    t9->testSetBorders(borders9);
 
     vector<Territory *>* list1 = new vector<Territory *>;
     list1->push_back(t1);

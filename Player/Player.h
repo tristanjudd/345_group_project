@@ -66,3 +66,6 @@ public:
     int getReinforcements();
     void setReinforcements(int n);
 };
+
+int string_is_num_in_range(string str, int n, int m);
+void invalidInput();

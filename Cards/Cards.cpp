@@ -86,7 +86,7 @@ void Card::assignHand(Hand* h) {
 
 // Method issues an order to the player who owns the card and card is returned to the deck
 CardType Card::play() {
-	std::cout << "PLAYING" << std::endl;
+	std::cout << "Playing " << getCardName() << " card\n" << std::endl;
 
 	// Remove this card from hand
     this->hand->remove(this);
@@ -96,7 +96,21 @@ CardType Card::play() {
 
     return *cardType;
 	
-	
+}
+
+string Card::getCardName() {
+    switch(*cardType) {
+        case 0:
+            return "Bomb";
+        case 1:
+            return "Reinforcement";
+        case 2:
+            return "Blockade";
+        case 3:
+            return "Airlift";
+        case 4:
+            return "Diplomacy";
+    } // end of switch
 }
 
 // Hand class method declarations
