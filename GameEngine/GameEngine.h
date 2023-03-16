@@ -60,8 +60,8 @@ public:
 
     //MEMBERS USED IN ORDERS
     static Player* neutral; //neutral player
-    static std::unordered_map<string, bool>* peaceStatus;
-    static vector<int>* conqStatus;
+    static std::unordered_map<string, bool>* peaceStatus; //keeps track of peace status between players
+    static vector<int>* conqStatus; //keeps track of conquest status
 };
 
 int string_is_num_in_range(string str, int n, int m);

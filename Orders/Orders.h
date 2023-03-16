@@ -8,10 +8,10 @@ using std::vector;
 using namespace std;
 #include <cstdlib>
 using std::rand;
+#include <unordered_map>
+using namespace std;
 
 #include "../Map/Map.h"
-//#include "../Cards/Cards.h"
-//#include "../GameEngine/GameEngine.h"
 
 //forward declaration
 class Player;
@@ -64,6 +64,9 @@ public:
 	bool execute();
 
 	void operator= (Deploy const &);
+
+	void doSomething();
+	void testStatic();
 
 private:
 	int *nbArmies;

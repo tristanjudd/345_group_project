@@ -24,6 +24,7 @@ Player::Player(vector<Territory *> *territories, Hand *hand, OrderList* orders, 
 Player::Player(int id){
 
     Player::id = new int(id);
+    Player::territories = new vector<Territory *>();
 
 }
 

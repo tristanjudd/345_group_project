@@ -1,9 +1,8 @@
 #include "GameEngine.h"
 
-//CREATING THE STATIC NEUTRAL PLAYER ID = -1
-Player* GameEngine::neutral = new Player(-1);
-std::unordered_map<string, bool>* GameEngine::peaceStatus = new std::unordered_map<string, bool>();
-vector<int>* GameEngine::conqStatus = new vector<int>();
+Player* GameEngine::neutral = new Player(-1); //CREATING THE STATIC NEUTRAL PLAYER ID = -1
+std::unordered_map<string, bool>* GameEngine::peaceStatus = new std::unordered_map<string, bool>(); //CREATING THE STATIC PEACE STATUS MAP
+vector<int>* GameEngine::conqStatus = new vector<int>(); //CREATING THE STATIC CONQUERED STATUS VECTOR
 
 //Start phase
 PHASE GameEngine::start() {
@@ -184,6 +183,10 @@ GameEngine::~GameEngine() {
     winner = nullptr;
     delete winner;
     delete [] players;
+
+    delete neutral;
+    delete peaceStatus;
+    delete conqStatus;
 }
 
 // START OF ASSIGNMENT 2

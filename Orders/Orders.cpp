@@ -168,6 +168,85 @@ void Deploy::operator= (Deploy const& obj)
 	target = obj.target;
 }
 
+//TEST STATIC MEMBERS
+void Deploy::doSomething() {
+	
+	//check if we can access neutral player
+	int ID = *GameEngine::neutral->getId();
+	cout << "Neutral Player ID: " << ID << endl;
+
+	//modify neutral player ID
+	GameEngine::neutral->setId(new int(5));
+	ID = *GameEngine::neutral->getId();
+	cout << "Neutral Player ID after mod: " << ID << endl;
+
+
+	//add an int to peace status
+	std::string peaceDuo = "1-2";
+	GameEngine::peaceStatus->insert(make_pair(peaceDuo, true));
+
+	//check if peace status is in map
+	if (GameEngine::peaceStatus->count(peaceDuo) > 0) {
+		cout << "Peace status between 1 and 2 is true" << endl;
+	}
+	else {
+		cout << "Peace status between 1 and 2 is false" << endl;
+	}
+
+	//check if peace between 1 and 3 is true
+	peaceDuo = "1-3";
+	if (GameEngine::peaceStatus->count(peaceDuo) > 0){
+		cout << "Peace status between 1 and 3 is true" << endl;
+	}
+	else {
+		cout << "Peace status between 1 and 3 is false" << endl;
+	}
+
+	//ADD neutral player ID to conqStatus
+	GameEngine::conqStatus->push_back(ID);
+	
+	//check if neutral player ID is in conqStatus
+	if (std::find(GameEngine::conqStatus->begin(), GameEngine::conqStatus->end(), ID) != GameEngine::conqStatus->end()) {
+		cout << "Neutral player ID is in conqStatus" << endl;
+	}
+	else {
+		cout << "Neutral player ID is not in conqStatus" << endl;
+	}
+
+	//check if 10 is in conqStatus
+	if (std::find(GameEngine::conqStatus->begin(), GameEngine::conqStatus->end(), 10) != GameEngine::conqStatus->end()) {
+		cout << "10 is in conqStatus" << endl;
+	}
+	else {
+		cout << "10 is not in conqStatus" << endl;
+	}
+
+}
+
+//TEST IF STATIC CHANGED APPLY EVERYWHERE
+void Deploy::testStatic() {
+	//check if neutral player ID is 5
+	int ID = *GameEngine::neutral->getId();
+	cout << "Neutral Player ID: " << ID << endl;
+
+	//check if peace status is in map
+	std::string peaceDuo = "1-2";
+	if (GameEngine::peaceStatus->count(peaceDuo) > 0) {
+		cout << "Peace status between 1 and 2 is true" << endl;
+	}
+	else {
+		cout << "Peace status between 1 and 2 is false" << endl;
+	}
+
+	//check if neutral player ID is in conqStatus
+	if (std::find(GameEngine::conqStatus->begin(), GameEngine::conqStatus->end(), ID) != GameEngine::conqStatus->end()) {
+		cout << "Neutral player ID is in conqStatus" << endl;
+	}
+	else {
+		cout << "Neutral player ID is not in conqStatus" << endl;
+	}
+}
+
 //Advance class
 Advance::Advance()
 {
@@ -224,7 +303,14 @@ void Advance::setTarget(Territory _target) {
 
 //check if source belongs to player
 //check if source and target are adjacent
+//check if territory has enough armies
 bool Advance::validate() {
+
+	//check if territory has enough troops
+	if (*(source->getArmyCount()) < *nbArmies) {
+		cout << "DEBUG: Order not valid" << endl;
+		return false;
+	}
 	
 	//check owner
 	if ((*(target->getOwner())->getId()) != (*(getPlayer()->getId()))) {
