@@ -413,10 +413,17 @@ bool Player::issueOrder() {
                                                             int validAirliftTo = string_is_num_in_range(airliftTo, 1, territories->size());
 
                                                             if (validAirliftTo) {
-                                                                // TODO issue order
                                                                 cout << "Airlift " << validTroopsToAirlift << " troops form "
-                                                                << *(territories->at(validAirliftFrom)->getTerritoryName()) << " to "
+                                                                << *(territories->at(validAirliftFrom - 1)->getTerritoryName()) << " to "
                                                                 << *(territories->at(validAirliftTo - 1)->getTerritoryName()) << endl;
+                                                                // issue order
+                                                                Order* airlift = new Airlift(
+                                                                        this,
+                                                                        validTroopsToAirlift,
+                                                                        territories->at(validAirliftFrom - 1),
+                                                                        territories->at(validAirliftTo - 1)
+                                                                        );
+                                                                orders->Add(airlift);
 
                                                                 break;
                                                             } else {
