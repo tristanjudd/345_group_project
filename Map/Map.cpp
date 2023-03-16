@@ -734,3 +734,8 @@ int mapTest() {
     delete continent3;
     return 0;
 }
+
+// Tristan: for dev purposes, delete later
+void Territory::testSetBorders(vector<Territory *> *b) {
+    borderedTerritories = b;
+}
