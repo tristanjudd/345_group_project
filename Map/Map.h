@@ -86,6 +86,7 @@ public:
     int *getValue() const;
     static void setTerritoriesInContinent(Continent *inContinent, vector<Territory *> *inTerritoriesInContinent);
     vector<Territory *> *getTerritoriesInContinent() const;
+    void testSetTerritories(vector<Territory *>* t); // Tristan: for dev purposes, remove later
 };
 
 class Map {

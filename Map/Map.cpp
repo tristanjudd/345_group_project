@@ -759,3 +759,8 @@ int mapTest() {
 void Territory::testSetBorders(vector<Territory *> *b) {
     borderedTerritories = b;
 }
+
+// Tristan: for dev purposes, delete later
+void Continent::testSetTerritories(vector<Territory *> *t) {
+    territoriesInContinent = t;
+}
