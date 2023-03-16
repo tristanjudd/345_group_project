@@ -745,17 +745,17 @@ Negotiate::Negotiate()
 	setDesc("This is a Negotiate order");
 }
 
-Negotiate::Negotiate(Player* _issuer, Player* _victim) : Order(_issuer)
+Negotiate::Negotiate(Player* _issuer, int _victimID) : Order(_issuer)
 {
-	string desc = "Negotiate order: Player " + to_string(*(_issuer->getId())) + " negotiates with Player " + to_string(*(_victim->getId()));
+	string desc = "Negotiate order: Player " + to_string(*(_issuer->getId())) + " negotiates with Player " + to_string(_victimID);
 	setDesc(desc);
-	victim = _victim;
+	victim = new int(_victimID);
 	
 }
 
 Negotiate::Negotiate(const Negotiate& _o) : Order(_o)
 {
-	victim = _o.getVictim();
+	victim = new int(_o.getVictim());
 }
 
 Negotiate::~Negotiate() {
@@ -763,12 +763,12 @@ Negotiate::~Negotiate() {
 }
 
 //GETTER AND SETTER NEGOTIATE
-Player* Negotiate::getVictim() const {
-	return victim;
+int Negotiate::getVictim() const {
+	return *victim;
 }
 
-void Negotiate::setVictim(Player _victim) {
-	*victim = _victim;
+void Negotiate::setVictim(int _victimID) {
+	*victim = _victimID;
 }
 
 
@@ -776,7 +776,7 @@ void Negotiate::setVictim(Player _victim) {
 bool Negotiate::validate() {
 	
 	//check if player and victim are the same
-	if ((*(victim->getId())) == (*(getPlayer()->getId()))) {
+	if ( *victim == (*(getPlayer()->getId()))) {
 		cout << "DEBUG: Order not valid" << endl;
 		return false;
 	}
@@ -792,10 +792,10 @@ bool Negotiate::execute() {
 
 	if (valid) {
 		cout << "DEBUG: Negotiate order executed" << endl;
-		string peaceDuo = to_string(*getPlayer()->getId()) + "/" + to_string(*victim->getId()); //Create a string with both IDs
+		string peaceDuo = to_string(*getPlayer()->getId()) + "/" + to_string(*victim); //Create a string with both IDs
 		GameEngine::peaceStatus->insert(make_pair(peaceDuo, true)); //add duo to peaceStatus map
 
-		string execEffect = "Players " + to_string(*getPlayer()->getId()) + " and " + to_string(*victim->getId()) + " are at peace for the rest of the round.";
+		string execEffect = "Players " + to_string(*getPlayer()->getId()) + " and " + to_string(*victim) + " are at peace for the rest of the round.";
 		setEffect(execEffect);
 		return true;
 	}

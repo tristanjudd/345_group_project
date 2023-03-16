@@ -174,13 +174,13 @@ class Negotiate : public Order
 {
 public:
 	Negotiate();
-	Negotiate(Player* _issuer, Player* _victim);
+	Negotiate(Player* _issuer, int _victimID);
 	Negotiate(const Negotiate& _o);
 	~Negotiate();
 
 	//getter and setter;
-	Player* getVictim() const;
-	void setVictim(Player _victim);
+	int getVictim() const;
+	void setVictim(int _victimID);
 
 	void operator= (Negotiate const &);
 
@@ -189,7 +189,7 @@ public:
 
 private:
 	Player* issuer;
-	Player* victim;
+	int* victim;
 };
 
 class OrderList
