@@ -116,7 +116,9 @@ bool Player::issueOrder() {
 
                 // if input valid add order to order list
                 if (validNumOfTroops) {
-                    // TODO: actually assign troops to territory
+                    // Create an order and add to order list
+                    Order* deploy = new Deploy(this, validNumOfTroops, playerTerritories.at(validTerritory - 1));
+                    orders->Add(deploy);
 
                     cout << validNumOfTroops << " troops assigned to " << *(playerTerritories.at(validTerritory - 1)->getTerritoryName()) << endl;
 
@@ -185,11 +187,30 @@ bool Player::issueOrder() {
                                 // loop until valid input
                                 while (true) {
                                     if (validDefendFrom) {
-                                        cout << "Defend " << *(defendable.at(validDefend - 1)->getTerritoryName())
-                                             << " from " << *(defendable.at(validDefendFrom - 1)->getTerritoryName())
-                                             << endl;
-                                        // TODO dispatch order
-                                        // exit while loop
+                                        string howManyTroops;
+                                        cout << "How many troops do you want to defend with? ";
+
+                                        while(true) {
+                                            cin >> howManyTroops;
+                                            int validHowManyTroops = string_is_num_in_range(howManyTroops, 1, 999999);
+
+                                            if(validHowManyTroops) {
+                                                cout << "Defend " << *(defendable.at(validDefend - 1)->getTerritoryName())
+                                                     << " from " << *(defendable.at(validDefendFrom - 1)->getTerritoryName())
+                                                     << " with " << validHowManyTroops << " troops." << endl;
+                                                // Issue order
+                                                Order* advance = new Advance(this,
+                                                                             validHowManyTroops,
+                                                                             defendable.at(validDefendFrom - 1),
+                                                                             defendable.at(validDefendFrom - 1));
+                                                orders->Add(advance);
+
+                                                break;
+                                            } else {
+                                                invalidInput();
+                                            }
+                                        } // end while for how many troops
+
                                         break;
                                     } else {
                                         invalidInput();
@@ -256,10 +277,16 @@ bool Player::issueOrder() {
                                             int validNumTroops = string_is_num_in_range(numTroops, 1, 999999);
 
                                             if (validNumTroops) {
-                                                // TODO issue order
                                                 string nameAttack = *(attackable.at(validAttack - 1)->getTerritoryName());
                                                 string nameAttackFrom = *(attackingTerritories.at(validAttackingTerritory - 1)->getTerritoryName());
                                                 cout << "Attacking " << nameAttack << " from " << nameAttackFrom << " with " << validNumTroops << " troops." << endl;
+
+                                                // Issue order
+                                                Order* advance = new Advance(this,
+                                                                             validNumTroops,
+                                                                             attackable.at(validAttack - 1),
+                                                                             attackingTerritories.at(validAttackingTerritory - 1));
+                                                orders->Add(advance);
 
                                                 break;
                                             } else {
@@ -330,6 +357,111 @@ bool Player::issueOrder() {
                             int validCard = string_is_num_in_range(cardChosen, 1, currentHand.size());
                             // if valid play card
                             if (validCard) {
+                                CardType cardType = currentHand.at(validCard -1)->getType();
+
+                                switch(cardType) {
+                                    //Bomb
+                                    case 0: {
+                                        cout << "What territory do you want to bomb? ";
+                                        string toBomb;
+                                        cin >> toBomb;
+                                        cout << "Order to bomb " << toBomb << " issued" << endl;
+
+                                        break;
+                                    } // end case 0
+                                    //Reinforcement
+                                    case 1: {
+                                        cout << "Reinforcement" << endl;
+                                        break;
+                                    } // end case 1
+                                    // Blockade
+                                    case 2: {
+                                        cout << "What territory do you want to blockade? ";
+                                        string toBlockade;
+                                        cin >> toBlockade;
+                                        cout << "Issued order to blockade " << toBlockade << endl;
+
+                                        break;
+                                    } // end case 2
+                                    // Airlift
+                                    case 3: {
+                                        cout << "Where do you want to airlift from?" << endl;
+                                        for (int i = 0; i < territories->size(); i++) {
+                                            cout << (i+1) << ". " << territories->at(i) << endl;
+                                        }
+
+                                        string airliftFrom;
+                                        while (true) {
+                                            cin >> airliftFrom;
+                                            int validAirliftFrom = string_is_num_in_range(airliftFrom, 1, territories->size());
+
+                                            if (validAirliftFrom) {
+                                                cout << "How many troops to airlift? ";
+
+                                                string troopsToAirlift;
+                                                while(true) {
+                                                    cin >> troopsToAirlift;
+                                                    int validTroopsToAirlift = string_is_num_in_range(troopsToAirlift, 1, 999999);
+
+                                                    if (validTroopsToAirlift) {
+                                                        cout << "Airlift troops to which territory? ";
+
+                                                        string airliftTo;
+
+                                                        while(true) {
+                                                            cin >> airliftTo;
+                                                            int validAirliftTo = string_is_num_in_range(airliftTo, 1, territories->size());
+
+                                                            if (validAirliftTo) {
+                                                                // TODO issue order
+                                                                cout << "Airlift " << validTroopsToAirlift << " troops form "
+                                                                << *(territories->at(validAirliftFrom)->getTerritoryName()) << " to "
+                                                                << *(territories->at(validAirliftTo - 1)->getTerritoryName()) << endl;
+
+                                                                break;
+                                                            } else {
+                                                                invalidInput();
+                                                            }
+                                                        }
+
+                                                        break;
+                                                    } else {
+                                                        invalidInput();
+                                                    }
+                                                }
+
+
+                                                break;
+                                            } else {
+                                                invalidInput();
+                                            }
+                                        }
+
+                                        break;
+                                    } // end case 3
+                                    // Diplomacy
+                                    case 4: {
+                                        cout << "What player do you want to use diplomacy on? ";
+
+                                        string diplomacyTarget;
+
+                                        while(true) {
+                                            cin >> diplomacyTarget;
+                                            int validDiplomacyTarget = string_is_num_in_range(diplomacyTarget, 1, 9999);
+
+                                            if (validDiplomacyTarget) {
+                                                // TODO issue order
+                                                cout << "Using diplomacy on player " << validDiplomacyTarget << endl;
+                                                break;
+                                            } else {
+                                                invalidInput();
+                                            }
+                                        }
+
+                                        break;
+                                    } // end case 4
+
+                                } // end of switch
 
                                 // TODO issue order
                                 currentHand.at(validCard - 1)->play();
@@ -504,7 +636,6 @@ void invalidInput() {
     cin.clear();
     cin.ignore();
 }
-
 
 
 

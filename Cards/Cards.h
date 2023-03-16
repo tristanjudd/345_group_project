@@ -84,3 +84,4 @@ public:
 	int size();
 	Card* peek(int n);
 };
+
