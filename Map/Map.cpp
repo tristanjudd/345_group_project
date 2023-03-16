@@ -224,6 +224,22 @@ int *Continent::getValue() const {
     return value;
 }
 
+void Continent::setTerritoriesInContinent(Continent *inContinent, vector<Territory *> *inTerritoriesInContinent) {
+    vector<Territory *> *tempTerritory = new vector<Territory *>();
+    for (int i = 0; i < inTerritoriesInContinent->size(); i++) {
+        if (*inContinent->getId() == *inTerritoriesInContinent->at(i)->getContinentId()) {
+            tempTerritory->push_back(inTerritoriesInContinent->at(i));
+        }
+    }
+    inContinent->territoriesInContinent = tempTerritory;
+    tempTerritory->clear();
+    delete tempTerritory;
+}
+
+vector<Territory *> *Continent::getTerritoriesInContinent() const {
+    return territoriesInContinent;
+}
+
 // Map class
 // default constructor
 Map::Map() {
@@ -629,6 +645,10 @@ Map MapLoader::load(int mapNumber) {
 
     for (int i = 0; i < map->getTerritories()->size(); i++) {
         Territory::setBorderedTerritories(map->getTerritories()->at(i), map->getTerritories());
+    }
+
+    for (int i = 0; i < map->getContinents()->size(); i++) {
+        Continent::setTerritoriesInContinent(map->getContinents()->at(i), map->getTerritories());
     }
 
     printf("Closing %s...\n", path->c_str());
