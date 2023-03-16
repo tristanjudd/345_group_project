@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <algorithm>
+#include "../Player/Player.h"
 using std::cout;
 using std::endl;
 using std::string;
@@ -33,7 +34,7 @@ class GameEngine {
 private:
     int *winner; // id of the winner
     vector<Player *> *players; // list of players currently in the game, in order of turns
-    int* currentPlayer; // keeps track of the current player
+    Map* map; // the game map
 
 public:
     PHASE start();
@@ -56,9 +57,11 @@ public:
     PHASE reinforcementPhase(); // called by mainGameLoop
     PHASE issueOrdersPhase(); // called by mainGameLoop
     PHASE executeOrdersPhase(); // called by mainGameLoop
+    void initGameDummy(); // method that creates map, players, etc. for dev purposes
 
 };
 
-int string_is_num_in_range(string str, int n, int m);
+//int string_is_num_in_range(string str, int n, int m);
+//void invalidInput();
 
 #endif //WARZONE_GAMEENGINE_H
