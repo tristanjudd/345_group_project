@@ -1,14 +1,21 @@
 #include "GameEngineDriver.h"
 #include "GameEngine.h"
+#include "../CommandProcessor/CommandProcessing.h"
 
 int gameEngineDriver() {
     GameEngine *g = new GameEngine();
+    CommandProcessor* cp = new CommandProcessor();
+    Command *command;
+
     PHASE phase = START;
     while (true) {
         switch (phase) {
             case START:
                 cout << "Start Phase" << endl;
-                phase = g->start();
+                command = cp->getCommand(phase);  // will prompt user, and should not pass for anything other than 'loadmap <mapfile>' (in this phase)
+                cout << *command << endl;  // just to show I did my part
+                // actually execute the command & move to next phase. not sure how you wanna do this.
+                //phase = g->start();
                 break;
             case MAP_LOADED:
                 cout << "Load Map Phase" << endl;
