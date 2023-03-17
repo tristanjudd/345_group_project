@@ -55,7 +55,7 @@ public:
     string* getEffect() const;
     void setName(COMMAND newCmd);
     void setArgument(const string& newArg);
-    void setEffect(const string& newEffect);
+    void saveEffect(const string& newEffect);
 };
 
 class CommandProcessor {
@@ -63,10 +63,9 @@ private:
     vector<Command*> *commands;
 
     // methods
-    static string generateEffect(bool, Command*, PHASE);
-    static void saveEffect(Command *, const string&);
+    static string generateEffect(bool, Command *cmd, PHASE currentPhase);
 
-    void saveCommand(Command *);
+    void saveCommand(Command *cmd);
 public:
     // constructors
     CommandProcessor();
@@ -78,10 +77,10 @@ public:
     friend ostream& operator<<(ostream& os, const CommandProcessor& cp);
 
     // methods
-    static bool validate(Command*, PHASE);
+    static bool validate(Command* cmd, PHASE currentPhase);
     static Command* readCommand();
 
-    Command* getCommand(PHASE);
+    Command* getCommand(PHASE currentPhase);
 };
 
 // TODO IMPLEMENT THIS & ADD ALL THE BS STUFF THEY WANT FOR CLASS (STREAM INSERTION, COPY, DESTRUCTOR ETC.)

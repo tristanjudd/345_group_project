@@ -62,7 +62,7 @@ void Command::setArgument(const string &newArg) {
     argument = new string(newArg);
 }
 
-void Command::setEffect(const string &newEffect) {
+void Command::saveEffect(const string &newEffect) {
     effect = new string(newEffect);
 }
 
@@ -196,10 +196,6 @@ ostream &operator<<(ostream &os, const CommandProcessor &cp) {
 }
 
 // Methods
-void CommandProcessor::saveEffect(Command *command, const string &newEffect) {
-    command->setEffect(newEffect);
-}
-
 void CommandProcessor::saveCommand(Command *command) {
     this->commands->push_back(command);
 }
@@ -297,7 +293,7 @@ Command* CommandProcessor::getCommand(PHASE currentPhase) {
 
     bool cmdIsValid = validate(command, currentPhase);
 
-    CommandProcessor::saveEffect(command, generateEffect(cmdIsValid, command, currentPhase));
+    command->saveEffect(generateEffect(cmdIsValid, command, currentPhase));
 
     saveCommand(command);
     return command;
