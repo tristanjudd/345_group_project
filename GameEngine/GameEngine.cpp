@@ -58,7 +58,11 @@ PHASE GameEngine::addPlayers() {
     }
     cout << "Players created" << endl;
 
+    // TRISTAN: THESE METHODS ARE FOR DEMO PURPOSES
     initGameDummy();
+    //initGameEndDummy();
+    // END OF DEMO METHODS
+
     return PLAY; //go to assign reinforcement phase
 }
 
@@ -202,6 +206,26 @@ PHASE GameEngine::mainGameLoop() {
 
     cout << "There are " << players->size() << " players" << endl;
 
+    // create new vector for surviving players
+    vector<Player *>* newPlayers = new vector<Player *>;
+    // loop through current players and only push players with territories
+    for (Player* p : *players) {
+        if (p->getTerritories()->size() > 0) {
+            newPlayers->push_back(p);
+        } else {
+            // if player has no territories delete
+            delete p;
+            p = nullptr;
+        }
+    }
+    // delete old players vector
+    delete players;
+    // assign new player vector to gameEngine attribute
+    players = newPlayers;
+
+    cout << "There are " << players->size() << " players" << endl;
+
+
     // check if there's a winner
     if (players->size() == 1) {
         return WIN;
@@ -227,7 +251,25 @@ PHASE GameEngine::reinforcementPhase() {
         newTroops += playerTerritories.size() / 3;
 
         // Add continent bonus
-        // TODO
+        // loop through all continents
+        for (Continent* c : *(map->getContinents())) {
+            // get all member territories of continent
+            vector<Territory *> conts = *(c->getTerritoriesInContinent());
+
+            int matches = 0;
+            // for each territory in continent, check if it's also in player's territories
+            // if so, increment matches
+            for (Territory* t : conts) {
+                if (std::find(playerTerritories.begin(), playerTerritories.end(), t) != playerTerritories.end()) {
+                    matches++;
+                }
+            }
+
+            // if matches == size of continent territories, player has whole continent
+            if (matches == conts.size()) {
+                newTroops += 5;
+            }
+        }
 
         // Update player's reinforcement pool
         player->setReinforcements(player->getReinforcements() + newTroops);
@@ -431,13 +473,25 @@ void GameEngine::initGameDummy() {
         t->setOwner(p3);
     }
 
+    Player* p4 = new Player();
+
     Deck* deck = new Deck();
     Hand* h1 = new Hand();
     Hand* h2 = new Hand();
     Hand* h3 = new Hand();
 
-    h1->insert(deck->draw());
-    h1->insert(deck->draw());
+    Card* c1 = new Card(deck,static_cast<CardType>(0));
+    Card* c2 = new Card(deck,static_cast<CardType>(1));
+    Card* c3 = new Card(deck,static_cast<CardType>(2));
+    Card* c4 = new Card(deck,static_cast<CardType>(3));
+    Card* c5 = new Card(deck,static_cast<CardType>(4));
+
+    h1->insert(c1);
+    h1->insert(c2);
+    h1->insert(c3);
+    h1->insert(c4);
+    h1->insert(c5);
+
     p1->setHand(h1);
     h2->insert(deck->draw());
     h2->insert(deck->draw());
@@ -450,6 +504,7 @@ void GameEngine::initGameDummy() {
     players->push_back(p1);
     players->push_back(p2);
     players->push_back(p3);
+    players->push_back(p4);
 
     vector<Territory *>* mapList = new vector<Territory *>;
     mapList->push_back(t1);
@@ -466,5 +521,21 @@ void GameEngine::initGameDummy() {
     //
     map->setTerritories(mapList);
 
+    Continent* cont = new Continent();
+    vector<Continent *>* contVector = new vector<Continent *>;
+    contVector->push_back(cont);
+
+    cont->testSetTerritories(list1);
+    map->setContinents(contVector);
+
     // END OF DUMMY CODE
+}
+
+void GameEngine::initGameEndDummy() {
+    Player* p = new Player();
+    Territory* t = new Territory();
+    vector<Territory *>* tvec = new vector<Territory *>;
+    tvec->push_back(t);
+    p->setTerritories(tvec);
+    players->push_back(p);
 }
