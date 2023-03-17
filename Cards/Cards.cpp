@@ -68,6 +68,12 @@ Card::Card(Deck* d, Hand* h) {
 	*cardType = static_cast<CardType>(k);
 }
 
+Card::Card(Deck* d, CardType t) {
+    deckIssuedFrom = d;
+    cardType = new CardType;
+    *cardType = t;
+}
+
 // Stream operator
 ostream &operator <<(ostream& os, const Card& c) {
 	os << "Card type: " << c.cardType << std::endl;
@@ -92,7 +98,7 @@ CardType Card::play() {
     this->hand->remove(this);
 
 	// Insert card back into deck
-	this->deckIssuedFrom->insert(this);
+	// this->deckIssuedFrom->insert(this);
 
     return *cardType;
 	
@@ -184,21 +190,22 @@ int Hand::size() {
 
 // Default constructor creates 100 cards and adds their pointers to the deck
 Deck::Deck() {
+    contents = new vector<Card *>;
 
 	for (int i = 0; i < 100; i++) {
 		Card* c = new Card(this);
-		contents.push_back(c);
+		contents->push_back(c);
 	}
 }
 
 Deck::~Deck() {
 	// Delete all cards in deck
-	for (auto c : contents) {
-		delete c;
-	}
+    delete [] contents;
 
 	// Clear vector 
-	contents.clear();
+	contents->clear();
+
+    contents = nullptr;
 }
 
 // Deck copy constructor
@@ -219,8 +226,8 @@ Deck& Deck::operator=(const Deck& d) {
 ostream& operator<<(ostream& os, const Deck& d) {
 	os << "Cards in hand: " << std::endl;
 
-	for (int i = 0; i < d.contents.size(); i++) {
-		os << "Card 1 type: " << d.contents.at(i)->getType() << std::endl;
+	for (int i = 0; i < d.contents->size(); i++) {
+		os << "Card 1 type: " << d.contents->at(i)->getType() << std::endl;
 	}
     return os;
 }
@@ -231,19 +238,19 @@ Deck::Deck(int n) {
 
 	for (int i = 0; i < n; i++) {
 		Card* c = new Card();
-		contents.push_back(c);
+		contents->push_back(c);
 	}
 }
 
 // Returns last card pointer in contents and removes it from contents
 Card* Deck::draw() {
 	// Check that deck is not empty
-	if (contents.size() == 0) {
+	if (contents->size() == 0) {
 		std::cout << "Deck is empty" << std::endl;
 	}
 	else {
-		Card* card = contents.back();
-		contents.pop_back();
+		Card* card = contents->back();
+		contents->pop_back();
 		return card;
 	}
 	
@@ -251,22 +258,22 @@ Card* Deck::draw() {
 
 // Pushes a card pointer to contents and shuffles deck
 void Deck::insert(Card* card) {
-	contents.push_back(card);
-	shuffleDeck();
+	contents->push_back(card);
+	// shuffleDeck();
 }
 
 // Re-arranges pointers in contents vector into random order
 void Deck::shuffleDeck() {
-	std::shuffle(contents.begin(), contents.end(), default_random_engine(time(0)));
+	std::shuffle(contents->begin(), contents->end(), default_random_engine(time(0)));
 	
 }
 
 // Returns number of cards in deck
 int Deck::size() {
-	return contents.size();
+	return contents->size();
 }
 
 // Get nth card in a deck (for dev purposes)
 Card* Deck::peek(int n) {
-	return contents.at(n);
+	return contents->at(n);
 }

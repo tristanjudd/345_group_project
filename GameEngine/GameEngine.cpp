@@ -471,19 +471,17 @@ void GameEngine::initGameDummy() {
     Hand* h2 = new Hand();
     Hand* h3 = new Hand();
 
-    h1->insert(deck->draw());
-    h1->insert(deck->draw());
-    h1->insert(deck->draw());
-    h1->insert(deck->draw());
-    h1->insert(deck->draw());
-    h1->insert(deck->draw());
-    h1->insert(deck->draw());
-    h1->insert(deck->draw());
-    h1->insert(deck->draw());
-    h1->insert(deck->draw());
-    h1->insert(deck->draw());
-    h1->insert(deck->draw());
-    h1->insert(deck->draw());
+    Card* c1 = new Card(deck,static_cast<CardType>(0));
+    Card* c2 = new Card(deck,static_cast<CardType>(1));
+    Card* c3 = new Card(deck,static_cast<CardType>(2));
+    Card* c4 = new Card(deck,static_cast<CardType>(3));
+    Card* c5 = new Card(deck,static_cast<CardType>(4));
+
+    h1->insert(c1);
+    h1->insert(c2);
+    h1->insert(c3);
+    h1->insert(c4);
+    h1->insert(c5);
 
     p1->setHand(h1);
     h2->insert(deck->draw());
