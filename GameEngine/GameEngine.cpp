@@ -197,6 +197,26 @@ PHASE GameEngine::mainGameLoop() {
 
     cout << "There are " << players->size() << " players" << endl;
 
+    // create new vector for surviving players
+    vector<Player *>* newPlayers = new vector<Player *>;
+    // loop through current players and only push players with territories
+    for (Player* p : *players) {
+        if (p->getTerritories()->size() > 0) {
+            newPlayers->push_back(p);
+        } else {
+            // if player has no territories delete
+            delete p;
+            p = nullptr;
+        }
+    }
+    // delete old players vector
+    delete players;
+    // assign new player vector to gameEngine attribute
+    players = newPlayers;
+
+    cout << "There are " << players->size() << " players" << endl;
+
+
     // check if there's a winner
     if (players->size() == 1) {
         return WIN;
@@ -444,6 +464,8 @@ void GameEngine::initGameDummy() {
         t->setOwner(p3);
     }
 
+    Player* p4 = new Player();
+
     Deck* deck = new Deck();
     Hand* h1 = new Hand();
     Hand* h2 = new Hand();
@@ -451,6 +473,18 @@ void GameEngine::initGameDummy() {
 
     h1->insert(deck->draw());
     h1->insert(deck->draw());
+    h1->insert(deck->draw());
+    h1->insert(deck->draw());
+    h1->insert(deck->draw());
+    h1->insert(deck->draw());
+    h1->insert(deck->draw());
+    h1->insert(deck->draw());
+    h1->insert(deck->draw());
+    h1->insert(deck->draw());
+    h1->insert(deck->draw());
+    h1->insert(deck->draw());
+    h1->insert(deck->draw());
+
     p1->setHand(h1);
     h2->insert(deck->draw());
     h2->insert(deck->draw());
@@ -463,6 +497,7 @@ void GameEngine::initGameDummy() {
     players->push_back(p1);
     players->push_back(p2);
     players->push_back(p3);
+    players->push_back(p4);
 
     vector<Territory *>* mapList = new vector<Territory *>;
     mapList->push_back(t1);
