@@ -59,7 +59,7 @@ PHASE GameEngine::addPlayers() {
     cout << "Players created" << endl;
 
     // TRISTAN: THESE METHODS ARE FOR DEMO PURPOSES
-    initGameDummy();
+    //initGameDummy();
     //initGameEndDummy();
     // END OF DEMO METHODS
 
