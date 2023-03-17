@@ -1,9 +1,9 @@
 #include "GameEngine.h"
 #include <set>
 
-Player* GameEngine::neutral = new Player(-1); //CREATING THE STATIC NEUTRAL PLAYER ID = -1
-std::unordered_map<string, bool>* GameEngine::peaceStatus = new std::unordered_map<string, bool>(); //CREATING THE STATIC PEACE STATUS MAP
-vector<int>* GameEngine::conqStatus = new vector<int>(); //CREATING THE STATIC CONQUERED STATUS VECTOR
+Player *GameEngine::neutral = new Player(-1); //CREATING THE STATIC NEUTRAL PLAYER ID = -1
+std::unordered_map<string, bool> *GameEngine::peaceStatus = new std::unordered_map<string, bool>(); //CREATING THE STATIC PEACE STATUS MAP
+vector<int> *GameEngine::conqStatus = new vector<int>(); //CREATING THE STATIC CONQUERED STATUS VECTOR
 
 //Start phase
 PHASE GameEngine::start() {
@@ -160,14 +160,14 @@ GameEngine::GameEngine() {
 }
 
 //copy constructor
-GameEngine::GameEngine(const GameEngine& gameEngine) {
+GameEngine::GameEngine(const GameEngine &gameEngine) {
     cout << "GameEngine copy constructor called" << endl;
     winner = new int(*gameEngine.winner);
     players = gameEngine.players;
 }
 
 //assignment operator
-GameEngine& GameEngine::operator=(const GameEngine& gameEngine) {
+GameEngine &GameEngine::operator=(const GameEngine &gameEngine) {
     cout << "GameEngine assignment operator called" << endl;
     if (this != &gameEngine) {
         delete this->winner;
@@ -177,7 +177,7 @@ GameEngine& GameEngine::operator=(const GameEngine& gameEngine) {
 }
 
 //ostream operator
-ostream& operator<<(ostream& out, const GameEngine& gameEngine) {
+ostream &operator<<(ostream &out, const GameEngine &gameEngine) {
     cout << "GameEngine ostream operator called" << endl;
     out << "Winner: " << *gameEngine.winner << endl;
     return out;
@@ -188,7 +188,7 @@ GameEngine::~GameEngine() {
     cout << "GameEngine destructor called" << endl;
     winner = nullptr;
     delete winner;
-    delete [] players;
+    delete[] players;
 
     delete neutral;
     delete peaceStatus;
@@ -202,9 +202,9 @@ PHASE GameEngine::mainGameLoop() {
     cout << "There are " << players->size() << " players" << endl;
 
     // create new vector for surviving players
-    vector<Player *>* newPlayers = new vector<Player *>;
+    vector<Player *> *newPlayers = new vector<Player *>;
     // loop through current players and only push players with territories
-    for (Player* p : *players) {
+    for (Player *p: *players) {
         if (p->getTerritories()->size() > 0) {
             newPlayers->push_back(p);
         } else {
@@ -235,7 +235,7 @@ PHASE GameEngine::reinforcementPhase() {
     cout << "Assigning reinforcements to all players..." << endl;
 
     // loop through all current players and assign reinforcements based on game logic
-    for (Player* player : *players) {
+    for (Player *player: *players) {
         // get current player's territories
         vector<Territory *> playerTerritories = *(player->getTerritories());
 
@@ -247,14 +247,14 @@ PHASE GameEngine::reinforcementPhase() {
 
         // Add continent bonus
         // loop through all continents
-        for (Continent* c : *(map->getContinents())) {
+        for (Continent *c: *(map->getContinents())) {
             // get all member territories of continent
             vector<Territory *> conts = *(c->getTerritoriesInContinent());
 
             int matches = 0;
             // for each territory in continent, check if it's also in player's territories
             // if so, increment matches
-            for (Territory* t : conts) {
+            for (Territory *t: conts) {
                 if (std::find(playerTerritories.begin(), playerTerritories.end(), t) != playerTerritories.end()) {
                     matches++;
                 }
@@ -279,7 +279,7 @@ PHASE GameEngine::reinforcementPhase() {
 //Issue orders phase
 PHASE GameEngine::issueOrdersPhase() {
 // loop through each player and call issueOrder method
-    for (Player* player : *players) {
+    for (Player *player: *players) {
         cout << "PLAYER " << *(player->getId()) << " ISSUING ORDERS" << endl;
         bool stillPlaying = true;
 
@@ -292,61 +292,61 @@ PHASE GameEngine::issueOrdersPhase() {
 
     }
 
-return EXECUTE_ORDERS;
+    return EXECUTE_ORDERS;
 
 }
 
 //Execute orders phase
 PHASE GameEngine::executeOrdersPhase() {
 
-   vector<Order *> currentOrderList;
-   // flag indicating whether an order has been executed
-   // initialized to true so that we can enter the execution loop
-   bool modFlag = true;
-   // flag indicating whether a deployment was executed
-   // initialized to true to make sure all deployments are executed before other orders
-   bool deployFlag = true;
+    vector<Order *> currentOrderList;
+    // flag indicating whether an order has been executed
+    // initialized to true so that we can enter the execution loop
+    bool modFlag = true;
+    // flag indicating whether a deployment was executed
+    // initialized to true to make sure all deployments are executed before other orders
+    bool deployFlag = true;
 
-   // loop executing orders until there are no orders left
-   while (modFlag) {
-       // set flag to false at the beginning of each round-robin
-       modFlag = false;
-       // go through each player and execute the first order in their list
-       for (Player* player : *players) {
-           // get current player's order list
-           currentOrderList = *(player->getOrders()->getList());
+    // loop executing orders until there are no orders left
+    while (modFlag) {
+        // set flag to false at the beginning of each round-robin
+        modFlag = false;
+        // go through each player and execute the first order in their list
+        for (Player *player: *players) {
+            // get current player's order list
+            currentOrderList = *(player->getOrders()->getList());
 
-           // if there is at least one order left to execute
-           if (currentOrderList.size() > 0) {
-               //get top order
-               Order* toExecute = currentOrderList.at(0);
-               // remove order from front of list
-               currentOrderList.erase(currentOrderList.begin());
-               // check if order is a deploy order
-               auto* isDeploy = dynamic_cast<Deploy *>(toExecute);
+            // if there is at least one order left to execute
+            if (currentOrderList.size() > 0) {
+                //get top order
+                Order *toExecute = currentOrderList.at(0);
+                // remove order from front of list
+                currentOrderList.erase(currentOrderList.begin());
+                // check if order is a deploy order
+                auto *isDeploy = dynamic_cast<Deploy *>(toExecute);
 
-               // if order is deploy, nothing needs to be checked and it can be executed right away
-               if (isDeploy) {
-                   toExecute->execute();
-                   // set deploy flag to true to indicate there was a deployment this round
-                   deployFlag = true;
-               } else {
-                   // if this is set, either another player deployed this turn
-                   // or a player deployed last turn and we need to run through a round-robin to make sure no others deploy
-                   if (deployFlag) {
-                       // set to false so that if nobody else deploys this turn, next turn other orders execute
-                       deployFlag = false;
-                   } else {
-                       // if flag is false, nobody deployed for a whole turn so non-deploy orders are now
-                       // safe to execute
-                       toExecute->execute();
-                   }
-               }
+                // if order is deploy, nothing needs to be checked and it can be executed right away
+                if (isDeploy) {
+                    toExecute->execute();
+                    // set deploy flag to true to indicate there was a deployment this round
+                    deployFlag = true;
+                } else {
+                    // if this is set, either another player deployed this turn
+                    // or a player deployed last turn and we need to run through a round-robin to make sure no others deploy
+                    if (deployFlag) {
+                        // set to false so that if nobody else deploys this turn, next turn other orders execute
+                        deployFlag = false;
+                    } else {
+                        // if flag is false, nobody deployed for a whole turn so non-deploy orders are now
+                        // safe to execute
+                        toExecute->execute();
+                    }
+                }
 
-           }
-       }
+            }
+        }
 
-   }
+    }
 
     return PLAY;
 }
@@ -378,108 +378,108 @@ PHASE GameEngine::executeOrdersPhase() {
 // inits a bunch of objects to have something to test with in dev phase
 void GameEngine::initGameDummy() {
     // DUMMY CODE adding players for dev purposes
-    Territory* t1 = new Territory(1, 1, "A");
-    Territory* t2 = new Territory(2, 1, "B");
-    Territory* t3 = new Territory(3, 1, "C");
-    Territory* t4 = new Territory(4, 1, "D");
-    Territory* t5 = new Territory(5, 1, "E");
-    Territory* t6 = new Territory(6, 1, "F");
-    Territory* t7 = new Territory(7, 1, "G");
-    Territory* t8 = new Territory(8, 1, "H");
-    Territory* t9 = new Territory(9, 1, "I");
+    Territory *t1 = new Territory(1, 1, "A");
+    Territory *t2 = new Territory(2, 1, "B");
+    Territory *t3 = new Territory(3, 1, "C");
+    Territory *t4 = new Territory(4, 1, "D");
+    Territory *t5 = new Territory(5, 1, "E");
+    Territory *t6 = new Territory(6, 1, "F");
+    Territory *t7 = new Territory(7, 1, "G");
+    Territory *t8 = new Territory(8, 1, "H");
+    Territory *t9 = new Territory(9, 1, "I");
 
-    vector<Territory *>* borders1 = new vector<Territory *>;
+    vector<Territory *> *borders1 = new vector<Territory *>;
     borders1->push_back(t2);
     borders1->push_back(t4);
     t1->testSetBorders(borders1);
 
-    vector<Territory *>* borders2 = new vector<Territory *>;
+    vector<Territory *> *borders2 = new vector<Territory *>;
     borders2->push_back(t1);
     borders2->push_back(t3);
     borders2->push_back(t5);
     t2->testSetBorders(borders2);
 
-    vector<Territory *>* borders3 = new vector<Territory *>;
+    vector<Territory *> *borders3 = new vector<Territory *>;
     borders3->push_back(t2);
     borders3->push_back(t6);
     t3->testSetBorders(borders3);
 
-    vector<Territory *>* borders4 = new vector<Territory *>;
+    vector<Territory *> *borders4 = new vector<Territory *>;
     borders4->push_back(t1);
     borders4->push_back(t5);
     borders4->push_back(t7);
     t4->testSetBorders(borders4);
 
-    vector<Territory *>* borders5 = new vector<Territory *>;
+    vector<Territory *> *borders5 = new vector<Territory *>;
     borders5->push_back(t2);
     borders5->push_back(t4);
     borders5->push_back(t6);
     borders5->push_back(t8);
     t5->testSetBorders(borders5);
 
-    vector<Territory *>* borders6 = new vector<Territory *>;
+    vector<Territory *> *borders6 = new vector<Territory *>;
     borders6->push_back(t3);
     borders6->push_back(t5);
     borders6->push_back(t9);
     t6->testSetBorders(borders6);
 
-    vector<Territory *>* borders7 = new vector<Territory *>;
+    vector<Territory *> *borders7 = new vector<Territory *>;
     borders7->push_back(t4);
     borders7->push_back(t8);
     t7->testSetBorders(borders7);
 
-    vector<Territory *>* borders8 = new vector<Territory *>;
+    vector<Territory *> *borders8 = new vector<Territory *>;
     borders8->push_back(t5);
     borders8->push_back(t7);
     borders8->push_back(t9);
     t8->testSetBorders(borders8);
 
-    vector<Territory *>* borders9 = new vector<Territory *>;
+    vector<Territory *> *borders9 = new vector<Territory *>;
     borders9->push_back(t6);
     borders9->push_back(t8);
     t9->testSetBorders(borders9);
 
-    vector<Territory *>* list1 = new vector<Territory *>;
+    vector<Territory *> *list1 = new vector<Territory *>;
     list1->push_back(t1);
     list1->push_back(t2);
     list1->push_back(t3);
-    vector<Territory *>* list2 = new vector<Territory *>;
+    vector<Territory *> *list2 = new vector<Territory *>;
     list2->push_back(t4);
     list2->push_back(t5);
     list2->push_back(t6);
-    vector<Territory *>* list3 = new vector<Territory *>;
+    vector<Territory *> *list3 = new vector<Territory *>;
     list3->push_back(t7);
     list3->push_back(t8);
     list3->push_back(t9);
 
     Player *p1 = new Player();
     p1->setTerritories(list1);
-    for (Territory* t : *list1) {
+    for (Territory *t: *list1) {
         t->setOwner(p1);
     }
-    Player* p2 = new Player();
+    Player *p2 = new Player();
     p2->setTerritories(list2);
-    for (Territory* t : *list2) {
+    for (Territory *t: *list2) {
         t->setOwner(p2);
     }
-    Player* p3 = new Player();
+    Player *p3 = new Player();
     p3->setTerritories(list3);
-    for (Territory* t : *list3) {
+    for (Territory *t: *list3) {
         t->setOwner(p3);
     }
 
-    Player* p4 = new Player();
+    Player *p4 = new Player();
 
-    Deck* deck = new Deck();
-    Hand* h1 = new Hand();
-    Hand* h2 = new Hand();
-    Hand* h3 = new Hand();
+    Deck *deck = new Deck();
+    Hand *h1 = new Hand();
+    Hand *h2 = new Hand();
+    Hand *h3 = new Hand();
 
-    Card* c1 = new Card(deck,static_cast<CardType>(0));
-    Card* c2 = new Card(deck,static_cast<CardType>(1));
-    Card* c3 = new Card(deck,static_cast<CardType>(2));
-    Card* c4 = new Card(deck,static_cast<CardType>(3));
-    Card* c5 = new Card(deck,static_cast<CardType>(4));
+    Card *c1 = new Card(deck, static_cast<CardType>(0));
+    Card *c2 = new Card(deck, static_cast<CardType>(1));
+    Card *c3 = new Card(deck, static_cast<CardType>(2));
+    Card *c4 = new Card(deck, static_cast<CardType>(3));
+    Card *c5 = new Card(deck, static_cast<CardType>(4));
 
     h1->insert(c1);
     h1->insert(c2);
@@ -501,7 +501,7 @@ void GameEngine::initGameDummy() {
     players->push_back(p3);
     players->push_back(p4);
 
-    vector<Territory *>* mapList = new vector<Territory *>;
+    vector<Territory *> *mapList = new vector<Territory *>;
     mapList->push_back(t1);
     mapList->push_back(t2);
     mapList->push_back(t3);
@@ -516,8 +516,8 @@ void GameEngine::initGameDummy() {
     //
     map->setTerritories(mapList);
 
-    Continent* cont = new Continent();
-    vector<Continent *>* contVector = new vector<Continent *>;
+    Continent *cont = new Continent();
+    vector<Continent *> *contVector = new vector<Continent *>;
     contVector->push_back(cont);
 
     cont->testSetTerritories(list1);
@@ -527,9 +527,9 @@ void GameEngine::initGameDummy() {
 }
 
 void GameEngine::initGameEndDummy() {
-    Player* p = new Player();
-    Territory* t = new Territory();
-    vector<Territory *>* tvec = new vector<Territory *>;
+    Player *p = new Player();
+    Territory *t = new Territory();
+    vector<Territory *> *tvec = new vector<Territory *>;
     tvec->push_back(t);
     p->setTerritories(tvec);
     players->push_back(p);
