@@ -57,7 +57,8 @@ public:
     PHASE reinforcementPhase(); // called by mainGameLoop
     PHASE issueOrdersPhase(); // called by mainGameLoop
     PHASE executeOrdersPhase(); // called by mainGameLoop
-    void initGameDummy(); // method that creates map, players, etc. for dev purposes
+    void initGameDummy(); // driver method that creates map, players, etc. for dev purposes
+    void initGameEndDummy(); // driver method that inits game with only one player to show win condition
 
     //MEMBERS USED IN ORDERS
     static Player* neutral; //neutral player
