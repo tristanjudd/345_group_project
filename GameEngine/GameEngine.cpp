@@ -104,6 +104,11 @@ PHASE GameEngine::issueOrders() {
 
 //Execute orders phase ***DEPRECATED FROM A1
 PHASE GameEngine::executeOrders() {
+
+    //clearing peaceStatus map and conqStatus vector
+    peaceStatus->clear();
+    conqStatus->clear();
+
     while (true) {
         cout << "Execute orders" << endl;
         while (true) {
