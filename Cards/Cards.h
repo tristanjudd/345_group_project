@@ -37,6 +37,7 @@ public:
 	Card(Hand* h);
 	Card(Deck* d);
 	Card(Deck* d, Hand* h);
+    Card(Deck* d, CardType t);
 	Card &operator=(const Card& c); // Assignment operator
 	friend std::ostream& operator<<(std::ostream& os, const Card& c);
 	void assignHand(Hand* hand);
@@ -70,7 +71,7 @@ public:
 // A deck is a collection of Card objects
 class Deck {
 private:
-	std::vector<Card *> contents;
+	std::vector<Card *>* contents;
 public:
 	Deck();
 	~Deck();
