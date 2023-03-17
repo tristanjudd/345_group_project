@@ -58,7 +58,11 @@ PHASE GameEngine::addPlayers() {
     }
     cout << "Players created" << endl;
 
+    // TRISTAN: THESE METHODS ARE FOR DEMO PURPOSES
     initGameDummy();
+    //initGameEndDummy();
+    // END OF DEMO METHODS
+
     return PLAY; //go to assign reinforcement phase
 }
 
@@ -104,6 +108,11 @@ PHASE GameEngine::issueOrders() {
 
 //Execute orders phase ***DEPRECATED FROM A1
 PHASE GameEngine::executeOrders() {
+
+    //clearing peaceStatus map and conqStatus vector
+    peaceStatus->clear();
+    conqStatus->clear();
+
     while (true) {
         cout << "Execute orders" << endl;
         while (true) {
@@ -520,4 +529,13 @@ void GameEngine::initGameDummy() {
     map->setContinents(contVector);
 
     // END OF DUMMY CODE
+}
+
+void GameEngine::initGameEndDummy() {
+    Player* p = new Player();
+    Territory* t = new Territory();
+    vector<Territory *>* tvec = new vector<Territory *>;
+    tvec->push_back(t);
+    p->setTerritories(tvec);
+    players->push_back(p);
 }
