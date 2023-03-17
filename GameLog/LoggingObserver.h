@@ -22,7 +22,7 @@ class Observer {
 
 public:
     ~Observer();
-    virtual void Update() = 0;
+    virtual void Update(ILoggable* loggable) = 0;
 
 protected:
     Observer();
@@ -31,14 +31,13 @@ protected:
 class Subject {
 
 public:
-    virtual void Attach(Observer* o);
-    virtual void Detach(Observer* o);
-    virtual void Notify();
+
+    virtual void Notify(ILoggable* loggable);
     Subject();
     ~Subject();
 private:
 
-    list<Observer*> * _observers;
+    Observer * observer;
 
 };
 

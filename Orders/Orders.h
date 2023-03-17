@@ -12,11 +12,12 @@ using std::rand;
 using namespace std;
 
 #include "../Map/Map.h"
+#include "../GameLog/LoggingObserver.h"
 
 //forward declaration
 class Player;
 
-class Order
+class Order: public ILoggable, public Subject
 {
 public:
 
