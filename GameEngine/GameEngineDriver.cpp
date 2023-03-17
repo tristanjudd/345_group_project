@@ -18,21 +18,25 @@ int gameEngineDriver() {
                 cout << "Validate Map Phase" << endl;
                 phase = g->validateMap();
                 break;
+            case PLAY:
+                cout << "NEW TURN \n" << endl;
+                phase = g->mainGameLoop();
+                break;
             case PLAYERS_ADDED:
                 cout << "Add Players Phase" << endl;
                 phase = g->addPlayers();
                 break;
             case ASSIGN_REINFORCEMENT:
-                cout << "Assign Reinforcement Phase" << endl;
-                phase = g->assignReinforcements();
+                cout << "ASSIGN REINFORCEMENTS PHASE" << endl;
+                phase = g->reinforcementPhase();
                 break;
             case ISSUE_ORDERS:
-                cout << "Issue Orders Phase" << endl;
-                phase = g->issueOrders();
+                cout << "ISSUE ORDERS PHASE" << endl;
+                phase = g->issueOrdersPhase();
                 break;
             case EXECUTE_ORDERS:
-                cout << "Execute Orders Phase" << endl;
-                phase = g->executeOrders();
+                cout << "EXECUTE ORDERS PHASE" << endl;
+                phase = g->executeOrdersPhase();
                 break;
             case WIN:
                 cout << "Win Phase" << endl;

@@ -2,6 +2,8 @@
 #define WARZONE_GAMEENGINE_H
 
 #include <iostream>
+#include <algorithm>
+#include <unordered_map>
 #include <string>
 using std::cout;
 using std::endl;
@@ -9,12 +11,18 @@ using std::string;
 using std::cin;
 using std::ostream;
 
+#include "../Player/Player.h"
+#include "../Map/Map.h"
+#include "../Orders/Orders.h"
+#include "../Cards/Cards.h"
+
 //enum of phases
 enum PHASE {
     START,
     MAP_LOADED,
     MAP_VALIDATED,
     PLAYERS_ADDED,
+    PLAY,
     ASSIGN_REINFORCEMENT,
     ISSUE_ORDERS,
     EXECUTE_ORDERS,
@@ -25,6 +33,9 @@ enum PHASE {
 class GameEngine {
 private:
     int *winner; // id of the winner
+    vector<Player *> *players; // list of players currently in the game, in order of turns
+    Map* map; // the game map
+
 public:
     PHASE start();
     PHASE loadMap();
@@ -42,11 +53,19 @@ public:
     ~GameEngine(); //destructor
 
     // START OF ASSIGNMENT 2
-    void mainGameLoop(); // loops through game phases until win condition is met
-    void reinforcementPhase(); // called by mainGameLoop
-    void issueOrdersPhase(); // called by mainGameLoop
-    void executeOrdersPhase(); // called by mainGameLoop
+    PHASE mainGameLoop(); // loops through game phases until win condition is met
+    PHASE reinforcementPhase(); // called by mainGameLoop
+    PHASE issueOrdersPhase(); // called by mainGameLoop
+    PHASE executeOrdersPhase(); // called by mainGameLoop
+    void initGameDummy(); // method that creates map, players, etc. for dev purposes
 
+    //MEMBERS USED IN ORDERS
+    static Player* neutral; //neutral player
+    static std::unordered_map<string, bool>* peaceStatus; //keeps track of peace status between players
+    static vector<int>* conqStatus; //keeps track of conquest status
 };
+
+//int string_is_num_in_range(string str, int n, int m);
+//void invalidInput();
 
 #endif //WARZONE_GAMEENGINE_H

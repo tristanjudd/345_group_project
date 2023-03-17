@@ -6,14 +6,22 @@ using std::cout;
 using std::vector;
 #include <string>
 using namespace std;
+#include <cstdlib>
+using std::rand;
+#include <unordered_map>
+using namespace std;
 
+#include "../Map/Map.h"
+
+//forward declaration
+class Player;
 
 class Order
 {
 public:
 
 	Order();
-	Order(string _execMessage);
+	Order(Player* _issuer);
 	Order(const Order& _o);
 	virtual ~Order();
 
@@ -24,11 +32,15 @@ public:
 	void setEffect(string _execMessage);
 	string getDesc() const;
 	void setDesc(string _desc);
+	Player* getPlayer() const;
+	void setPlayer(Player _player);
+
 	void operator= (Order const &);
 	
 private:
 	string* m_descriptionPtr;
 	string* m_effectPtr;
+	Player* m_playerPtr;
 };
 
 //stream insertion operator ORDER
@@ -39,59 +51,95 @@ class Deploy : public Order
 {
 public:
 	Deploy();
-	Deploy(string _execMessage);
+	Deploy(Player* _issuer, int _nbArmies, Territory* _target);
 	Deploy(const Deploy& _o);
 	~Deploy();
+
+	int getNbArmies() const;
+	void setNbArmies(int _nbArmies);
+	Territory* getTarget() const;
+	void setTarget(Territory _target);
 
 	bool validate();
 	bool execute();
 
+	void operator= (Deploy const &);
+
+	void doSomething();
+	void testStatic();
+
 private:
+	int *nbArmies;
+	Territory* target;
 };
 
 class Advance : public Order
 {
 public:
 	Advance();
-	Advance(string _execMessage);
+	Advance(Player* _issuer,int _nbArmies, Territory* _source, Territory* _target);
 	Advance(const Advance& _o);
 	~Advance();
+
+	//getter and setters
+	int getNbArmies() const;
+	void setNbArmies(int _nbArmies);
+	Territory* getSource() const;
+	void setSource(Territory _source);
+	Territory* getTarget() const;
+	void setTarget(Territory _target);
+	
+	void operator= (Advance const &);
 
 	bool validate();
 	bool execute();
 
 private:
-
+	int* nbArmies;
+	Territory* source;
+	Territory* target;
 };
 
 class Bomb : public Order
 {
 public:
 	Bomb();
-	Bomb(string _execMessage);
+	Bomb(Player* _issuer, Territory* _target);
 	Bomb(const Bomb& _o);
 	~Bomb();
+
+	//getter and setter
+	Territory* getTarget() const;
+	void setTarget(Territory _target);
+
+	void operator= (Bomb const &);
 
 	bool validate();
 	bool execute();
 
 private:
-
+	Territory* target;
 };
 
 class Blockade : public Order
 {
 public:
 	Blockade();
-	Blockade(string _execMessage);
+	Blockade(Player* _issuer, Territory* _target);
 	Blockade(const Blockade& _o);
 	~Blockade();
+
+	//getter and setter
+	Territory* getTarget() const;
+	void setTarget(Territory _target);
+
+	void operator= (Blockade const &);
 
 	bool validate();
 	bool execute();
 
 private:
-
+	Territory* target;
 };
 
 
@@ -99,30 +147,49 @@ class Airlift : public Order
 {
 public:
 	Airlift();
-	Airlift(string _execMessage);
+	Airlift(Player* _issuer, int _nbArmies, Territory* _source, Territory* _target);
 	Airlift(const Airlift& _o);
 	~Airlift();
+
+	//getter and setters
+	int getNbArmies() const;
+	void setNbArmies(int _nbArmies);
+	Territory* getSource() const;
+	void setSource(Territory _source);
+	Territory* getTarget() const;
+	void setTarget(Territory _target);
+
+	void operator= (Airlift const &);
 
 	bool validate();
 	bool execute();
 
 private:
-
+	int* nbArmies;
+	Territory* source;
+	Territory* target;
 };
 
 class Negotiate : public Order
 {
 public:
 	Negotiate();
-	Negotiate(string _execMessage);
+	Negotiate(Player* _issuer, int _victimID);
 	Negotiate(const Negotiate& _o);
 	~Negotiate();
+
+	//getter and setter;
+	int getVictim() const;
+	void setVictim(int _victimID);
+
+	void operator= (Negotiate const &);
 
 	bool validate();
 	bool execute();
 
 private:
-
+	Player* issuer;
+	int* victim;
 };
 
 class OrderList

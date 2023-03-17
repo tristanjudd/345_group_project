@@ -1,15 +1,15 @@
-class Hand;
+//class Hand;
 #pragma once
 //#include "Map.h"
-#include "../Cards/Cards.h"
 #include <vector>
 #include <ostream>
+
 #include "../Map/Map.h"
 #include "../Orders/Orders.h"
+#include "../Cards/Cards.h"
 
 using std::vector;
 
-class Territory;
 
 class Player {
 
@@ -36,11 +36,13 @@ public:
     friend ostream &operator<<(ostream &os, const Player &player);
 
     //Player functions
-    vector<Territory*> *toAttack();
+
+    // changed return type to int because had to use territory ids for comparison
+    vector<Territory *> *toAttack();
 
     vector<Territory*> *toDefend();
 
-    void issueOrder();
+    bool issueOrder();
 
     //getters and setters
     Hand *getHand();
@@ -64,3 +66,6 @@ public:
     int getReinforcements();
     void setReinforcements(int n);
 };
+
+int string_is_num_in_range(string str, int n, int m);
+void invalidInput();

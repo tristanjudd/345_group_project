@@ -5,6 +5,9 @@
 #include <random>
 #include <iostream>
 
+#include "../Player/Player.h"
+#include "../Orders/Orders.h"
+
 // Card class method definitions
 Card::Card() {
 	int k = rand() % 5;
@@ -65,6 +68,12 @@ Card::Card(Deck* d, Hand* h) {
 	*cardType = static_cast<CardType>(k);
 }
 
+Card::Card(Deck* d, CardType t) {
+    deckIssuedFrom = d;
+    cardType = new CardType;
+    *cardType = t;
+}
+
 // Stream operator
 ostream &operator <<(ostream& os, const Card& c) {
 	os << "Card type: " << c.cardType << std::endl;
@@ -82,52 +91,57 @@ void Card::assignHand(Hand* h) {
 }
 
 // Method issues an order to the player who owns the card and card is returned to the deck
-void Card::play() {
-	std::cout << "PLAYING" << std::endl;
-
-	// Issue order
-	this->hand->owner->issueOrder();
-	std::cout << "order issued" << std::endl;
+CardType Card::play() {
+	std::cout << "Playing " << getCardName() << " card\n" << std::endl;
 
 	// Remove this card from hand
-	this->hand->remove(this);
+    this->hand->remove(this);
 
 	// Insert card back into deck
-	this->deckIssuedFrom->insert(this);
+	// this->deckIssuedFrom->insert(this);
+
+    return *cardType;
 	
-	
+}
+
+string Card::getCardName() {
+    switch(*cardType) {
+        case 0:
+            return "Bomb";
+        case 1:
+            return "Reinforcement";
+        case 2:
+            return "Blockade";
+        case 3:
+            return "Airlift";
+        case 4:
+            return "Diplomacy";
+    } // end of switch
 }
 
 // Hand class method declarations
 
 // Hand default constructor pointing to no player
 Hand::Hand() {
-	owner = NULL;
+    contents = new vector<Card *>;
 }
 
 Hand::~Hand() {
 	// Return all cards to deck
-	for (auto c : contents) {
+	for (auto c : *contents) {
 		c->deckIssuedFrom->insert(c);
 	}
 
-	contents.clear();
+	contents->clear();
 }
 
 Hand::Hand(const Hand& h) {
-	owner = h.owner;
 	contents = h.contents;
-}
-
-// Hand constructor with Player to whom the hand is pointing
-Hand::Hand(Player* p) {
-	owner = p;
 }
 
 // Hand assignment operator
 Hand& Hand::operator=(const Hand& h) {
 	if (this != &h) {
-		owner = h.owner;
 		contents = h.contents;
 	}
 	return *this;
@@ -138,8 +152,8 @@ Hand& Hand::operator=(const Hand& h) {
 ostream& operator<<(ostream& os, const Hand& h) {
 	os << "Cards in hand: " << std::endl;
 
-	for (int i = 0; i < h.contents.size(); i++) {
-		os << "Card 1 type: " << h.contents.at(i)->getType() << std::endl;
+	for (int i = 0; i < h.contents->size(); i++) {
+		os << "Card 1 type: " << h.contents->at(i)->getType() << std::endl;
 	}
 
     return os;
@@ -147,64 +161,51 @@ ostream& operator<<(ostream& os, const Hand& h) {
 
 // Get contents of hand, returns vector of Card objects
 std::vector<Card *> Hand::getHand() {
-	return contents;
+	return *contents;
 }
 
 // Insert a card into a hand
 void Hand::insert(Card* card) {
-	contents.push_back(card);
+	contents->push_back(card);
 	card->assignHand(this);
 }
 
 // Remove a card from a hand
 void Hand::remove(Card* card) {
-	// std::vector<Card*>::iterator it = contents.begin();
-	int i = 0;
-	bool cardFound = false;
+    std::vector<Card *>::iterator cardToRemove;
 
-	for (i; i < contents.size(); i++) {
-		if (card == contents[i]) {
-			cardFound = true;
-			break;
-		}
-	}
-
-	std::vector<Card*>::iterator it = contents.begin() + i;
-
-	if (cardFound) {
-		contents.erase(it);
-	}
-	else {
-		std::cout << "card not found" << std::endl;
-	}
-
+    cardToRemove = std::find(contents->begin(), contents->end(), card);
+    if (cardToRemove != contents->end()) {
+        contents->erase(cardToRemove);
+    }
 
 }
 
 // Get size of hand
 int Hand::size() {
-	return contents.size();
+	return contents->size();
 }
 
 // Deck class method delcarations 
 
 // Default constructor creates 100 cards and adds their pointers to the deck
 Deck::Deck() {
+    contents = new vector<Card *>;
 
 	for (int i = 0; i < 100; i++) {
 		Card* c = new Card(this);
-		contents.push_back(c);
+		contents->push_back(c);
 	}
 }
 
 Deck::~Deck() {
 	// Delete all cards in deck
-	for (auto c : contents) {
-		delete c;
-	}
+    delete [] contents;
 
 	// Clear vector 
-	contents.clear();
+	contents->clear();
+
+    contents = nullptr;
 }
 
 // Deck copy constructor
@@ -225,8 +226,8 @@ Deck& Deck::operator=(const Deck& d) {
 ostream& operator<<(ostream& os, const Deck& d) {
 	os << "Cards in hand: " << std::endl;
 
-	for (int i = 0; i < d.contents.size(); i++) {
-		os << "Card 1 type: " << d.contents.at(i)->getType() << std::endl;
+	for (int i = 0; i < d.contents->size(); i++) {
+		os << "Card 1 type: " << d.contents->at(i)->getType() << std::endl;
 	}
     return os;
 }
@@ -237,19 +238,19 @@ Deck::Deck(int n) {
 
 	for (int i = 0; i < n; i++) {
 		Card* c = new Card();
-		contents.push_back(c);
+		contents->push_back(c);
 	}
 }
 
 // Returns last card pointer in contents and removes it from contents
 Card* Deck::draw() {
 	// Check that deck is not empty
-	if (contents.size() == 0) {
+	if (contents->size() == 0) {
 		std::cout << "Deck is empty" << std::endl;
 	}
 	else {
-		Card* card = contents.back();
-		contents.pop_back();
+		Card* card = contents->back();
+		contents->pop_back();
 		return card;
 	}
 	
@@ -257,22 +258,22 @@ Card* Deck::draw() {
 
 // Pushes a card pointer to contents and shuffles deck
 void Deck::insert(Card* card) {
-	contents.push_back(card);
-	shuffleDeck();
+	contents->push_back(card);
+	// shuffleDeck();
 }
 
 // Re-arranges pointers in contents vector into random order
 void Deck::shuffleDeck() {
-	std::shuffle(contents.begin(), contents.end(), default_random_engine(time(0)));
+	std::shuffle(contents->begin(), contents->end(), default_random_engine(time(0)));
 	
 }
 
 // Returns number of cards in deck
 int Deck::size() {
-	return contents.size();
+	return contents->size();
 }
 
 // Get nth card in a deck (for dev purposes)
 Card* Deck::peek(int n) {
-	return contents.at(n);
+	return contents->at(n);
 }

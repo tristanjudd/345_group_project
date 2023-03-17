@@ -8,17 +8,17 @@ int ordersDriver() {
 	//Creating objects
 	//Order *ord = new Order("");
 	cout << "Order created" << endl;
-	Deploy *dep = new Deploy("");
+	Deploy *dep = new Deploy();
 	cout << "Deploy created" << endl;
-	Advance *adv =  new Advance("");
+	Advance *adv =  new Advance();
 	cout << "Advance created" << endl;
-	Bomb *bom = new Bomb("");
+	Bomb *bom = new Bomb();
 	cout << "Bomb created" << endl;
-	Blockade *blo = new Blockade("");
+	Blockade *blo = new Blockade();
 	cout << "blockade created" << endl;
-	Airlift *air = new Airlift("");
+	Airlift *air = new Airlift();
 	cout << "Airlift created" << endl;
-	Negotiate *neg = new Negotiate("");
+	Negotiate *neg = new Negotiate();
 	cout << "Negotiate created" << endl;
 
 	//Order *invalid = new Order("invalid");

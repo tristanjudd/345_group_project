@@ -1,9 +1,12 @@
-class Player; // foreward declaration to avoid circular dependency
 #pragma once
 #include <string>
 #include <vector>
 #include <ostream>
-#include "../Player/Player.h"
+//#include "../Player/Player.h"
+#include "../Orders/Orders.h"
+
+// class Player; // foreward declaration to avoid circular dependency
+
 
 // Enum of the different card types
 enum CardType
@@ -34,11 +37,13 @@ public:
 	Card(Hand* h);
 	Card(Deck* d);
 	Card(Deck* d, Hand* h);
+    Card(Deck* d, CardType t);
 	Card &operator=(const Card& c); // Assignment operator
 	friend std::ostream& operator<<(std::ostream& os, const Card& c);
 	void assignHand(Hand* hand);
-	void play();
+	CardType play();
 	CardType getType();
+    string getCardName();
 };
 
 // Hand class header
@@ -46,10 +51,9 @@ public:
 class Hand {
 private:
 	
-	std::vector<Card *> contents;
+	std::vector<Card *>* contents;
 
 public:
-	Player* owner;
 	Hand(); // Default constructor with no cards
 	~Hand();
 	Hand(const Hand& h); // copy constructor
@@ -67,7 +71,7 @@ public:
 // A deck is a collection of Card objects
 class Deck {
 private:
-	std::vector<Card *> contents;
+	std::vector<Card *>* contents;
 public:
 	Deck();
 	~Deck();
@@ -81,3 +85,4 @@ public:
 	int size();
 	Card* peek(int n);
 };
+

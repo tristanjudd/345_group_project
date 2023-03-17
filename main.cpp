@@ -8,11 +8,14 @@
 int main() {
     std::cout << "Welcome to our bootleg Warzone!" << std::endl;
 
+    //PART1
     //mapDriver();  // For now, just goes through the prompt, but we will have to return the map objects here eventually
     //cardDriver();
-    ordersDriver();
-    //playerDriver();
-    //gameEngineDriver();
+    //ordersDriver(); //DOES NOT WORK ANYMORE BECAUSE ORDER CLASS IS ABSTRACT
+    //playerDriver(); //DOES NOT WORK ANYMORE BECAUSE ORDER CLASS IS ABSTRACT AND ISSUEORDER NOT DEFINE
+    gameEngineDriver();
 
+    //PART2
+    
     return 0;
 }
