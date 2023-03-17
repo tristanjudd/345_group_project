@@ -150,7 +150,6 @@ private:
 
     // static methods
     static PARSE_MODE getMode(const string& inputString);
-    static vector<string> getTokens(const string& inputString);
 
 public:
     // Constructors
@@ -166,6 +165,7 @@ public:
 
     // Methods
     Map load(int mapNumber);
+    static vector<string> getTokens(const string& inputString);
 };
 int mapTest();
 #endif //MAP_H
