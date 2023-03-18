@@ -129,8 +129,9 @@ Deploy::~Deploy()
 //check if territory belongs to player
 bool Deploy::validate() {
 	
+	//check if playerID and target ownerID are the same
 	if( (*(target->getOwner())->getId()) != (*(getPlayer()->getId())) ){
-		cout << "DEBUG: Order not valid" << endl;
+		cout << "DEBUG: Deploy not valid, target doesn't belong to player" << endl;
 		return false;
 	}
 
@@ -308,13 +309,13 @@ bool Advance::validate() {
 
 	//check if territory has enough troops
 	if (*(source->getArmyCount()) < *nbArmies) {
-		cout << "DEBUG: Order not valid" << endl;
+		cout << "DEBUG: Advance not valid, source doesn't have enough troops" << endl;
 		return false;
 	}
 	
-	//check owner
+	//check owner of source
 	if ((*(target->getOwner())->getId()) != (*(getPlayer()->getId()))) {
-		cout << "DEBUG: Order not valid" << endl;
+		cout << "DEBUG: Advance not valid, player doesn't own the source" << endl;
 		return false;
 	}
 
@@ -323,18 +324,18 @@ bool Advance::validate() {
 	string peaceDuo2 = to_string(*(target->getOwner()->getId())) + "/" + to_string(*(getPlayer()->getId()));
 
 	if (GameEngine::peaceStatus->count(peaceDuo1) > 0 || GameEngine::peaceStatus->count(peaceDuo2) > 0) {
-		cout << "DEBUG: Order not valid, players at peace" << endl;
+		cout << "DEBUG: Advance not valid, players at peace" << endl;
 		return false;
 	}
 
-	//check if adjacent
+	//check if source and target are adjacent
 	vector<int>* vec = source->getBorders();
 
 	if (find(vec->begin(), vec->end(), (*(target->getId())) ) != vec->end()) {
 		return true;
 	}
 
-	cout << "DEBUG: Order not valid" << endl;
+	cout << "DEBUG: Advance not valid, source and target are not adjacent" << endl;
 	return false;
 }
 
@@ -404,6 +405,15 @@ bool Advance::execute() {
 
 
 				//Give card to player
+				int ID = *getPlayer()->getId();
+				if (std::find(GameEngine::conqStatus->begin(), GameEngine::conqStatus->end(), ID) == GameEngine::conqStatus->end()) //ID not in vector, first time conquering this round
+				{
+					GameEngine::conqStatus->push_back(ID);
+					Card* theCard = new Card();
+
+					getPlayer()->getHand()->insert(theCard); //ading card to Players hand
+
+				}
 
 				execEffect = "Player " + to_string(*(getPlayer()->getId())) + " conquered " + *(target->getTerritoryName());
 			}
@@ -415,7 +425,7 @@ bool Advance::execute() {
 				source->setArmyCount(leave);
 
 				//remove defender that died
-				target->setArmyCount(new int(defendingArmies)); //change army count
+				target->setArmyCount(new int(defendingArmies));
 
 				execEffect = ("Defender won the battle");
 			}
@@ -478,9 +488,10 @@ void Bomb::setTarget(Territory _target) {
 //check owner of target
 // check if adjacent
 bool Bomb::validate() {
-	//check owner
+	
+	//check playerID and targetID are the same
 	if ((*(target->getOwner())->getId()) == (*(getPlayer()->getId()))) {
-		cout << "DEBUG: Order not valid" << endl;
+		cout << "DEBUG: Bomb not valid, player targets himself" << endl;
 		return false;
 	}
 
@@ -489,13 +500,14 @@ bool Bomb::validate() {
 	string peaceDuo2 = to_string(*(target->getOwner()->getId())) + "/" + to_string(*(getPlayer()->getId()));
 
 	if (GameEngine::peaceStatus->count(peaceDuo1) > 0 || GameEngine::peaceStatus->count(peaceDuo2) > 0) {
-		cout << "DEBUG: Order not valid, players at peace" << endl;
+		cout << "DEBUG: Bomb not valid, players at peace" << endl;
 		return false;
 	}
 
+	//check if adjacent to one of the player's territories
 	bool adjacent = false;
-	//check if target is adjacent to one of the players territory
-	for (int i = 0; i < getPlayer()->getPlayerTerritories()->size(); i++)
+	
+	for (int i = 0; i < getPlayer()->getTerritories()->size(); i++) 
 	{
 		vector<int>*bvec = (*(getPlayer()->getPlayerTerritories()))[i]->getBorders();
 
@@ -508,7 +520,7 @@ bool Bomb::validate() {
 
 	if (!adjacent)
 	{
-		cout << "DEBUG: Order not valid" << endl;
+		cout << "DEBUG: Bomb not valid, target is not adjacent" << endl;
 		return false;
 	}
 
@@ -578,9 +590,9 @@ void Blockade::setTarget(Territory _target) {
 //check owner of target
 bool Blockade::validate() {
 	
-	//check owner
+	//check if Player owns target
 	if ((*(target->getOwner())->getId()) != (*(getPlayer()->getId()))) {
-		cout << "DEBUG: Order not valid" << endl;
+		cout << "DEBUG: Blockade not valid, player doesn't own the target" << endl;
 		return false;
 	}
 
@@ -690,15 +702,15 @@ void Airlift::setTarget(Territory _target) {
 //check if player owns source and target
 bool Airlift::validate() {
 	
-	//check owner of target
+	//check if playerID and targetID are the same
 	if ((*(target->getOwner())->getId()) != (*(getPlayer()->getId()))) {
-		cout << "DEBUG: Order not valid" << endl;
+		cout << "DEBUG: Airlift not valid, player doesn't own the target" << endl;
 		return false;
 	}
 
 	//check owner of source
 	if ((*(source->getOwner())->getId()) != (*(getPlayer()->getId()))) {
-		cout << "DEBUG: Order not valid" << endl;
+		cout << "DEBUG: Airlift not valid, player doesn't own the source" << endl;
 		return false;
 	}
 	
@@ -775,9 +787,9 @@ void Negotiate::setVictim(int _victimID) {
 //check if player is negotating with himself
 bool Negotiate::validate() {
 	
-	//check if player and victim are the same
+	//check if player and victim are the same player
 	if ( *victim == (*(getPlayer()->getId()))) {
-		cout << "DEBUG: Order not valid" << endl;
+		cout << "DEBUG: Negotiate not valid, target is same as issuer" << endl;
 		return false;
 	}
 
