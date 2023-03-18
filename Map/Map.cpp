@@ -555,14 +555,14 @@ string *MapLoader::getPath() const {
     return path;
 }
 
-// Loads the input file and returns a full map object
-Map MapLoader::load(int mapNumber) {
-    printf("Loading %s...\n", path->c_str());
+// Reads the input file and returns a full map object
+Map *MapLoader::readMap(string *filePath) {
+    //  printf("Loading %s...\n", filePath->c_str());
 
-    ifstream file(path->c_str());
+    ifstream file(filePath->c_str());
     PARSE_MODE mode = UNSPECIFIED;
 
-    vector<Territory *> *territories = new vector<Territory *>();  // countries
+    vector<Territory *> *territories = new vector<Territory *>();
     vector<Continent *> *continents = new vector<Continent *>();
     int continentCounter = 0;
 
@@ -620,8 +620,11 @@ Map MapLoader::load(int mapNumber) {
         }
     }
 
-    Map *map = new Map(mapNumber,
-                       "Unnamed Map...",
+    string *mapName = new string();
+    *mapName = filePath->substr(filePath->find_last_of('/') + 1,
+                                filePath->find_last_of('.') - filePath->find_last_of('/') - 1);
+    Map *map = new Map(0,
+                       *mapName,
                        *continents,
                        *territories);
 
@@ -651,10 +654,10 @@ Map MapLoader::load(int mapNumber) {
         Continent::setTerritoriesInContinent(map->getContinents()->at(i), map->getTerritories());
     }
 
-    printf("Closing %s...\n", path->c_str());
+    printf("Closing %s...\n", filePath->c_str());
     file.close();
 
-    return *map;
+    return map;
 }
 
 // Switch the parsing mode based on the [flag]
@@ -689,6 +692,37 @@ vector<string> MapLoader::getTokens(const string &inputString) {
     }
 
     return tokens;
+}
+
+bool MapLoader::loadMap(GameEngine *g, string *inputPath) {
+    // printf("Beginning map setup...\n");
+    // printf("Initializing MapLoader...\n");
+    MapLoader *myMapLoader = new MapLoader();
+    string filePath = *inputPath;
+
+    // Check if file exists
+    ifstream file(filePath);
+    if (file.fail()) {
+        printf("File \"%s\" does not exist.\n", filePath.c_str());
+        return false;
+    }
+
+    printf("Reading %s...\n", filePath.c_str());
+    myMapLoader->setPath(&filePath);
+
+    Map *loadedMap;
+    try {
+        loadedMap = myMapLoader->readMap(&filePath);
+        g->setMap(loadedMap);
+    } catch (...) {
+        printf("Could not parse map file. Discarding...\n");
+    }
+
+    printf("Deleting MapLoader...\n");
+    delete myMapLoader;
+
+    printf("Map selection complete.\n");  // When merging with the rest, will return map
+    return true;
 }
 
 int mapTest() {

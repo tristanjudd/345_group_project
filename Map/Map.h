@@ -168,7 +168,8 @@ public:
     string *getPath() const;
 
     // Methods
-    Map load(int mapNumber);
+    static bool loadMap(GameEngine *g, string *inputPath);
+    static Map* readMap(string *filePath);
     static vector<string> getTokens(const string& inputString);
 };
 int mapTest();
