@@ -5,20 +5,7 @@ Player *GameEngine::neutral = new Player(-1); //CREATING THE STATIC NEUTRAL PLAY
 std::unordered_map<string, bool> *GameEngine::peaceStatus = new std::unordered_map<string, bool>(); //CREATING THE STATIC PEACE STATUS MAP
 vector<int> *GameEngine::conqStatus = new vector<int>(); //CREATING THE STATIC CONQUERED STATUS VECTOR
 
-//Load map method
-PHASE GameEngine::loadMap(GameEngine *game, PHASE phase, string mapFile) {
-    cout << "Load Map Method" << endl;
-    if (MapLoader::loadMap(game, &mapFile)) {
-        cout << *game->getMap() << endl;
-        cout << *game->map->getName() << " map loaded" << endl;
-        phase = MAP_LOADED;
-    } else {
-        cout << "Map not loaded \n" << endl;
-        phase = START;
-    }
-    return phase;
-}
-
+// Startup
 void GameEngine::startupPhase(GameEngine *game, CommandProcessor *cp, Command *command, PHASE phase) {
     cout << "Welcome to our bootleg Warzone!" << endl;
     int playerId = 0;
@@ -53,7 +40,7 @@ void GameEngine::startupPhase(GameEngine *game, CommandProcessor *cp, Command *c
                 cout << *command << endl;
                 playerId = 0;
                 if (*command->getName() == COMMAND::addplayer) {
-                    phase = addPlayer(game, game->getPlayers(), *command->getArgument(), playerId);
+                    phase = addPlayer(game, *command->getArgument(), playerId);
                     playerId = playerId + 1;
                     break;
                 }
@@ -83,7 +70,7 @@ void GameEngine::startupPhase(GameEngine *game, CommandProcessor *cp, Command *c
                         game->getPlayers()->clear();
                         phase = MAP_VALIDATED;
                     } else {
-                        phase = addPlayer(game, game->getPlayers(), *command->getArgument(), playerId);
+                        phase = addPlayer(game, *command->getArgument(), playerId);
                         playerId = playerId + 1;
                     }
                     break;
@@ -107,58 +94,54 @@ void GameEngine::startupPhase(GameEngine *game, CommandProcessor *cp, Command *c
     }
 }
 
-//Validate map phase
+//Load map method
+PHASE GameEngine::loadMap(GameEngine *game, PHASE phase, string mapFile) {
+    cout << "Load Map Method" << endl;
+    if (MapLoader::loadMap(game, &mapFile)) {
+        cout << *game->getMap() << endl;
+        cout << *game->map->getName() << " map loaded" << endl;
+        phase = MAP_LOADED;
+    } else { // restart if map not loaded
+        cout << "Map not loaded \n" << endl;
+        phase = START;
+    }
+    return phase;
+}
+
+//Validate map method
 PHASE GameEngine::validateMap(GameEngine *game, PHASE phase) {
     cout << "Validating map..." << endl;
     if (game->getMap()->validate()) {
         cout << "Map validated" << endl;
         phase = MAP_VALIDATED;
-    } else {
+    } else { // restart if map not valid
         cout << "Map invalid" << endl;
         phase = START;
     }
     return phase;
 }
 
-//Add players phase
-PHASE GameEngine::addPlayers() {
-    int numPlayers;
-    cout << "How many players would you like to add: ";
-    cin >> numPlayers;
-    if (numPlayers < 1 || !isdigit(numPlayers) == 0) { //check if input is a number greater than 0
-        cout << "Invalid number of players" << endl;
-        cin.clear();
-        cin.ignore(100, '\n');
-        return PLAYERS_ADDED; //go back to add players phase
-    }
-    cout << "Players created" << endl;
-
-    // TRISTAN: THESE METHODS ARE FOR DEMO PURPOSES
-    initGameDummy();
-    //initGameEndDummy();
-    // END OF DEMO METHODS
-
-    return PLAY; //go to assign reinforcement phase
-}
-
-PHASE GameEngine::addPlayer(GameEngine *game, vector<Player *> *playersStartup, string playerName, int playerId) {
+// Add player method
+PHASE GameEngine::addPlayer(GameEngine *game, string playerName, int playerId) {
     Player *newPlayer = new Player(playerName, playerId);
-    cout << "Player " << *newPlayer->getName() << " added" << endl;
-    vector<Player *> *players = getPlayers();
+    vector<Player *> *players = game->getPlayers();
     players->push_back(newPlayer);
+    cout << "Player " << *newPlayer->getName() << " added" << endl;
     cout << "Num of players: " << players->size() << endl << endl;
     game->setPlayers(players);
     return PLAYERS_ADDED;
 }
 
+// Game start method
 PHASE GameEngine::gameStart(GameEngine *game) {
     distributeTerritories(game->getMap());
-    determineOrder(game);
+    determinePlayerOrder(game);
     giveInitialArmies();
     drawCards();
     return END;
 }
 
+// Distribute territories method
 void GameEngine::distributeTerritories(Map *map) {
     cout << "Distributing territories..." << endl;
     vector<Territory *> *territories = map->getTerritories();
@@ -176,14 +159,12 @@ void GameEngine::distributeTerritories(Map *map) {
         }
         players->at(i)->setPlayerTerritories(territoriesForPlayers);
     }
-
     //distribute the remainder of the territories to the players and set owner of territory
     for (int i = 0; i < remainderTerritories; i++) {
         players->at(i)->getPlayerTerritories()->push_back(
                 territories->at(i + numPlayers * territoriesPerPlayer)); //add territory to player
         territories->at(i + numPlayers * territoriesPerPlayer)->setOwner(players->at(i)); //set owner of territory
     }
-
     //print out territories of players
     for (int i = 0; i < players->size(); i++) {
         cout << "\nPlayer " << *players->at(i)->getId() << " has territories: " << endl;
@@ -196,7 +177,8 @@ void GameEngine::distributeTerritories(Map *map) {
     }
 }
 
-void GameEngine::determineOrder(GameEngine *game) {
+// Determine player order method
+void GameEngine::determinePlayerOrder(GameEngine *game) {
     cout << "\nDetermining order of players..." << endl;
     vector<Player *> *players = getPlayers();
     vector<Player *> *playersOrder = new vector<Player *>();

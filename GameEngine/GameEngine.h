@@ -43,20 +43,19 @@ private:
     vector<Player *> *players; // list of players currently in the game, in order of turns
 
 public:
+    // Startup
     void startupPhase(GameEngine *game, CommandProcessor *cp, Command *command, PHASE phase);
     PHASE loadMap(GameEngine *game, PHASE phase, string mapFile);
     PHASE validateMap(GameEngine *game, PHASE phase);
-
-    // Startup
-    PHASE addPlayer(GameEngine *game, vector<Player *> *players, string playerName, int playerId);
+    PHASE addPlayer(GameEngine *game, string playerName, int playerId);
     PHASE gameStart(GameEngine *game);
     void distributeTerritories(Map *map);
-    void determineOrder(GameEngine *game);
+    void determinePlayerOrder(GameEngine *game);
     void giveInitialArmies();
     void drawCards();
 
     // Main Game Loop
-    PHASE addPlayers();
+    //PHASE addPlayers();
     void mainGameLoop(GameEngine *game, PHASE phase); // loops through game phases until win condition is met
     PHASE reinforcementPhase(); // called by mainGameLoop
     PHASE issueOrdersPhase(); // called by mainGameLoop
