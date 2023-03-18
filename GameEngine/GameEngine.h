@@ -43,6 +43,18 @@ private:
     vector<Player *> *players; // list of players currently in the game, in order of turns
 
 public:
+    GameEngine(); //default constructor
+    GameEngine(const GameEngine &copy); //copy constructor
+    GameEngine& operator=(const GameEngine& t); //assignment operator
+    friend ostream& operator<<(ostream& os, const GameEngine& t);
+    ~GameEngine(); //destructor
+
+    // GETTERS AND SETTERS
+    vector<Player *> *getPlayers() const;
+    void setPlayers(vector<Player *> *players);
+    Map *getMap() const;
+    void setMap(Map *map);
+
     // Startup
     void startupPhase(GameEngine *game, CommandProcessor *cp, Command *command, PHASE phase);
     PHASE loadMap(GameEngine *game, PHASE phase, string mapFile);
@@ -55,7 +67,6 @@ public:
     void drawCards();
 
     // Main Game Loop
-    //PHASE addPlayers();
     void mainGameLoop(GameEngine *game, PHASE phase); // loops through game phases until win condition is met
     PHASE reinforcementPhase(); // called by mainGameLoop
     PHASE issueOrdersPhase(); // called by mainGameLoop
@@ -66,18 +77,6 @@ public:
 
     PHASE win();
     void end();
-    GameEngine(); //default constructor
-    GameEngine(const GameEngine &copy); //copy constructor
-    GameEngine& operator=(const GameEngine& t); //assignment operator
-    friend ostream& operator<<(ostream& os, const GameEngine& t);
-    ~GameEngine(); //destructor
-
-    // GETTERS AND SETTERS
-    vector<Player *> *getPlayers() const;
-    void setPlayers(vector<Player *> *players);
-
-    Map *getMap() const;
-    void setMap(Map *map);
 
     //MEMBERS USED IN ORDERS
     static Player* neutral; //neutral player
