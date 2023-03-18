@@ -330,6 +330,10 @@ FileLineReader::FileLineReader(const string& filePath) {
     lines = new vector<string>();
 
     ifstream file(filePath);
+    if (file.fail()) {
+        throw runtime_error("Command file does not exist. Please pass proper command line arguments.");
+    }
+
     string line;
     while (getline(file, line)) {
         lines->push_back(line);
