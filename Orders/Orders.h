@@ -177,7 +177,7 @@ class Negotiate : public Order
 {
 public:
 	Negotiate(LogObserver* observer);
-	Negotiate(Player* _issuer, int _victimID, logObserver* observer);
+	Negotiate(Player* _issuer, int _victimID, LogObserver* observer);
 	Negotiate(const Negotiate& _o);
 	~Negotiate();
 
