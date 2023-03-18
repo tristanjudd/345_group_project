@@ -8,13 +8,13 @@
 // Constructors
 Command::Command() {
     name = nullptr;
-    argument = nullptr;
+    argument = new string("");
     effect = nullptr;
 }
 
 Command::Command(COMMAND cmd) {
     name = new COMMAND(cmd);
-    argument = nullptr;
+    argument = new string("");
     effect = nullptr;
 }
 
