@@ -33,7 +33,7 @@ enum PHASE {
     ISSUE_ORDERS,
     EXECUTE_ORDERS,
     WIN,
-    ENDSTARTUP
+    END
 };
 
 class GameEngine {

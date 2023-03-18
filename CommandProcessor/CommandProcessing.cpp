@@ -167,7 +167,7 @@ ostream &operator<<(ostream &os, PHASE p) {
         case WIN:
             os << "win";
             break;
-        case ENDSTARTUP:
+        case END:
             os << "end";
             break;
     }

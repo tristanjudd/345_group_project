@@ -90,7 +90,7 @@ void GameEngine::startupPhase(GameEngine *game, CommandProcessor *cp, Command *c
                 cout << "Gamestart phase" << endl;
                 phase = game->gameStart(game);
                 break;
-            case ENDSTARTUP: {
+            case END: {
                 cout << "End Phase" << endl;
                 game->end();
                 return;
@@ -152,7 +152,7 @@ PHASE GameEngine::gameStart(GameEngine *game) {
     determineOrder(game);
     giveInitialArmies();
     drawCards();
-    return ENDSTARTUP;
+    return END;
 }
 
 void GameEngine::distributeTerritories(Map *map) {
@@ -312,7 +312,7 @@ PHASE GameEngine::win() {
             return START; //go to start phase
         } else if (playAgain == "n") {
             cout << "Goodbye!" << endl;
-            return ENDSTARTUP; //go to end phase
+            return END; //go to end phase
         }
         cout << "Invalid input" << endl << "Try again" << endl;
     }
