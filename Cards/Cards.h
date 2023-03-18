@@ -20,6 +20,7 @@ enum CardType
 
 class Hand; // Foreward declaration
 class Deck; // Foreward declaration
+class Player; // Forward declaration
 
 // Card class header
 // Card is an object containing details about a specific instance of a Warzone card

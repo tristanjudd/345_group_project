@@ -15,6 +15,7 @@ using namespace std;
 
 //forward declaration
 class Player;
+class Territory;
 
 class Order
 {

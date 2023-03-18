@@ -8,13 +8,13 @@
 // Constructors
 Command::Command() {
     name = nullptr;
-    argument = nullptr;
+    argument = new string("");
     effect = nullptr;
 }
 
 Command::Command(COMMAND cmd) {
     name = new COMMAND(cmd);
-    argument = nullptr;
+    argument = new string("");
     effect = nullptr;
 }
 
@@ -126,7 +126,7 @@ CommandProcessor::CommandProcessor() {
 
 CommandProcessor::CommandProcessor(const CommandProcessor &copy) {
     commands = new vector<Command *>();
-    for (Command *cmd : *copy.commands) {
+    for (Command *cmd: *copy.commands) {
         commands->push_back(new Command(*cmd));
     }
 }
@@ -178,7 +178,7 @@ ostream &operator<<(ostream &os, PHASE p) {
 CommandProcessor &CommandProcessor::operator=(const CommandProcessor &cp) {
     if (this != &cp) {
         commands->clear();
-        for (Command *cmd : *cp.commands) {
+        for (Command *cmd: *cp.commands) {
             commands->push_back(cmd);
         }
     }
@@ -188,7 +188,7 @@ CommandProcessor &CommandProcessor::operator=(const CommandProcessor &cp) {
 
 ostream &operator<<(ostream &os, const CommandProcessor &cp) {
     os << "CommandProcessor with commands: " << endl;
-    for (Command *cmd : *cp.commands) {
+    for (Command *cmd: *cp.commands) {
         os << cmd;
     }
 

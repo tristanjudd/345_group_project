@@ -10,15 +10,21 @@ using std::endl;
 using std::string;
 using std::cin;
 using std::ostream;
+using std::find;
 
 #include "../Player/Player.h"
 #include "../Map/Map.h"
 #include "../Orders/Orders.h"
 #include "../Cards/Cards.h"
 
+class Command; //forward declaration
+class CommandProcessor; //forward declaration
+class Map; //forward declaration
+
 //enum of phases
 enum PHASE {
     START,
+    LOAD_MAP,
     MAP_LOADED,
     MAP_VALIDATED,
     PLAYERS_ADDED,
@@ -33,14 +39,22 @@ enum PHASE {
 class GameEngine {
 private:
     int *winner; // id of the winner
-    vector<Player *> *players; // list of players currently in the game, in order of turns
     Map* map; // the game map
+    vector<Player *> *players; // list of players currently in the game, in order of turns
+    vector<Player *> *playersStartup = new vector<Player *>();
 
 public:
+    void startupPhase(GameEngine *game, CommandProcessor *cp, Command *command, PHASE phase);
     PHASE start();
-    PHASE loadMap();
-    PHASE validateMap();
+    PHASE loadMap(GameEngine *game, PHASE phase, string mapFile);
+    PHASE validateMap(GameEngine *game, PHASE phase);
     PHASE addPlayers();
+    PHASE addPlayer(GameEngine *game, vector<Player *> *playersStartup, string playerName, int playerId);
+    PHASE gameStart(GameEngine *game);
+    void distributeTerritories(Map *map);
+    void determineOrder(GameEngine *game);
+    void giveInitialArmies();
+    void drawCards();
     PHASE assignReinforcements();
     PHASE issueOrders();
     PHASE executeOrders();
@@ -51,6 +65,13 @@ public:
     GameEngine& operator=(const GameEngine& t); //assignment operator
     friend ostream& operator<<(ostream& os, const GameEngine& t);
     ~GameEngine(); //destructor
+
+    // GETTERS AND SETTERS
+    vector<Player *> *getPlayersStartup() const;
+    void setPlayersStartup(vector<Player *> *playersStartup);
+
+    Map *getMap() const;
+    void setMap(Map *map);
 
     // START OF ASSIGNMENT 2
     PHASE mainGameLoop(); // loops through game phases until win condition is met
