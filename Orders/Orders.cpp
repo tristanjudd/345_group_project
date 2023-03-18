@@ -401,16 +401,17 @@ bool Advance::execute() {
                 target->setArmyCount(new int(attackingArmies)); //change army count
                 target->setOwner(getPlayer()); //change ownership
 
+
                 //remove territory from defender
                 Player *otherPlayer = target->getOwner();
 
-                vector<Territory *> *newTerritories = otherPlayer->getTerritories();
-                auto it = std::find(newTerritories->begin(), newTerritories->end(), target);
-                if (it != newTerritories->end()) {
-                    newTerritories->erase(it);
-                }
+				vector<Territory*>* newTerritories = otherPlayer->getPlayerTerritories();
+				auto it = std::find(newTerritories->begin(), newTerritories->end(), target);
+				if (it != newTerritories->end()) {
+					newTerritories->erase(it);
+				}
 
-                otherPlayer->setTerritories(newTerritories);
+				otherPlayer->setPlayerTerritories(newTerritories);
 
 
                 //Give card to player
@@ -505,16 +506,18 @@ bool Bomb::validate() {
     string peaceDuo1 = to_string(*(getPlayer()->getId())) + "/" + to_string(*(target->getOwner()->getId()));
     string peaceDuo2 = to_string(*(target->getOwner()->getId())) + "/" + to_string(*(getPlayer()->getId()));
 
+
     if (GameEngine::peaceStatus->count(peaceDuo1) > 0 || GameEngine::peaceStatus->count(peaceDuo2) > 0) {
         cout << "DEBUG: Bomb not valid, players at peace" << endl;
         return false;
     }
 
-    //check if adjacent to one of the player's territories
-    bool adjacent = false;
-
-    for (int i = 0; i < getPlayer()->getTerritories()->size(); i++) {
-        vector<int> *bvec = (*(getPlayer()->getTerritories()))[i]->getBorders();
+	//check if adjacent to one of the player's territories
+	bool adjacent = false;
+	
+	for (int i = 0; i < getPlayer()->getPlayerTerritories()->size(); i++)
+	{
+		vector<int>*bvec = (*(getPlayer()->getPlayerTerritories()))[i]->getBorders();
 
         if (find(bvec->begin(), bvec->end(), (*(target->getId()))) != bvec->end()) {
             adjacent = true;
@@ -615,23 +618,23 @@ bool Blockade::execute() {
         int *doubled = new int((*(target->getArmyCount())) * 2);
         target->setArmyCount(doubled);
 
+
         string execEffect = *(target->getTerritoryName()) + " now has " + to_string(*doubled) + "armies";
         setEffect(execEffect);
 
-        //REMOVE territory from player
-        vector<Territory *> *newTerritories = getPlayer()->getTerritories();
+		//REMOVE territory from player
+		vector<Territory*> *newTerritories = getPlayer()->getPlayerTerritories();
+
 
         auto it = std::find(newTerritories->begin(), newTerritories->end(), target);
         if (it != newTerritories->end()) {
             newTerritories->erase(it);
         }
+		getPlayer()->setPlayerTerritories(newTerritories);
 
-        getPlayer()->setTerritories(newTerritories);
-
-        //GIVE TERRITORY TO NEUTRAL PLAYER
-        GameEngine::neutral->getTerritories()->push_back(target);
-        target->setOwner(GameEngine::neutral);
-
+		//GIVE TERRITORY TO NEUTRAL PLAYER
+		GameEngine::neutral->getPlayerTerritories()->push_back(target);
+		target->setOwner(GameEngine::neutral);
 
         return true;
     } else {

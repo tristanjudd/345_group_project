@@ -15,13 +15,13 @@ using std::endl;
 // Constructors
 Command::Command() {
     name = nullptr;
-    argument = nullptr;
+    argument = new string("");
     effect = nullptr;
 }
 
 Command::Command(COMMAND cmd, LogObserver *observer) : Subject(observer) {
     name = new COMMAND(cmd);
-    argument = nullptr;
+    argument = new string("");
     effect = nullptr;
 }
 
@@ -255,7 +255,7 @@ string CommandProcessor::generateEffect(bool isValid, Command *cmd, PHASE curren
                 break;
         }
     } else {
-        out << "[ERROR] Cannot " << *cmd->getName() << " from phase " << currentPhase << endl;
+        out << "[ERROR] Cannot " << *cmd->getName() << " from phase " << currentPhase;
     }
 
     return out.str();
@@ -292,6 +292,7 @@ bool CommandProcessor::validate(Command *cmd, PHASE currentPhase) {
 }
 
 Command *CommandProcessor::readCommand(LogObserver* observer) {
+
     string newCommand{};
 
     while (true) {
@@ -320,7 +321,7 @@ Command *CommandProcessor::readCommand(LogObserver* observer) {
 
 Command *CommandProcessor::getCommand(PHASE currentPhase, LogObserver* observer) {
     Command *command = CommandProcessor::readCommand(observer);
-    Command * c = new Command(COMMAND::validatemap, observer);
+
     bool cmdIsValid = validate(command, currentPhase);
 
     command->saveEffect(generateEffect(cmdIsValid, command, currentPhase));
