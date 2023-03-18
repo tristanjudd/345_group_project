@@ -507,7 +507,7 @@ bool Bomb::validate() {
 	//check if adjacent to one of the player's territories
 	bool adjacent = false;
 	
-	for (int i = 0; i < getPlayer()->getTerritories()->size(); i++) 
+	for (int i = 0; i < getPlayer()->getPlayerTerritories()->size(); i++)
 	{
 		vector<int>*bvec = (*(getPlayer()->getPlayerTerritories()))[i]->getBorders();
 
