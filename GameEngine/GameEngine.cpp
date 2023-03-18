@@ -31,8 +31,13 @@ GameEngine &GameEngine::operator=(const GameEngine &gameEngine) {
 
 //ostream operator
 ostream &operator<<(ostream &out, const GameEngine &gameEngine) {
-    cout << "GameEngine ostream operator called" << endl;
+    out << "GameEngine: " << endl;
     out << "Winner: " << *gameEngine.winner << endl;
+    out << "Map: " << *gameEngine.map << endl;
+    out << "Players: " << endl;
+    for (int i = 0; i < gameEngine.players->size(); i++) {
+        out << *gameEngine.players->at(i) << endl;
+    }
     return out;
 }
 
@@ -82,7 +87,7 @@ void GameEngine::startupPhase(GameEngine *game, CommandProcessor *cp, Command *c
                 break;
             }
             case MAP_LOADED: {
-                cout << "Map loaded state" << endl;
+                cout << "\nMap loaded state" << endl;
                 command = cp->getCommand(phase, cp);
                 cout << *command << endl;
                 if (*command->getName() == COMMAND::validatemap) {
@@ -95,7 +100,7 @@ void GameEngine::startupPhase(GameEngine *game, CommandProcessor *cp, Command *c
                 }
             }
             case MAP_VALIDATED: {
-                cout << "Map validated state" << endl;
+                cout << "\nMap validated state" << endl;
                 command = cp->getCommand(phase, cp);
                 cout << *command << endl;
                 playerId = 0;
