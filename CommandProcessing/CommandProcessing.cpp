@@ -376,6 +376,9 @@ ostream &operator<<(ostream &os, const FileLineReader &flr) {
 
 // methods
 string FileLineReader::readLineFromFile(int l) {
+    if (l >= lines->size()) {
+        throw runtime_error("Ran out of commands in file.");
+    }
     return lines->at(l);
 }
 
