@@ -1,6 +1,6 @@
 #include "GameEngineDriver.h"
 #include "GameEngine.h"
-#include "../CommandProcessor/CommandProcessing.h"
+#include "../CommandProcessing/CommandProcessing.h"
 
 int gameEngineDriver() {
     GameEngine *g = new GameEngine();
