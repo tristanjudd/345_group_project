@@ -3,7 +3,12 @@
 //
 
 #include "LoggingObserver.h"
+#include <string>
+#include <iostream>
+#include <fstream>
 
+using std::ofstream;
+using std::string;
 
 //Observer Functions
 Observer::Observer() {}
@@ -12,14 +17,46 @@ Observer::~Observer() {}
 
 
 //Subject Functions
-Subject::Subject(){
+Subject::Subject() {
     //_observers = new list<Observer*>;
 }
-Subject::~Subject(){
+
+Subject::Subject(Observer* observer){
+
+    this->observer = observer;
+}
+
+Subject::~Subject() {
+
     delete observer;
 }
 
 
-void Subject::Notify(ILoggable* loggable) {
+void Subject::Notify(ILoggable *loggable) {
     observer->Update(loggable);
+}
+
+
+//LogObserver Functions
+
+void LogObserver::Update(ILoggable* loggable) {
+
+    loggable->stringToLog();
+}
+
+
+ofstream checkFile(){
+
+    //creating file string
+    string filename = "../Log/gamelog.txt";
+    ofstream outputFile;
+
+    //checking if file exists
+    ofstream exists(filename);
+
+    if (exists.bad()) {
+        outputFile.open(filename);
+    }
+
+    return outputFile;
 }

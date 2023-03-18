@@ -1,6 +1,13 @@
 //
 // Created by jay on 16/03/23.
 //
+#include <string>
+#include <iostream>
+#include<fstream>
+
+using std::ofstream;
+using std::string;
+using std::endl;
 
 #include "CommandProcessing.h"
 
@@ -12,13 +19,14 @@ Command::Command() {
     effect = nullptr;
 }
 
-Command::Command(COMMAND cmd) {
+Command::Command(COMMAND cmd, LogObserver *observer) : Subject(observer) {
     name = new COMMAND(cmd);
     argument = nullptr;
     effect = nullptr;
 }
 
-Command::Command(COMMAND cmd, string &arg) {
+
+Command::Command(COMMAND cmd, string &arg, LogObserver *observer) : Subject(observer) {
     name = new COMMAND(cmd);
     argument = new string(arg);
     effect = nullptr;
@@ -64,6 +72,8 @@ void Command::setArgument(const string &newArg) {
 
 void Command::saveEffect(const string &newEffect) {
     effect = new string(newEffect);
+
+    Notify(this);
 }
 
 // Operators
@@ -117,16 +127,35 @@ Command &Command::operator=(const Command &c) {
     return *this;
 }
 
+void Command::stringToLog() {
+
+    //creating file string
+    string filename = "../Log/gamelog.txt";
+    ofstream outputFile;
+
+    //checking if file exists
+    ifstream exists(filename);
+
+    if (exists.bad()) {
+        outputFile.open(filename);
+    }
+
+    // Append data to the file
+    outputFile.open(filename, std::ios_base::app);
+    outputFile << "Saving Effect: " << this->getEffect() << endl;
+    outputFile.close();
+}
+
 
 // CommandProcessor
 // Constructors
-CommandProcessor::CommandProcessor() {
+CommandProcessor::CommandProcessor(LogObserver *observer) : Subject(observer) {
     commands = new vector<Command *>();
 }
 
 CommandProcessor::CommandProcessor(const CommandProcessor &copy) {
     commands = new vector<Command *>();
-    for (Command *cmd : *copy.commands) {
+    for (Command *cmd: *copy.commands) {
         commands->push_back(new Command(*cmd));
     }
 }
@@ -178,7 +207,7 @@ ostream &operator<<(ostream &os, PHASE p) {
 CommandProcessor &CommandProcessor::operator=(const CommandProcessor &cp) {
     if (this != &cp) {
         commands->clear();
-        for (Command *cmd : *cp.commands) {
+        for (Command *cmd: *cp.commands) {
             commands->push_back(cmd);
         }
     }
@@ -188,7 +217,7 @@ CommandProcessor &CommandProcessor::operator=(const CommandProcessor &cp) {
 
 ostream &operator<<(ostream &os, const CommandProcessor &cp) {
     os << "CommandProcessor with commands: " << endl;
-    for (Command *cmd : *cp.commands) {
+    for (Command *cmd: *cp.commands) {
         os << cmd;
     }
 
@@ -198,6 +227,7 @@ ostream &operator<<(ostream &os, const CommandProcessor &cp) {
 // Methods
 void CommandProcessor::saveCommand(Command *command) {
     this->commands->push_back(command);
+    Notify(this);
 }
 
 string CommandProcessor::generateEffect(bool isValid, Command *cmd, PHASE currentPhase) {
@@ -261,7 +291,7 @@ bool CommandProcessor::validate(Command *cmd, PHASE currentPhase) {
     return false;
 }
 
-Command* CommandProcessor::readCommand() {
+Command *CommandProcessor::readCommand(LogObserver* observer) {
     string newCommand{};
 
     while (true) {
@@ -271,26 +301,26 @@ Command* CommandProcessor::readCommand() {
         vector<string> commandTokens = MapLoader::getTokens(newCommand);
 
         if (commandTokens[0] == "loadmap") {
-            return new Command(COMMAND::loadmap, commandTokens[1]);
+            return new Command(COMMAND::loadmap, commandTokens[1], observer);
         } else if (newCommand == "validatemap") {
-            return new Command(COMMAND::validatemap);
+            return new Command(COMMAND::validatemap, observer);
         } else if (commandTokens[0] == "addplayer") {
-            return new Command(COMMAND::addplayer, commandTokens[1]);
+            return new Command(COMMAND::addplayer, commandTokens[1], observer);
         } else if (newCommand == "gamestart") {
-            return new Command(COMMAND::gamestart);
-        } else if (newCommand == "replay") {
-            return new Command(COMMAND::replay);
+            return new Command(COMMAND::gamestart, observer);
+        } else if (newCommand == "replay", observer) {
+            return new Command(COMMAND::replay, observer);
         } else if (newCommand == "quit") {
-            return new Command(COMMAND::quit);
+            return new Command(COMMAND::quit, observer);
         } else {
             cout << "Not a valid command. Please try again." << endl;
         }
     }
 }
 
-Command* CommandProcessor::getCommand(PHASE currentPhase) {
-    Command *command = CommandProcessor::readCommand();
-
+Command *CommandProcessor::getCommand(PHASE currentPhase, LogObserver* observer) {
+    Command *command = CommandProcessor::readCommand(observer);
+    Command * c = new Command(COMMAND::validatemap, observer);
     bool cmdIsValid = validate(command, currentPhase);
 
     command->saveEffect(generateEffect(cmdIsValid, command, currentPhase));
@@ -298,3 +328,24 @@ Command* CommandProcessor::getCommand(PHASE currentPhase) {
     saveCommand(command);
     return command;
 }
+
+void CommandProcessor::stringToLog() {
+
+    //creating file string
+    string filename = "../Log/gamelog.txt";
+    ofstream outputFile;
+
+    //checking if file exists
+    ifstream exists(filename);
+
+    if (exists.bad()) {
+        outputFile.open(filename);
+    }
+
+    // Append data to the file
+    outputFile.open(filename, std::ios_base::app);
+    outputFile << "Saving Command: " << this->commands->back()->getName() << endl;
+    outputFile.close();
+}
+
+

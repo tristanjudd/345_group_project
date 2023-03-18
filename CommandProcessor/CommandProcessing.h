@@ -20,6 +20,7 @@ using std::endl;
 using std::stringstream;
 
 #include "../GameEngine/GameEngine.h"
+#include "../GameLog/LoggingObserver.h"
 
 enum COMMAND {
     loadmap,
@@ -30,7 +31,7 @@ enum COMMAND {
     quit
 };
 
-class Command {
+class Command: public ILoggable, public Subject{
 private:
     COMMAND *name;
     string *argument;
@@ -38,8 +39,8 @@ private:
 public:
     // constructors
     Command();
-    Command(COMMAND cmd);
-    Command(COMMAND cmd, string& arg);
+    Command(COMMAND cmd, LogObserver* observer);
+    Command(COMMAND cmd, string& arg, LogObserver* observer);
     Command(const Command &copy);
     ~Command();
 
@@ -56,9 +57,10 @@ public:
     void setName(COMMAND newCmd);
     void setArgument(const string& newArg);
     void saveEffect(const string& newEffect);
+    void stringToLog();
 };
 
-class CommandProcessor {
+class CommandProcessor: public ILoggable, public Subject{
 private:
     vector<Command*> *commands;
 
@@ -68,7 +70,7 @@ private:
     void saveCommand(Command *cmd);
 public:
     // constructors
-    CommandProcessor();
+    CommandProcessor(LogObserver* observer);
     CommandProcessor(const CommandProcessor &copy);
     ~CommandProcessor();
 
@@ -78,9 +80,10 @@ public:
 
     // methods
     static bool validate(Command* cmd, PHASE currentPhase);
-    static Command* readCommand();
+    static Command* readCommand(LogObserver* observer);
+    void  stringToLog() override;
 
-    Command* getCommand(PHASE currentPhase);
+    Command* getCommand(PHASE currentPhase, LogObserver* Observer);
 };
 
 // TODO IMPLEMENT THIS & ADD ALL THE BS STUFF THEY WANT FOR CLASS (STREAM INSERTION, COPY, DESTRUCTOR ETC.)

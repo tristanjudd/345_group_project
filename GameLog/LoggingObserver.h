@@ -4,11 +4,10 @@
 
 #ifndef WARZONE_LOGGINGOBSERVER_H
 #define WARZONE_LOGGINGOBSERVER_H
+#include <iostream>
+#include <fstream>
 
-
-#include <list>
-
-using std::list;
+using std::ofstream;
 
 class ILoggable {
 
@@ -34,6 +33,7 @@ public:
 
     virtual void Notify(ILoggable* loggable);
     Subject();
+    Subject(Observer* observer);
     ~Subject();
 private:
 
@@ -41,6 +41,16 @@ private:
 
 };
 
+class LogObserver: public Observer
+{
+public:
+    LogObserver();
+    void Update(ILoggable* loggable);
+    ~LogObserver();
+};
+
+
+ofstream checkFile();
 
 
 
