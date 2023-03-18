@@ -5,27 +5,22 @@ Player *GameEngine::neutral = new Player(-1); //CREATING THE STATIC NEUTRAL PLAY
 std::unordered_map<string, bool> *GameEngine::peaceStatus = new std::unordered_map<string, bool>(); //CREATING THE STATIC PEACE STATUS MAP
 vector<int> *GameEngine::conqStatus = new vector<int>(); //CREATING THE STATIC CONQUERED STATUS VECTOR
 
-//Start phase
-PHASE GameEngine::start() {
-    cout << "Welcome to our bootleg Warzone!" << endl;
-    return MAP_LOADED; // go to load map phase
-}
-
-//Load map phase
+//Load map method
 PHASE GameEngine::loadMap(GameEngine *game, PHASE phase, string mapFile) {
-    cout << "Load Map Phase" << endl;
+    cout << "Load Map Method" << endl;
     if (MapLoader::loadMap(game, &mapFile)) {
         cout << *game->getMap() << endl;
         cout << *game->map->getName() << " map loaded" << endl;
         phase = MAP_LOADED;
     } else {
-        cout << "Map not loaded" << endl;
+        cout << "Map not loaded \n" << endl;
         phase = START;
     }
     return phase;
 }
 
 void GameEngine::startupPhase(GameEngine *game, CommandProcessor *cp, Command *command, PHASE phase) {
+    cout << "Welcome to our bootleg Warzone!" << endl;
     int playerId = 0;
     string mapFile;
     while (true) {
@@ -56,8 +51,9 @@ void GameEngine::startupPhase(GameEngine *game, CommandProcessor *cp, Command *c
                 cout << "Map validated state" << endl;
                 command = cp->getCommand(phase);
                 cout << *command << endl;
+                playerId = 0;
                 if (*command->getName() == COMMAND::addplayer) {
-                    phase = addPlayer(game, game->getPlayersStartup(), *command->getArgument(), playerId);
+                    phase = addPlayer(game, game->getPlayers(), *command->getArgument(), playerId);
                     playerId = playerId + 1;
                     break;
                 }
@@ -68,10 +64,10 @@ void GameEngine::startupPhase(GameEngine *game, CommandProcessor *cp, Command *c
                 command = cp->getCommand(phase);
                 cout << *command << endl;
                 if (*command->getName() == COMMAND::gamestart) {
-                    if (game->getPlayersStartup()->size() < 2) {
+                    if (game->getPlayers()->size() < 2) {
                         cout << "Not enough players to start the game" << endl;
                         continue;
-                    } else if (game->getPlayersStartup()->size() > 6) {
+                    } else if (game->getPlayers()->size() > 6) {
                         cout << "Too many players to start the game" << endl;
                         cout << "Restart :(" << endl;
                         phase = START;
@@ -80,8 +76,16 @@ void GameEngine::startupPhase(GameEngine *game, CommandProcessor *cp, Command *c
                     }
                     break;
                 } else if (*command->getName() == COMMAND::addplayer) {
-                    phase = addPlayer(game, game->getPlayersStartup(), *command->getArgument(), playerId);
-                    playerId = playerId + 1;
+                    if (game->getPlayers()->size() >= 6) {
+                        cout << "Too many players to start the game" << endl;
+                        cout << "Restart player creation :(" << endl << endl;
+                        //reset players
+                        game->getPlayers()->clear();
+                        phase = MAP_VALIDATED;
+                    } else {
+                        phase = addPlayer(game, game->getPlayers(), *command->getArgument(), playerId);
+                        playerId = playerId + 1;
+                    }
                     break;
                 }
                 break;
@@ -139,10 +143,11 @@ PHASE GameEngine::addPlayers() {
 
 PHASE GameEngine::addPlayer(GameEngine *game, vector<Player *> *playersStartup, string playerName, int playerId) {
     Player *newPlayer = new Player(playerName, playerId);
-    cout << "Player " << *newPlayer->getName() << " added " << *newPlayer->getId() << endl;
-    vector<Player *> *players = getPlayersStartup();
+    cout << "Player " << *newPlayer->getName() << " added" << endl;
+    vector<Player *> *players = getPlayers();
     players->push_back(newPlayer);
-    game->setPlayersStartup(players);
+    cout << "Num of players: " << players->size() << endl << endl;
+    game->setPlayers(players);
     return PLAYERS_ADDED;
 }
 
@@ -157,30 +162,32 @@ PHASE GameEngine::gameStart(GameEngine *game) {
 void GameEngine::distributeTerritories(Map *map) {
     cout << "Distributing territories..." << endl;
     vector<Territory *> *territories = map->getTerritories();
-    int numPlayers = playersStartup->size();
+    int numPlayers = players->size();
     int numTerritories = territories->size();
     int territoriesPerPlayer = numTerritories / numPlayers;
-    int remainder = numTerritories % numPlayers;
+    int remainderTerritories = numTerritories % numPlayers;
 
-    //distribute all the territories to the players
+    //distribute all the territories to the players and set owner of territory
     for (int i = 0; i < numPlayers; i++) {
-        vector<Territory *> *playerTerritories = new vector<Territory *>();
+        vector<Territory *> *territoriesForPlayers = players->at(i)->getPlayerTerritories();
         for (int j = 0; j < territoriesPerPlayer; j++) {
-            playerTerritories->push_back(territories->at(i * territoriesPerPlayer + j));
+            territoriesForPlayers->push_back(territories->at(i * territoriesPerPlayer + j)); //add territory to player
+            territories->at(i * territoriesPerPlayer + j)->setOwner(players->at(i)); //set owner of territory
         }
-        playersStartup->at(i)->setPlayerTerritories(playerTerritories);
+        players->at(i)->setPlayerTerritories(territoriesForPlayers);
     }
 
-    //distribute the remainder of the territories to the players
-    for (int i = 0; i < remainder; i++) {
-        playersStartup->at(i)->getPlayerTerritories()->push_back(
-                territories->at(i + numPlayers * territoriesPerPlayer));
+    //distribute the remainder of the territories to the players and set owner of territory
+    for (int i = 0; i < remainderTerritories; i++) {
+        players->at(i)->getPlayerTerritories()->push_back(
+                territories->at(i + numPlayers * territoriesPerPlayer)); //add territory to player
+        territories->at(i + numPlayers * territoriesPerPlayer)->setOwner(players->at(i)); //set owner of territory
     }
 
     //print out territories of players
-    for (int i = 0; i < playersStartup->size(); i++) {
-        cout << "Player " << *playersStartup->at(i)->getId() << " has territories: " << endl;
-        vector<Territory *> *tempTerritories = playersStartup->at(i)->getPlayerTerritories();
+    for (int i = 0; i < players->size(); i++) {
+        cout << "\nPlayer " << *players->at(i)->getId() << " has territories: " << endl;
+        vector<Territory *> *tempTerritories = players->at(i)->getPlayerTerritories();
         for (int j = 0; j < tempTerritories->size(); j++) {
             cout << *tempTerritories->at(j)->getTerritoryName() << endl;
         }
@@ -190,113 +197,50 @@ void GameEngine::distributeTerritories(Map *map) {
 }
 
 void GameEngine::determineOrder(GameEngine *game) {
-    cout << "Determining order of players..." << endl;
-    vector<Player *> *players = getPlayersStartup();
+    cout << "\nDetermining order of players..." << endl;
+    vector<Player *> *players = getPlayers();
     vector<Player *> *playersOrder = new vector<Player *>();
     int numPlayers = players->size();
-    int randomPlayer;
+    int randomNum;
     while (playersOrder->size() < numPlayers) {
-        randomPlayer = rand() % numPlayers;
-        if (find(playersOrder->begin(), playersOrder->end(), players->at(randomPlayer)) == playersOrder->end()) {
-            playersOrder->push_back(players->at(randomPlayer));
+        randomNum = rand() % numPlayers;
+        if (find(playersOrder->begin(), playersOrder->end(), players->at(randomNum)) == playersOrder->end()) {
+            playersOrder->push_back(players->at(randomNum));
         }
     }
-    game->setPlayersStartup(playersOrder);
-    for (int i = 0; i < playersStartup->size(); i++) {
-        cout << "Player " << *playersStartup->at(i)->getName() << " is player " << i + 1 << endl;
+    game->setPlayers(playersOrder);
+    delete players;
+    players = playersOrder;
+    for (int i = 0; i < players->size(); i++) {
+        cout << "Player " << *players->at(i)->getName() << " is player " << i + 1 << endl;
     }
-//    delete playersOrder;
-//    playersOrder = nullptr;
 }
 
 void GameEngine::giveInitialArmies() {
     //give initial armies of 50 to each player
-    cout << "Giving initial armies..." << endl;
-    for (int i = 0; i < playersStartup->size(); i++) {
-        playersStartup->at(i)->setReinforcements(50);
-        cout << "Player " << *playersStartup->at(i)->getName() << " has " << playersStartup->at(i)->getReinforcements()
+    cout << "\nGiving initial armies..." << endl;
+    for (int i = 0; i < players->size(); i++) {
+        players->at(i)->setReinforcements(50);
+        cout << "Player " << *players->at(i)->getName() << " has " << players->at(i)->getReinforcements()
              << " armies" << endl;
     }
 }
 
 void GameEngine::drawCards() {
-    cout << "Drawing cards for players..." << endl;
+    cout << "\nDrawing cards for players..." << endl;
     Deck *deck = new Deck();
-    for (int i = 0; i < playersStartup->size(); i++) {
+    for (int i = 0; i < players->size(); i++) {
         Hand *hand = new Hand();
         hand->insert(deck->draw());
         hand->insert(deck->draw());
-        playersStartup->at(i)->setHand(hand);
+        players->at(i)->setHand(hand);
     }
     //print hand of players
-    for (int i = 0; i < playersStartup->size(); i++) {
-        cout << "Player " << *playersStartup->at(i)->getName() << " has " << playersStartup->at(i)->getHand()->size()
+    for (int i = 0; i < players->size(); i++) {
+        cout << "Player " << *players->at(i)->getName() << " has " << players->at(i)->getHand()->size()
              << " cards" << endl;
     }
 
-}
-
-//Assign reinforcement phase ***DEPRECATED FROM A1
-PHASE GameEngine::assignReinforcements() {
-    while (true) {
-        cout << "Assign reinforcements" << endl;
-        while (true) {
-            cout << "Continue? (y/n): ";
-            string continueAssigningReinforcements;
-            cin >> continueAssigningReinforcements;
-            if (continueAssigningReinforcements == "y") {
-                return ASSIGN_REINFORCEMENT; //assign more reinforcements
-            } else if (continueAssigningReinforcements == "n") {
-                return ISSUE_ORDERS; //go to issue orders phase
-            }
-            cout << "Invalid input" << endl << "Try again" << endl;
-            cin.clear(); //clear input stream
-            cin.ignore();
-        }
-    }
-}
-
-//Issue orders phase ***DEPRECATED FROM A1
-PHASE GameEngine::issueOrders() {
-    while (true) {
-        cout << "Issue orders" << endl;
-        while (true) {
-            cout << "Continue? (y/n): ";
-            string continueIssuingOrders;
-            cin >> continueIssuingOrders;
-            if (continueIssuingOrders == "y") {
-                return ISSUE_ORDERS; //issue more orders
-            } else if (continueIssuingOrders == "n") {
-                return EXECUTE_ORDERS; //go to execute orders phase
-            }
-            cout << "Invalid input" << endl << "Try again" << endl;
-            cin.clear(); //clear input stream
-            cin.ignore();
-        }
-    }
-}
-
-//Execute orders phase ***DEPRECATED FROM A1
-PHASE GameEngine::executeOrders() {
-    while (true) {
-        cout << "Execute orders" << endl;
-        while (true) {
-            if (*winner != -1) {
-                return WIN; //go to win phase
-            }
-            cout << "Continue? (y/n): ";
-            string continueExecutingOrders;
-            cin >> continueExecutingOrders;
-            if (continueExecutingOrders == "y") {
-                return EXECUTE_ORDERS; //execute more orders
-            } else if (continueExecutingOrders == "n") {
-                return ASSIGN_REINFORCEMENT; //go to assign reinforcement phase
-            } else if (continueExecutingOrders == "w") { //simulate winner
-                return WIN; //simulate win
-            }
-            cout << "Invalid input" << endl << "Try again" << endl;
-        }
-    }
 }
 
 //Win phase
@@ -359,7 +303,6 @@ GameEngine::~GameEngine() {
     winner = nullptr;
     delete winner;
     delete players;
-    delete playersStartup;
 
     delete neutral;
     delete peaceStatus;
@@ -367,12 +310,12 @@ GameEngine::~GameEngine() {
 }
 
 //Getters and setters
-vector<Player *> *GameEngine::getPlayersStartup() const {
-    return playersStartup;
+vector<Player *> *GameEngine::getPlayers() const {
+    return players;
 }
 
-void GameEngine::setPlayersStartup(vector<Player *> *playersStartup) {
-    GameEngine::playersStartup = playersStartup;
+void GameEngine::setPlayers(vector<Player *> *players) {
+    GameEngine::players = players;
 }
 
 Map *GameEngine::getMap() const {
@@ -385,10 +328,47 @@ void GameEngine::setMap(Map *map) {
 
 // START OF ASSIGNMENT 2
 // Start of new turn
-PHASE GameEngine::mainGameLoop() {
-
+void GameEngine::mainGameLoop(GameEngine *game, PHASE phase) {
+    initGameDummy();
     cout << "There are " << players->size() << " players" << endl;
 
+    while (true) {
+        switch (phase) {
+            case ASSIGN_REINFORCEMENT: {
+                cout << "Assign reinforcement state" << endl;
+                phase = game->reinforcementPhase();
+                break;
+            }
+            case ISSUE_ORDERS: {
+                cout << "Issue orders state" << endl;
+                phase = game->issueOrdersPhase();
+                break;
+            }
+            case EXECUTE_ORDERS: {
+                cout << "Execute orders state" << endl;
+                phase = game->executeOrdersPhase();
+                break;
+            }
+            case CHECK_WIN: {
+                cout << "Check victory state" << endl;
+                phase = game->checkWin();
+                break;
+            }
+            case WIN:
+                cout << "Win Phase" << endl;
+                phase = game->win();
+                break;
+            case END:
+                cout << "End Phase" << endl;
+                game->end();
+            default:
+                cout << "Invalid phase" << endl;
+                break;
+        }
+    }
+};
+
+PHASE GameEngine::checkWin() {
     // create new vector for surviving players
     vector<Player *> *newPlayers = new vector<Player *>;
     // loop through current players and only push players with territories
@@ -401,22 +381,17 @@ PHASE GameEngine::mainGameLoop() {
             p = nullptr;
         }
     }
-    // delete old players vector
-    delete players;
-    // assign new player vector to gameEngine attribute
-    players = newPlayers;
 
+    delete players; // delete old players vector
+    players = newPlayers; // assign new player vector to gameEngine attribute
     cout << "There are " << players->size() << " players" << endl;
-
 
     // check if there's a winner
     if (players->size() == 1) {
         return WIN;
     }
-
     return ASSIGN_REINFORCEMENT;
-
-};
+}
 
 //Assign reinforcement phase
 PHASE GameEngine::reinforcementPhase() {
@@ -453,14 +428,10 @@ PHASE GameEngine::reinforcementPhase() {
                 newTroops += 5;
             }
         }
-
         // Update player's reinforcement pool
         player->setReinforcements(player->getReinforcements() + newTroops);
-
     }
-
     cout << "Reinforcements assigned.\n" << endl;
-
     return ISSUE_ORDERS;
 }
 
@@ -477,11 +448,8 @@ PHASE GameEngine::issueOrdersPhase() {
             // player selects the end turn choice
             stillPlaying = player->issueOrder();
         }
-
     }
-
     return EXECUTE_ORDERS;
-
 }
 
 //Execute orders phase
@@ -535,8 +503,7 @@ PHASE GameEngine::executeOrdersPhase() {
         }
 
     }
-
-    return PLAY;
+    return CHECK_WIN;
 }
 
 //// function for checking whether input is a number within a certain range
