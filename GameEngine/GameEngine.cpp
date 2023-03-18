@@ -1,5 +1,4 @@
 #include "GameEngine.h"
-#include <set>
 
 Player *GameEngine::neutral = new Player(-1); //CREATING THE STATIC NEUTRAL PLAYER ID = -1
 std::unordered_map<string, bool> *GameEngine::peaceStatus = new std::unordered_map<string, bool>(); //CREATING THE STATIC PEACE STATUS MAP
@@ -188,7 +187,7 @@ GameEngine::~GameEngine() {
     cout << "GameEngine destructor called" << endl;
     winner = nullptr;
     delete winner;
-    delete[] players;
+    delete players;
 
     delete neutral;
     delete peaceStatus;
@@ -205,7 +204,7 @@ PHASE GameEngine::mainGameLoop() {
     vector<Player *> *newPlayers = new vector<Player *>;
     // loop through current players and only push players with territories
     for (Player *p: *players) {
-        if (p->getTerritories()->size() > 0) {
+        if (p->getPlayerTerritories()->size() > 0) {
             newPlayers->push_back(p);
         } else {
             // if player has no territories delete
@@ -237,7 +236,7 @@ PHASE GameEngine::reinforcementPhase() {
     // loop through all current players and assign reinforcements based on game logic
     for (Player *player: *players) {
         // get current player's territories
-        vector<Territory *> playerTerritories = *(player->getTerritories());
+        vector<Territory *> playerTerritories = *(player->getPlayerTerritories());
 
         // Assign troops based on game criteria
         int newTroops = 3; // minimum new troops
@@ -453,17 +452,17 @@ void GameEngine::initGameDummy() {
     list3->push_back(t9);
 
     Player *p1 = new Player();
-    p1->setTerritories(list1);
+    p1->setPlayerTerritories(list1);
     for (Territory *t: *list1) {
         t->setOwner(p1);
     }
     Player *p2 = new Player();
-    p2->setTerritories(list2);
+    p2->setPlayerTerritories(list2);
     for (Territory *t: *list2) {
         t->setOwner(p2);
     }
     Player *p3 = new Player();
-    p3->setTerritories(list3);
+    p3->setPlayerTerritories(list3);
     for (Territory *t: *list3) {
         t->setOwner(p3);
     }
@@ -531,6 +530,6 @@ void GameEngine::initGameEndDummy() {
     Territory *t = new Territory();
     vector<Territory *> *tvec = new vector<Territory *>;
     tvec->push_back(t);
-    p->setTerritories(tvec);
+    p->setPlayerTerritories(tvec);
     players->push_back(p);
 }

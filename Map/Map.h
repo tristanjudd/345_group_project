@@ -9,6 +9,8 @@
 #include <istream>
 #include <fstream>
 #include <sstream>
+#include <map>
+#include "../GameEngine/GameEngine.h"
 
 //#include "../Player/Player.h"
 
@@ -22,8 +24,10 @@ using std::istream;
 using std::stoi;
 using std::ifstream;
 using std::stringstream;
+using std::map;
 
 class Player; //forward declaration
+class GameEngine; //forward declaration
 
 class Territory {
 private:

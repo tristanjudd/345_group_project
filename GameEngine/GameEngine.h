@@ -10,6 +10,7 @@ using std::endl;
 using std::string;
 using std::cin;
 using std::ostream;
+using std::find;
 
 #include "../Player/Player.h"
 #include "../Map/Map.h"
@@ -29,6 +30,8 @@ enum PHASE {
     WIN,
     END
 };
+
+class Map;
 
 class GameEngine {
 private:
