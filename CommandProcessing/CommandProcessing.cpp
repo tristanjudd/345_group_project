@@ -225,7 +225,7 @@ string CommandProcessor::generateEffect(bool isValid, Command *cmd, PHASE curren
                 break;
         }
     } else {
-        out << "[ERROR] Cannot " << *cmd->getName() << " from phase " << currentPhase << endl;
+        out << "[ERROR] Cannot " << *cmd->getName() << " from phase " << currentPhase;
     }
 
     return out.str();
