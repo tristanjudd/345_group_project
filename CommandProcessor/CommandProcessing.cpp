@@ -126,7 +126,7 @@ CommandProcessor::CommandProcessor() {
 
 CommandProcessor::CommandProcessor(const CommandProcessor &copy) {
     commands = new vector<Command *>();
-    for (Command *cmd : *copy.commands) {
+    for (Command *cmd: *copy.commands) {
         commands->push_back(new Command(*cmd));
     }
 }
@@ -167,7 +167,7 @@ ostream &operator<<(ostream &os, PHASE p) {
         case WIN:
             os << "win";
             break;
-        case END:
+        case ENDSTARTUP:
             os << "end";
             break;
     }
@@ -178,7 +178,7 @@ ostream &operator<<(ostream &os, PHASE p) {
 CommandProcessor &CommandProcessor::operator=(const CommandProcessor &cp) {
     if (this != &cp) {
         commands->clear();
-        for (Command *cmd : *cp.commands) {
+        for (Command *cmd: *cp.commands) {
             commands->push_back(cmd);
         }
     }
@@ -188,7 +188,7 @@ CommandProcessor &CommandProcessor::operator=(const CommandProcessor &cp) {
 
 ostream &operator<<(ostream &os, const CommandProcessor &cp) {
     os << "CommandProcessor with commands: " << endl;
-    for (Command *cmd : *cp.commands) {
+    for (Command *cmd: *cp.commands) {
         os << cmd;
     }
 
@@ -261,7 +261,7 @@ bool CommandProcessor::validate(Command *cmd, PHASE currentPhase) {
     return false;
 }
 
-Command* CommandProcessor::readCommand() {
+Command *CommandProcessor::readCommand() {
     string newCommand{};
 
     while (true) {
@@ -288,7 +288,7 @@ Command* CommandProcessor::readCommand() {
     }
 }
 
-Command* CommandProcessor::getCommand(PHASE currentPhase) {
+Command *CommandProcessor::getCommand(PHASE currentPhase) {
     Command *command = CommandProcessor::readCommand();
 
     bool cmdIsValid = validate(command, currentPhase);
