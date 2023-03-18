@@ -7,6 +7,4 @@ int gameEngineDriver() {
     PHASE phase = START;
 
     game->startupPhase(game, cp, command, phase);
-
-    game->startupPhase(game, cp, command, phase, map);
 }
