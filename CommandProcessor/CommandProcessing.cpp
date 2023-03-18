@@ -118,7 +118,7 @@ Command &Command::operator=(const Command &c) {
 }
 
 
-// CommandProcessing
+// CommandProcessor
 // Constructors
 CommandProcessor::CommandProcessor() {
     commands = new vector<Command *>();
@@ -134,7 +134,7 @@ CommandProcessor::CommandProcessor(const CommandProcessor &copy) {
 CommandProcessor::~CommandProcessor() {
     commands = nullptr;
     delete commands;
-    cout << "CommandProcessing destructor called";
+    cout << "CommandProcessor destructor called";
 }
 
 // Operators
