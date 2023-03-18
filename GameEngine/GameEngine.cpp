@@ -1,9 +1,69 @@
 #include "GameEngine.h"
-#include "../CommandProcessor/CommandProcessing.h"
+#include "../CommandProcessing/CommandProcessing.h"
 
 Player *GameEngine::neutral = new Player(-1); //CREATING THE STATIC NEUTRAL PLAYER ID = -1
 std::unordered_map<string, bool> *GameEngine::peaceStatus = new std::unordered_map<string, bool>(); //CREATING THE STATIC PEACE STATUS MAP
 vector<int> *GameEngine::conqStatus = new vector<int>(); //CREATING THE STATIC CONQUERED STATUS VECTOR
+
+//default constructor
+GameEngine::GameEngine() {
+    cout << "GameEngine default constructor called" << endl;
+    winner = new int(-1);
+    players = new vector<Player *>;
+}
+
+//copy constructor
+GameEngine::GameEngine(const GameEngine &gameEngine) {
+    cout << "GameEngine copy constructor called" << endl;
+    winner = new int(*gameEngine.winner);
+    players = gameEngine.players;
+}
+
+//assignment operator
+GameEngine &GameEngine::operator=(const GameEngine &gameEngine) {
+    cout << "GameEngine assignment operator called" << endl;
+    if (this != &gameEngine) {
+        delete this->winner;
+        this->winner = new int(*gameEngine.winner);
+    }
+    return *this;
+}
+
+//ostream operator
+ostream &operator<<(ostream &out, const GameEngine &gameEngine) {
+    cout << "GameEngine ostream operator called" << endl;
+    out << "Winner: " << *gameEngine.winner << endl;
+    return out;
+}
+
+//destructor
+GameEngine::~GameEngine() {
+    cout << "GameEngine destructor called" << endl;
+    winner = nullptr;
+    delete winner;
+    delete players;
+
+    delete neutral;
+    delete peaceStatus;
+    delete conqStatus;
+}
+
+//Getters and setters
+vector<Player *> *GameEngine::getPlayers() const {
+    return players;
+}
+
+void GameEngine::setPlayers(vector<Player *> *players) {
+    GameEngine::players = players;
+}
+
+Map *GameEngine::getMap() const {
+    return map;
+}
+
+void GameEngine::setMap(Map *map) {
+    GameEngine::map = map;
+}
 
 // Startup
 void GameEngine::startupPhase(GameEngine *game, CommandProcessor *cp, Command *command, PHASE phase) {
@@ -15,7 +75,7 @@ void GameEngine::startupPhase(GameEngine *game, CommandProcessor *cp, Command *c
             case START: {
                 cout << "Start state" << endl;
                 // will prompt user, and should not pass for anything other than 'loadmap <mapfile>' (in this phase)
-                command = cp->getCommand(phase);
+                command = cp->getCommand(phase, cp);
                 cout << *command << endl;  // just to show I did my part
                 mapFile = *command->getArgument();
                 phase = loadMap(game, phase, mapFile);
@@ -23,7 +83,7 @@ void GameEngine::startupPhase(GameEngine *game, CommandProcessor *cp, Command *c
             }
             case MAP_LOADED: {
                 cout << "Map loaded state" << endl;
-                command = cp->getCommand(phase);
+                command = cp->getCommand(phase, cp);
                 cout << *command << endl;
                 if (*command->getName() == COMMAND::validatemap) {
                     phase = validateMap(game, phase);
@@ -36,7 +96,7 @@ void GameEngine::startupPhase(GameEngine *game, CommandProcessor *cp, Command *c
             }
             case MAP_VALIDATED: {
                 cout << "Map validated state" << endl;
-                command = cp->getCommand(phase);
+                command = cp->getCommand(phase, cp);
                 cout << *command << endl;
                 playerId = 0;
                 if (*command->getName() == COMMAND::addplayer) {
@@ -48,7 +108,7 @@ void GameEngine::startupPhase(GameEngine *game, CommandProcessor *cp, Command *c
             }
             case PLAYERS_ADDED: {
                 cout << "Players added state" << endl;
-                command = cp->getCommand(phase);
+                command = cp->getCommand(phase, cp);
                 cout << *command << endl;
                 if (*command->getName() == COMMAND::gamestart) {
                     if (game->getPlayers()->size() < 2) {
@@ -123,9 +183,9 @@ PHASE GameEngine::validateMap(GameEngine *game, PHASE phase) {
 
 // Add player method
 PHASE GameEngine::addPlayer(GameEngine *game, string playerName, int playerId) {
-    Player *newPlayer = new Player(playerName, playerId);
+    Player *newPlayer = new Player(playerName, playerId); //create new player
     vector<Player *> *players = game->getPlayers();
-    players->push_back(newPlayer);
+    players->push_back(newPlayer); //add player to vector of players
     cout << "Player " << *newPlayer->getName() << " added" << endl;
     cout << "Num of players: " << players->size() << endl << endl;
     game->setPlayers(players);
@@ -198,6 +258,7 @@ void GameEngine::determinePlayerOrder(GameEngine *game) {
     }
 }
 
+// Give initial armies method
 void GameEngine::giveInitialArmies() {
     //give initial armies of 50 to each player
     cout << "\nGiving initial armies..." << endl;
@@ -208,6 +269,7 @@ void GameEngine::giveInitialArmies() {
     }
 }
 
+// Draw cards method
 void GameEngine::drawCards() {
     cout << "\nDrawing cards for players..." << endl;
     Deck *deck = new Deck();
@@ -248,67 +310,6 @@ void GameEngine::end() {
     cout << "Bye Bye" << endl;
 }
 
-//default constructor
-GameEngine::GameEngine() {
-    cout << "GameEngine default constructor called" << endl;
-    winner = new int(-1);
-    players = new vector<Player *>;
-}
-
-//copy constructor
-GameEngine::GameEngine(const GameEngine &gameEngine) {
-    cout << "GameEngine copy constructor called" << endl;
-    winner = new int(*gameEngine.winner);
-    players = gameEngine.players;
-}
-
-//assignment operator
-GameEngine &GameEngine::operator=(const GameEngine &gameEngine) {
-    cout << "GameEngine assignment operator called" << endl;
-    if (this != &gameEngine) {
-        delete this->winner;
-        this->winner = new int(*gameEngine.winner);
-    }
-    return *this;
-}
-
-//ostream operator
-ostream &operator<<(ostream &out, const GameEngine &gameEngine) {
-    cout << "GameEngine ostream operator called" << endl;
-    out << "Winner: " << *gameEngine.winner << endl;
-    return out;
-}
-
-//destructor
-GameEngine::~GameEngine() {
-    cout << "GameEngine destructor called" << endl;
-    winner = nullptr;
-    delete winner;
-    delete players;
-
-    delete neutral;
-    delete peaceStatus;
-    delete conqStatus;
-}
-
-//Getters and setters
-vector<Player *> *GameEngine::getPlayers() const {
-    return players;
-}
-
-void GameEngine::setPlayers(vector<Player *> *players) {
-    GameEngine::players = players;
-}
-
-Map *GameEngine::getMap() const {
-    return map;
-}
-
-void GameEngine::setMap(Map *map) {
-    GameEngine::map = map;
-}
-
-// START OF ASSIGNMENT 2
 // Start of new turn
 void GameEngine::mainGameLoop(GameEngine *game, PHASE phase) {
     initGameDummy();
@@ -349,31 +350,6 @@ void GameEngine::mainGameLoop(GameEngine *game, PHASE phase) {
         }
     }
 };
-
-PHASE GameEngine::checkWin() {
-    // create new vector for surviving players
-    vector<Player *> *newPlayers = new vector<Player *>;
-    // loop through current players and only push players with territories
-    for (Player *p: *players) {
-        if (p->getPlayerTerritories()->size() > 0) {
-            newPlayers->push_back(p);
-        } else {
-            // if player has no territories delete
-            delete p;
-            p = nullptr;
-        }
-    }
-
-    delete players; // delete old players vector
-    players = newPlayers; // assign new player vector to gameEngine attribute
-    cout << "There are " << players->size() << " players" << endl;
-
-    // check if there's a winner
-    if (players->size() == 1) {
-        return WIN;
-    }
-    return ASSIGN_REINFORCEMENT;
-}
 
 //Assign reinforcement phase
 PHASE GameEngine::reinforcementPhase() {
@@ -486,6 +462,31 @@ PHASE GameEngine::executeOrdersPhase() {
 
     }
     return CHECK_WIN;
+}
+
+PHASE GameEngine::checkWin() {
+    // create new vector for surviving players
+    vector<Player *> *newPlayers = new vector<Player *>;
+    // loop through current players and only push players with territories
+    for (Player *p: *players) {
+        if (p->getPlayerTerritories()->size() > 0) {
+            newPlayers->push_back(p);
+        } else {
+            // if player has no territories delete
+            delete p;
+            p = nullptr;
+        }
+    }
+
+    delete players; // delete old players vector
+    players = newPlayers; // assign new player vector to gameEngine attribute
+    cout << "There are " << players->size() << " players" << endl;
+
+    // check if there's a winner
+    if (players->size() == 1) {
+        return WIN;
+    }
+    return ASSIGN_REINFORCEMENT;
 }
 
 //// function for checking whether input is a number within a certain range
