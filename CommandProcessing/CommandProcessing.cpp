@@ -265,16 +265,24 @@ Command *CommandProcessor::parseCommand(string newCommand) {
     vector<string> commandTokens = MapLoader::getTokens(newCommand);
 
     if (commandTokens[0] == "loadmap") {
-        return new Command(COMMAND::loadmap, commandTokens[1]);
-    } else if (newCommand == "validatemap") {
+        if (commandTokens.size() == 1) {  // no argument specified
+            return new Command(COMMAND::loadmap, *new string(""));
+        } else {
+            return new Command(COMMAND::loadmap, commandTokens[1]);
+        }
+    } else if (commandTokens[0] == "validatemap") {
         return new Command(COMMAND::validatemap);
     } else if (commandTokens[0] == "addplayer") {
-        return new Command(COMMAND::addplayer, commandTokens[1]);
-    } else if (newCommand == "gamestart") {
+        if (commandTokens.size() == 1) {  // no argument specified
+            return new Command(COMMAND::addplayer, *new string(""));
+        } else {
+            return new Command(COMMAND::addplayer, commandTokens[1]);
+        }
+    } else if (commandTokens[0] == "gamestart") {
         return new Command(COMMAND::gamestart);
-    } else if (newCommand == "replay") {
+    } else if (commandTokens[0] == "replay") {
         return new Command(COMMAND::replay);
-    } else if (newCommand == "quit") {
+    } else if (commandTokens[0] == "quit") {
         return new Command(COMMAND::quit);
     } else {
         return new Command();
@@ -297,15 +305,19 @@ Command* CommandProcessor::readCommand() {
     }
 }
 
-Command* CommandProcessor::getCommand(PHASE currentPhase, CommandProcessor commandProcessor) {
-    Command *command = commandProcessor.readCommand();
+Command* CommandProcessor::getCommand(PHASE currentPhase, CommandProcessor* commandProcessor) {
+    while (true) {
+        Command *command = commandProcessor->readCommand();
+        bool cmdIsValid = validate(command, currentPhase);
+        command->saveEffect(generateEffect(cmdIsValid, command, currentPhase));
+        saveCommand(command);
 
-    bool cmdIsValid = validate(command, currentPhase);
-
-    command->saveEffect(generateEffect(cmdIsValid, command, currentPhase));
-
-    saveCommand(command);
-    return command;
+        if (cmdIsValid) {
+            return command;
+        } else {
+            cout << *command->getEffect() << endl;
+        }
+    }
 }
 
 // FileLineReader
@@ -409,7 +421,6 @@ ostream &operator<<(ostream &os, const FileCommandProcessorAdapter &fcpa) {
 // methods
 Command *FileCommandProcessorAdapter::readCommand() {
     Command *command = parseCommand(flr->readLineFromFile(*currentLine));
-    currentLine += 1;
-
+    *currentLine = *currentLine + 1;
     return command;
 }

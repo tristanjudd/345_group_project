@@ -82,7 +82,7 @@ public:
     Command* parseCommand(string newCommand);
 
     virtual Command* readCommand();
-    Command* getCommand(PHASE currentPhase, CommandProcessor commandProcessor);
+    Command* getCommand(PHASE currentPhase, CommandProcessor* commandProcessor);
 };
 
 class FileLineReader {

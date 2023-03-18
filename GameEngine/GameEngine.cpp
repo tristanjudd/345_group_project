@@ -1,5 +1,5 @@
 #include "GameEngine.h"
-#include "../CommandProcessor/CommandProcessing.h"
+#include "../CommandProcessing/CommandProcessing.h"
 
 Player *GameEngine::neutral = new Player(-1); //CREATING THE STATIC NEUTRAL PLAYER ID = -1
 std::unordered_map<string, bool> *GameEngine::peaceStatus = new std::unordered_map<string, bool>(); //CREATING THE STATIC PEACE STATUS MAP
@@ -33,7 +33,7 @@ void GameEngine::startupPhase(GameEngine *game, CommandProcessor *cp, Command *c
             case START: {
                 cout << "Start state" << endl;
                 // will prompt user, and should not pass for anything other than 'loadmap <mapfile>' (in this phase)
-                command = cp->getCommand(phase);
+                command = cp->getCommand(phase, cp);
                 cout << *command << endl;  // just to show I did my part
                 mapFile = *command->getArgument();
                 phase = loadMap(game, phase, mapFile);
@@ -41,7 +41,7 @@ void GameEngine::startupPhase(GameEngine *game, CommandProcessor *cp, Command *c
             }
             case MAP_LOADED: {
                 cout << "Map loaded state" << endl;
-                command = cp->getCommand(phase);
+                command = cp->getCommand(phase, cp);
                 cout << *command << endl;
                 if (*command->getName() == COMMAND::validatemap) {
                     phase = validateMap(game, phase);
@@ -54,7 +54,7 @@ void GameEngine::startupPhase(GameEngine *game, CommandProcessor *cp, Command *c
             }
             case MAP_VALIDATED: {
                 cout << "Map validated state" << endl;
-                command = cp->getCommand(phase);
+                command = cp->getCommand(phase, cp);
                 cout << *command << endl;
                 if (*command->getName() == COMMAND::addplayer) {
                     phase = addPlayer(game, game->getPlayersStartup(), *command->getArgument(), playerId);
@@ -65,7 +65,7 @@ void GameEngine::startupPhase(GameEngine *game, CommandProcessor *cp, Command *c
             }
             case PLAYERS_ADDED: {
                 cout << "Players added state" << endl;
-                command = cp->getCommand(phase);
+                command = cp->getCommand(phase, cp);
                 cout << *command << endl;
                 if (*command->getName() == COMMAND::gamestart) {
                     if (game->getPlayersStartup()->size() < 2) {
