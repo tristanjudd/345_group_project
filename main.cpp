@@ -27,8 +27,6 @@ int main(int argc, char *argv[]) {
         cout << "[ERROR]: " << e.what() << "... Exiting program.";
         return -1;
     }
-
-    //PART2
     
     return 0;
 }
