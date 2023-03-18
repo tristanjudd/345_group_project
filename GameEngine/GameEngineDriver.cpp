@@ -5,7 +5,8 @@ int gameEngineDriver() {
     CommandProcessor *cp = new CommandProcessor();
     Command *command;
     PHASE phase = START;
-    Map *map;
+
+    game->startupPhase(game, cp, command, phase);
 
     game->startupPhase(game, cp, command, phase, map);
 }

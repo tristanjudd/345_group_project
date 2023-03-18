@@ -710,7 +710,7 @@ bool MapLoader::loadMap(GameEngine *g, string *inputPath) {
     printf("Reading %s...\n", filePath.c_str());
     myMapLoader->setPath(&filePath);
 
-    Map *loadedMap;
+    Map *loadedMap = new Map();
     try {
         loadedMap = myMapLoader->readMap(&filePath);
         g->setMap(loadedMap);

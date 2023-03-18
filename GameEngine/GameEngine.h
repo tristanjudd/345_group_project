@@ -39,12 +39,12 @@ enum PHASE {
 class GameEngine {
 private:
     int *winner; // id of the winner
-    vector<Player *> *players; // list of players currently in the game, in order of turns
     Map* map; // the game map
+    vector<Player *> *players; // list of players currently in the game, in order of turns
     vector<Player *> *playersStartup = new vector<Player *>();
 
 public:
-    void startupPhase(GameEngine *game, CommandProcessor *cp, Command *command, PHASE phase, Map *map);
+    void startupPhase(GameEngine *game, CommandProcessor *cp, Command *command, PHASE phase);
     PHASE start();
     PHASE loadMap(GameEngine *game, PHASE phase, string mapFile);
     PHASE validateMap(GameEngine *game, PHASE phase);

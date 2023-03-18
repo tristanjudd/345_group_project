@@ -25,7 +25,7 @@ PHASE GameEngine::loadMap(GameEngine *game, PHASE phase, string mapFile) {
     return phase;
 }
 
-void GameEngine::startupPhase(GameEngine *game, CommandProcessor *cp, Command *command, PHASE phase, Map *map) {
+void GameEngine::startupPhase(GameEngine *game, CommandProcessor *cp, Command *command, PHASE phase) {
     int playerId = 0;
     string mapFile;
     while (true) {
@@ -101,7 +101,6 @@ void GameEngine::startupPhase(GameEngine *game, CommandProcessor *cp, Command *c
             }
         }
     }
-
 }
 
 //Validate map phase
