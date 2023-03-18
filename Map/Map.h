@@ -9,6 +9,8 @@
 #include <istream>
 #include <fstream>
 #include <sstream>
+#include <map>
+#include "../GameEngine/GameEngine.h"
 
 //#include "../Player/Player.h"
 
@@ -22,8 +24,10 @@ using std::istream;
 using std::stoi;
 using std::ifstream;
 using std::stringstream;
+using std::map;
 
 class Player; //forward declaration
+class GameEngine; //forward declaration
 
 class Territory {
 private:
@@ -150,7 +154,6 @@ private:
 
     // static methods
     static PARSE_MODE getMode(const string& inputString);
-    static vector<string> getTokens(const string& inputString);
 
 public:
     // Constructors
@@ -165,7 +168,9 @@ public:
     string *getPath() const;
 
     // Methods
-    Map load(int mapNumber);
+    static bool loadMap(GameEngine *g, string *inputPath);
+    static Map* readMap(string *filePath);
+    static vector<string> getTokens(const string& inputString);
 };
 int mapTest();
 #endif //MAP_H

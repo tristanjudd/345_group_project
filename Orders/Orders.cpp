@@ -395,13 +395,13 @@ bool Advance::execute() {
 				//remove territory from defender
 				Player* otherPlayer = target->getOwner();
 
-				vector<Territory*>* newTerritories = otherPlayer->getTerritories();
+				vector<Territory*>* newTerritories = otherPlayer->getPlayerTerritories();
 				auto it = std::find(newTerritories->begin(), newTerritories->end(), target);
 				if (it != newTerritories->end()) {
 					newTerritories->erase(it);
 				}
 
-				otherPlayer->setTerritories(newTerritories);
+				otherPlayer->setPlayerTerritories(newTerritories);
 
 
 				//Give card to player
@@ -507,9 +507,9 @@ bool Bomb::validate() {
 	//check if adjacent to one of the player's territories
 	bool adjacent = false;
 	
-	for (int i = 0; i < getPlayer()->getTerritories()->size(); i++) 
+	for (int i = 0; i < getPlayer()->getPlayerTerritories()->size(); i++)
 	{
-		vector<int>*bvec = (*(getPlayer()->getTerritories()))[i]->getBorders();
+		vector<int>*bvec = (*(getPlayer()->getPlayerTerritories()))[i]->getBorders();
 
 		if (find(bvec->begin(), bvec->end(), (*(target->getId()))) != bvec->end()) 
 		{
@@ -618,17 +618,17 @@ bool Blockade::execute() {
 		setEffect(execEffect);
 
 		//REMOVE territory from player
-		vector<Territory*> *newTerritories = getPlayer()->getTerritories();
+		vector<Territory*> *newTerritories = getPlayer()->getPlayerTerritories();
 
 		auto it = std::find(newTerritories->begin(), newTerritories->end(), target);
 		if (it != newTerritories->end()) {
 			newTerritories->erase(it);
 		}
 
-		getPlayer()->setTerritories(newTerritories);
+		getPlayer()->setPlayerTerritories(newTerritories);
 
 		//GIVE TERRITORY TO NEUTRAL PLAYER
-		GameEngine::neutral->getTerritories()->push_back(target);
+		GameEngine::neutral->getPlayerTerritories()->push_back(target);
 		target->setOwner(GameEngine::neutral);
 
 

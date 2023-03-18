@@ -1,54 +1,19 @@
 #include "GameEngineDriver.h"
-#include "GameEngine.h"
 
 int gameEngineDriver() {
-    GameEngine *g = new GameEngine();
-    PHASE phase = START;
-    while (true) {
-        switch (phase) {
-            case START:
-                cout << "Start Phase" << endl;
-                phase = g->start();
-                break;
-            case MAP_LOADED:
-                cout << "Load Map Phase" << endl;
-                phase = g->loadMap();
-                break;
-            case MAP_VALIDATED:
-                cout << "Validate Map Phase" << endl;
-                phase = g->validateMap();
-                break;
-            case PLAY:
-                cout << "NEW TURN \n" << endl;
-                phase = g->mainGameLoop();
-                break;
-            case PLAYERS_ADDED:
-                cout << "Add Players Phase" << endl;
-                phase = g->addPlayers();
-                break;
-            case ASSIGN_REINFORCEMENT:
-                cout << "ASSIGN REINFORCEMENTS PHASE" << endl;
-                phase = g->reinforcementPhase();
-                break;
-            case ISSUE_ORDERS:
-                cout << "ISSUE ORDERS PHASE" << endl;
-                phase = g->issueOrdersPhase();
-                break;
-            case EXECUTE_ORDERS:
-                cout << "EXECUTE ORDERS PHASE" << endl;
-                phase = g->executeOrdersPhase();
-                break;
-            case WIN:
-                cout << "Win Phase" << endl;
-                phase = g->win();
-                break;
-            case END:
-                cout << "End Phase" << endl;
-                g->end();
-                return 0;
-            default:
-                cout << "Invalid phase" << endl;
-                break;
-        }
-    }
+    GameEngine *game = new GameEngine();
+    CommandProcessor *cp = new CommandProcessor();
+    Command *command;
+    PHASE phase;
+
+    phase = START;
+    game->startupPhase(game, cp, command, phase);
+
+//    phase = ASSIGN_REINFORCEMENT;
+//    game->mainGameLoop(game, phase);
+
+    // TRISTAN: THESE METHODS ARE FOR DEMO PURPOSES
+    // initGameDummy();
+    // initGameEndDummy();
+    // END OF DEMO METHODS
 }
