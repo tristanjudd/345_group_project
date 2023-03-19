@@ -151,7 +151,7 @@ bool Deploy::execute() {
 		target->setArmyCount(armies);
 		
 		//create exec effect
-		string execEffect = *(target->getTerritoryName()) + " now has " + to_string(*armies) + "armies";
+		string execEffect = *(target->getTerritoryName()) + " now has " + to_string(*armies) + " armies";
 		setEffect(execEffect);
 		return true;
 	}
@@ -256,7 +256,7 @@ Advance::Advance()
 
 Advance::Advance(Player* _issuer, int _nbArmies, Territory* _source, Territory* _target) : Order(_issuer)
 {
-	string desc = "Advance order: Player"+ to_string(*(_issuer->getId())) +" Advances" + to_string(_nbArmies) + " armies from "+ (*(_source->getTerritoryName())) + " to " + (*(_target->getTerritoryName()));
+	string desc = "Advance order: Player"+ to_string(*(_issuer->getId())) +" Advances " + to_string(_nbArmies) + " armies from "+ (*(_source->getTerritoryName())) + " to " + (*(_target->getTerritoryName()));
 	setDesc(desc);
 
 	nbArmies = new int(_nbArmies);
@@ -314,10 +314,11 @@ bool Advance::validate() {
 	}
 	
 	//check owner of source
-	if ((*(target->getOwner())->getId()) != (*(getPlayer()->getId()))) {
+	if ((*(source->getOwner())->getId()) != (*(getPlayer()->getId()))) {
 		cout << "DEBUG: Advance not valid, player doesn't own the source" << endl;
 		return false;
 	}
+
 
 	//check if players at peace
 	string peaceDuo1 = to_string(*(getPlayer()->getId())) + "/" + to_string(*(target->getOwner()->getId()));
@@ -358,13 +359,13 @@ bool Advance::execute() {
 
 			source->setArmyCount(leave);
 			target->setArmyCount(arrive);
-			execEffect = *(target->getTerritoryName()) + " now has " + to_string(*arrive) + "armies";
+			execEffect = *(target->getTerritoryName()) + " now has " + to_string(*arrive) + " armies";
 		}
 
 		// battle between 2 armies
 		else 
 		{
-			int attackingArmies = *(source->getArmyCount());
+			int attackingArmies = *nbArmies;
 			int defendingArmies = *(target->getArmyCount());
 
 			while (attackingArmies != 0 && defendingArmies != 0)
@@ -538,7 +539,7 @@ bool Bomb::execute() {
 		int* survive = new int((*(target->getArmyCount())) / 2);
 		target->setArmyCount(survive);
 
-		string execEffect = *(target->getTerritoryName()) + " now has " + to_string(*survive) + "armies";
+		string execEffect = *(target->getTerritoryName()) + " now has " + to_string(*survive) + " armies";
 		setEffect(execEffect);
 		return true;
 	}
@@ -614,7 +615,7 @@ bool Blockade::execute() {
 		int* doubled = new int((*(target->getArmyCount())) * 2);
 		target->setArmyCount(doubled);
 
-		string execEffect = *(target->getTerritoryName()) + " now has " + to_string(*doubled) + "armies";
+		string execEffect = *(target->getTerritoryName()) + " now has " + to_string(*doubled) + " armies and is owned by Neutral player";
 		setEffect(execEffect);
 
 		//REMOVE territory from player
@@ -732,7 +733,7 @@ bool Airlift::execute() {
 		target->setArmyCount(land);
 		
 		//create exec effect string
-		string execEffect = *(target->getTerritoryName()) + " now has " + to_string(*land) + "armies";
+		string execEffect = *(target->getTerritoryName()) + " now has " + to_string(*land) + " armies";
 		setEffect(execEffect);
 		return true;
 	}
