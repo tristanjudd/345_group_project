@@ -424,6 +424,10 @@ PHASE GameEngine::reinforcementPhase() {
 
 //Issue orders phase
 PHASE GameEngine::issueOrdersPhase(LogObserver* observer) {
+    //clear peaceStatus and conqStatus
+    peaceStatus->clear();
+    conqStatus->clear();
+
 // loop through each player and call issueOrder method
     for (Player *player: *players) {
         cout << "PLAYER " << *(player->getId()) << " ISSUING ORDERS" << endl;

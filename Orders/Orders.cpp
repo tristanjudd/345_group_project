@@ -545,10 +545,6 @@ bool Blockade::execute() {
 		string execEffect = *(target->getTerritoryName()) + " now has " + to_string(*doubled) + " armies and is owned by Neutral player";
 		setEffect(execEffect);
 
-
-        string execEffect = *(target->getTerritoryName()) + " now has " + to_string(*doubled) + "armies";
-        setEffect(execEffect);
-
 		//REMOVE territory from player
 		vector<Territory*> *newTerritories = getPlayer()->getPlayerTerritories();
 

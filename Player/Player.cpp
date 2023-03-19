@@ -39,7 +39,6 @@ Player::Player(int id) {
     Player::id = new int(id);
     Player::territories = new vector<Territory *>();
     Player::hand = new Hand();
-    Player::orders = new OrderList();
     Player::reinforcements = new int(0);
 
 }
