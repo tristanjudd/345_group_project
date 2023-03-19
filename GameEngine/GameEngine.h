@@ -50,10 +50,12 @@ public:
     ~GameEngine(); //destructor
 
     // GETTERS AND SETTERS
-    vector<Player *> *getPlayers() const;
-    void setPlayers(vector<Player *> *players);
+    int *getWinner() const;
+    void setWinner(int *winner);
     Map *getMap() const;
     void setMap(Map *map);
+    vector<Player *> *getPlayers() const;
+    void setPlayers(vector<Player *> *players);
 
     // Startup
     void startupPhase(GameEngine *game, CommandProcessor *cp, Command *command, PHASE phase);

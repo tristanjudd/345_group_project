@@ -694,7 +694,7 @@ vector<string> MapLoader::getTokens(const string &inputString) {
     return tokens;
 }
 
-bool MapLoader::loadMap(GameEngine *g, string *inputPath) {
+bool MapLoader::loadMap(GameEngine *game, string *inputPath) {
     // printf("Beginning map setup...\n");
     // printf("Initializing MapLoader...\n");
     MapLoader *myMapLoader = new MapLoader();
@@ -710,10 +710,10 @@ bool MapLoader::loadMap(GameEngine *g, string *inputPath) {
     printf("Reading %s...\n", filePath.c_str());
     myMapLoader->setPath(&filePath);
 
-    Map *loadedMap = new Map();
+    Map *loadedMap = game->getMap();
     try {
         loadedMap = myMapLoader->readMap(&filePath);
-        g->setMap(loadedMap);
+        game->setMap(loadedMap);
     } catch (...) {
         printf("Could not parse map file. Discarding...\n");
         printf("Deleting MapLoader...\n");
