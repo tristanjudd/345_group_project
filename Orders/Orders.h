@@ -65,9 +65,6 @@ public:
 
 	void operator= (Deploy const &);
 
-	void doSomething();
-	void testStatic();
-
 private:
 	int *nbArmies;
 	Territory* target;
