@@ -147,7 +147,7 @@ void Command::stringToLog() {
 }
 
 
-// CommandProcessor
+// CommandProcessing
 // Constructors
 CommandProcessor::CommandProcessor(LogObserver *observer) : Subject(observer) {
     commands = new vector<Command *>();
@@ -163,7 +163,7 @@ CommandProcessor::CommandProcessor(const CommandProcessor &copy) {
 CommandProcessor::~CommandProcessor() {
     commands = nullptr;
     delete commands;
-    cout << "CommandProcessor destructor called";
+    cout << "CommandProcessing destructor called";
 }
 
 // Operators
@@ -216,7 +216,7 @@ CommandProcessor &CommandProcessor::operator=(const CommandProcessor &cp) {
 }
 
 ostream &operator<<(ostream &os, const CommandProcessor &cp) {
-    os << "CommandProcessor with commands: " << endl;
+    os << "CommandProcessing with commands: " << endl;
     for (Command *cmd: *cp.commands) {
         os << cmd;
     }
@@ -291,42 +291,144 @@ bool CommandProcessor::validate(Command *cmd, PHASE currentPhase) {
     return false;
 }
 
-Command *CommandProcessor::readCommand(LogObserver* observer) {
 
-    string newCommand{};
+Command* CommandProcessor::readCommand(LogObserver* observer) {
+    string consoleCommand{};
 
     while (true) {
         cout << "Please enter your command: ";
-        getline(cin, newCommand);
+        getline(cin, consoleCommand);
 
-        vector<string> commandTokens = MapLoader::getTokens(newCommand);
-
-        if (commandTokens[0] == "loadmap") {
-            return new Command(COMMAND::loadmap, commandTokens[1], observer);
-        } else if (newCommand == "validatemap") {
-            return new Command(COMMAND::validatemap, observer);
-        } else if (commandTokens[0] == "addplayer") {
-            return new Command(COMMAND::addplayer, commandTokens[1], observer);
-        } else if (newCommand == "gamestart") {
-            return new Command(COMMAND::gamestart, observer);
-        } else if (newCommand == "replay", observer) {
-            return new Command(COMMAND::replay, observer);
-        } else if (newCommand == "quit") {
-            return new Command(COMMAND::quit, observer);
+        Command* command = parseCommand(consoleCommand);
+        if (command->getName() != nullptr) {
+            return command;
         } else {
             cout << "Not a valid command. Please try again." << endl;
         }
     }
 }
 
-Command *CommandProcessor::getCommand(PHASE currentPhase, LogObserver* observer) {
-    Command *command = CommandProcessor::readCommand(observer);
+Command* CommandProcessor::getCommand(PHASE currentPhase, CommandProcessor* commandProcessor, LogObserver* observer) {
+    while (true) {
+        Command *command = commandProcessor->readCommand(observer);
+        bool cmdIsValid = validate(command, currentPhase);
+        command->saveEffect(generateEffect(cmdIsValid, command, currentPhase));
+        saveCommand(command);
 
-    bool cmdIsValid = validate(command, currentPhase);
+        if (cmdIsValid) {
+            return command;
+        } else {
+            cout << *command->getEffect() << endl;
+        }
+    }
+}
 
-    command->saveEffect(generateEffect(cmdIsValid, command, currentPhase));
+// FileLineReader
+// constructors
+FileLineReader::FileLineReader() {
+    lines = new vector<string>();
+}
 
-    saveCommand(command);
+FileLineReader::FileLineReader(const string& filePath) {
+    lines = new vector<string>();
+
+    ifstream file(filePath);
+    string line;
+    while (getline(file, line)) {
+        lines->push_back(line);
+    }
+}
+
+FileLineReader::FileLineReader(const FileLineReader &copy) {
+    lines = new vector<string>();
+    for (string line : *copy.lines) {
+        lines->push_back(line);
+    }
+}
+
+FileLineReader::~FileLineReader() {
+    lines = nullptr;
+    delete lines;
+    cout << "FileLineReader destructor called";
+}
+
+// operators
+FileLineReader &FileLineReader::operator=(const FileLineReader &flr) {
+    if (this != &flr) {
+        lines->clear();
+        for (string line : *flr.lines) {
+            lines->push_back(line);
+        }
+    }
+
+    return *this;
+}
+
+ostream &operator<<(ostream &os, const FileLineReader &flr) {
+    os << "FileLineReader with lines: " << endl;
+    for (string line : *flr.lines) {
+        os << line;
+    }
+
+    return os;
+}
+
+// methods
+string FileLineReader::readLineFromFile(int l) {
+    return lines->at(l);
+}
+
+// FileCommandProcessorAdapter
+// constructors
+FileCommandProcessorAdapter::FileCommandProcessorAdapter() {
+    flr = new FileLineReader();
+    currentLine = new int{0};  // start at 1st line
+}
+FileCommandProcessorAdapter::FileCommandProcessorAdapter(LogObserver* observer): CommandProcessor(observer) {
+    flr = new FileLineReader();
+    currentLine = new int{0};  // start at 1st line
+}
+
+FileCommandProcessorAdapter::FileCommandProcessorAdapter(const string& cmdFilePath, LogObserver* observer): CommandProcessor(observer){
+    flr = new FileLineReader(cmdFilePath);
+    currentLine = new int{0};
+}
+
+FileCommandProcessorAdapter::FileCommandProcessorAdapter(const FileCommandProcessorAdapter &copy) : CommandProcessor(){
+    flr = new FileLineReader(*copy.flr);
+    currentLine = new int(*copy.currentLine);
+}
+
+FileCommandProcessorAdapter::~FileCommandProcessorAdapter() {
+    flr = nullptr;
+    currentLine = nullptr;
+
+    delete flr;
+    delete currentLine;
+    cout << "FileCommandProcessorAdapter destructor called";
+}
+
+// operators
+FileCommandProcessorAdapter &FileCommandProcessorAdapter::operator=(const FileCommandProcessorAdapter &fcpa) {
+    if (this != &fcpa) {
+        flr = fcpa.flr;
+        currentLine = fcpa.currentLine;
+    }
+
+    return *this;
+}
+
+ostream &operator<<(ostream &os, const FileCommandProcessorAdapter &fcpa) {
+    os << "FileCommandProcessorAdapter file line reader: " << *fcpa.flr << endl;
+    os << "FileCommandProcessorAdapter current line: " << *fcpa.currentLine << endl;
+
+    return os;
+}
+
+// methods
+Command *FileCommandProcessorAdapter::readCommand() {
+    Command *command = parseCommand(flr->readLineFromFile(*currentLine));
+    *currentLine = *currentLine + 1;
     return command;
 }
 

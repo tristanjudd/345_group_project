@@ -70,6 +70,7 @@ private:
     void saveCommand(Command *cmd);
 public:
     // constructors
+    CommandProcessor();
     CommandProcessor(LogObserver* observer);
     CommandProcessor(const CommandProcessor &copy);
     ~CommandProcessor();
@@ -80,16 +81,50 @@ public:
 
     // methods
     static bool validate(Command* cmd, PHASE currentPhase);
-    static Command* readCommand(LogObserver* observer);
-    void  stringToLog() override;
 
-    Command* getCommand(PHASE currentPhase, LogObserver* Observer);
+    Command* parseCommand(string newCommand);
+
+    virtual Command* readCommand(LogObserver* observer);
+    Command* getCommand(PHASE currentPhase, CommandProcessor* commandProcessor, LogObserver* observer);
+    void stringToLog() override;
 };
 
-// TODO IMPLEMENT THIS & ADD ALL THE BS STUFF THEY WANT FOR CLASS (STREAM INSERTION, COPY, DESTRUCTOR ETC.)
-class FileCommandProcessorAdapter {
+class FileLineReader {
+private:
+    vector<string> *lines;
+public:
+    // constructors
+    FileLineReader();
+    FileLineReader(const string& filePath);
+    FileLineReader(const FileLineReader &copy);
+    ~FileLineReader();
 
+    // operators
+    FileLineReader& operator=(const FileLineReader& flr);
+    friend ostream& operator<<(ostream& os, const FileLineReader& flr);
+
+    // methods
+    string readLineFromFile(int l);
 };
 
+class FileCommandProcessorAdapter : public CommandProcessor{
+private:
+    FileLineReader *flr;
+    int *currentLine;  // will start to get command at the first index in flr
+public:
+    // constructors
+    FileCommandProcessorAdapter();
+    FileCommandProcessorAdapter(LogObserver* observer);
+    FileCommandProcessorAdapter(const string& cmdFilePath, LogObserver* observer);
+    FileCommandProcessorAdapter(const FileCommandProcessorAdapter &copy);
+    ~FileCommandProcessorAdapter();
+
+    // operators
+    FileCommandProcessorAdapter& operator=(const FileCommandProcessorAdapter& fcpa);
+    friend ostream& operator<<(ostream& os, const FileCommandProcessorAdapter& fcpa);
+
+    // methods
+    Command* readCommand();
+};
 
 #endif //WARZONE_COMMANDPROCESSING_H

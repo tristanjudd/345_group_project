@@ -4,8 +4,13 @@
 #include <iostream>
 using std::iostream;
 
-#include "../CommandProcessor/CommandProcessing.h"
+#include "../CommandProcessing/CommandProcessing.h"
 
-int gameEngineDriver();
+enum GAME_MODE {
+    console,
+    file
+};
+
+int gameEngineDriver(GAME_MODE gm, const string& fileArg);
 
 #endif //WARZONE_GAMEENGINEDRIVER_H
