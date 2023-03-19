@@ -149,6 +149,10 @@ void Command::stringToLog() {
 
 // CommandProcessing
 // Constructors
+CommandProcessor::CommandProcessor() {
+    commands = new vector<Command *>();
+}
+
 CommandProcessor::CommandProcessor(LogObserver *observer) : Subject(observer) {
     commands = new vector<Command *>();
 }
@@ -291,6 +295,33 @@ bool CommandProcessor::validate(Command *cmd, PHASE currentPhase) {
     return false;
 }
 
+Command *CommandProcessor::parseCommand(string newCommand, LogObserver *observer) {
+    vector<string> commandTokens = MapLoader::getTokens(newCommand);
+
+    if (commandTokens[0] == "loadmap") {
+        if (commandTokens.size() == 1) {  // no argument specified
+            return new Command(COMMAND::loadmap, *new string(""), observer);
+        } else {
+            return new Command(COMMAND::loadmap, commandTokens[1], observer);
+        }
+    } else if (commandTokens[0] == "validatemap") {
+        return new Command(COMMAND::validatemap, observer);
+    } else if (commandTokens[0] == "addplayer") {
+        if (commandTokens.size() == 1) {  // no argument specified
+            return new Command(COMMAND::addplayer, *new string(""), observer);
+        } else {
+            return new Command(COMMAND::addplayer, commandTokens[1], observer);
+        }
+    } else if (commandTokens[0] == "gamestart") {
+        return new Command(COMMAND::gamestart, observer);
+    } else if (commandTokens[0] == "replay") {
+        return new Command(COMMAND::replay, observer);
+    } else if (commandTokens[0] == "quit") {
+        return new Command(COMMAND::quit, observer);
+    } else {
+        return new Command();
+    }
+}
 
 Command* CommandProcessor::readCommand(LogObserver* observer) {
     string consoleCommand{};
@@ -299,7 +330,7 @@ Command* CommandProcessor::readCommand(LogObserver* observer) {
         cout << "Please enter your command: ";
         getline(cin, consoleCommand);
 
-        Command* command = parseCommand(consoleCommand);
+        Command* command = parseCommand(consoleCommand, observer);
         if (command->getName() != nullptr) {
             return command;
         } else {
@@ -426,8 +457,8 @@ ostream &operator<<(ostream &os, const FileCommandProcessorAdapter &fcpa) {
 }
 
 // methods
-Command *FileCommandProcessorAdapter::readCommand() {
-    Command *command = parseCommand(flr->readLineFromFile(*currentLine));
+Command *FileCommandProcessorAdapter::readCommand(LogObserver *observer) {
+    Command *command = parseCommand(flr->readLineFromFile(*currentLine), observer);
     *currentLine = *currentLine + 1;
     return command;
 }

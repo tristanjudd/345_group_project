@@ -21,7 +21,7 @@ Subject::Subject() {
     //_observers = new list<Observer*>;
 }
 
-Subject::Subject(Observer* observer){
+Subject::Subject(Observer *observer) {
 
     this->observer = observer;
 }
@@ -36,16 +36,20 @@ void Subject::Notify(ILoggable *loggable) {
     observer->Update(loggable);
 }
 
+void ILoggable::stringToLog() {}
 
 //LogObserver Functions
 
-void LogObserver::Update(ILoggable* loggable) {
+void LogObserver::Update(ILoggable *loggable) {
 
     loggable->stringToLog();
 }
 
+LogObserver::LogObserver() {}
 
-ofstream checkFile(){
+LogObserver::~LogObserver() {}
+
+ofstream checkFile() {
 
     //creating file string
     string filename = "../Log/gamelog.txt";

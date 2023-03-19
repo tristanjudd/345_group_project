@@ -57,7 +57,7 @@ public:
     void setName(COMMAND newCmd);
     void setArgument(const string& newArg);
     void saveEffect(const string& newEffect);
-    void stringToLog();
+    void stringToLog() override;
 };
 
 class CommandProcessor: public ILoggable, public Subject{
@@ -82,7 +82,7 @@ public:
     // methods
     static bool validate(Command* cmd, PHASE currentPhase);
 
-    Command* parseCommand(string newCommand);
+    Command* parseCommand(string newCommand, LogObserver* observer);
 
     virtual Command* readCommand(LogObserver* observer);
     Command* getCommand(PHASE currentPhase, CommandProcessor* commandProcessor, LogObserver* observer);
@@ -124,7 +124,7 @@ public:
     friend ostream& operator<<(ostream& os, const FileCommandProcessorAdapter& fcpa);
 
     // methods
-    Command* readCommand();
+    Command* readCommand(LogObserver* observer) override;
 };
 
 #endif //WARZONE_COMMANDPROCESSING_H
