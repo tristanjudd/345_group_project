@@ -7,27 +7,32 @@
 #include "../Map/Map.h"
 #include "../Orders/Orders.h"
 #include "../Cards/Cards.h"
+#include "../GameLog/LoggingObserver.h"
 
 using std::vector;
 
+class Territory;
+class Hand;
+class OrderList;
 
 class Player {
 
 private:
-
+    string *name;
     vector<Territory *> *territories;
     Hand *hand;
-    OrderList* orders;
-    int * id;
+    OrderList *orders;
+    int *id;
 
     // ASSIGNMENT 2
-    int* reinforcements;
+    int *reinforcements;
 
 public:
 
     //Constructors
-    Player(); //Default Constructor
-    Player(vector<Territory *> *territories, Hand* hand, OrderList* orders, int *id); //Constructor
+    Player(LogObserver* observer); //Default Constructor
+    Player(string name, int playerId, LogObserver* observer); //Constructor
+    Player(vector<Territory *> *territories, Hand *hand, OrderList *orders, int *id); //Constructor
     Player(int id);
     Player(const Player &p);//Copy Constructor
     ~Player(); //Destructor
@@ -40,23 +45,27 @@ public:
     // changed return type to int because had to use territory ids for comparison
     vector<Territory *> *toAttack();
 
-    vector<Territory*> *toDefend();
+    vector<Territory *> *toDefend();
 
-    bool issueOrder();
+    bool issueOrder(LogObserver* observer);
 
     //getters and setters
+    string *getName() const;
+
+    void setName(string *name);
+
     Hand *getHand();
 
     void setHand(Hand *hand);
 
-    vector<Territory *> *getTerritories() const;
+    vector<Territory *> *getPlayerTerritories() const;
 
-    void setTerritories(vector<Territory *> *territories);
+    void setPlayerTerritories(vector<Territory *> *territories);
 
 
     OrderList *getOrders() const;
 
-    void setOrders(OrderList* orders);
+    void setOrders(OrderList *orders);
 
     int *getId() const;
 
@@ -64,8 +73,10 @@ public:
 
     // ASSIGNMENT 2
     int getReinforcements();
+
     void setReinforcements(int n);
 };
 
 int string_is_num_in_range(string str, int n, int m);
+
 void invalidInput();

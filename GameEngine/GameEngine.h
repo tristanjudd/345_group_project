@@ -5,16 +5,23 @@
 #include <algorithm>
 #include <unordered_map>
 #include <string>
+
 using std::cout;
 using std::endl;
 using std::string;
 using std::cin;
 using std::ostream;
+using std::find;
 
 #include "../Player/Player.h"
 #include "../Map/Map.h"
 #include "../Orders/Orders.h"
 #include "../Cards/Cards.h"
+#include "../GameLog/LoggingObserver.h"
+
+class Command; //forward declaration
+class CommandProcessor; //forward declaration
+class Map; //forward declaration
 
 //enum of phases
 enum PHASE {
@@ -26,39 +33,56 @@ enum PHASE {
     ASSIGN_REINFORCEMENT,
     ISSUE_ORDERS,
     EXECUTE_ORDERS,
+    CHECK_WIN,
     WIN,
     END
 };
 
-class GameEngine {
+class GameEngine : public ILoggable, public Subject{
 private:
     int *winner; // id of the winner
-    vector<Player *> *players; // list of players currently in the game, in order of turns
     Map* map; // the game map
+    vector<Player *> *players; // list of players currently in the game, in order of turns
+    PHASE *currentPhase;
 
 public:
-    PHASE start();
-    PHASE loadMap();
-    PHASE validateMap();
-    PHASE addPlayers();
-    PHASE assignReinforcements();
-    PHASE issueOrders();
-    PHASE executeOrders();
-    PHASE win();
-    void end();
-    GameEngine(); //default constructor
+    GameEngine(LogObserver* observer); //default constructor
     GameEngine(const GameEngine &copy); //copy constructor
     GameEngine& operator=(const GameEngine& t); //assignment operator
     friend ostream& operator<<(ostream& os, const GameEngine& t);
     ~GameEngine(); //destructor
 
-    // START OF ASSIGNMENT 2
-    PHASE mainGameLoop(); // loops through game phases until win condition is met
+    // GETTERS AND SETTERS
+    vector<Player *> *getPlayers() const;
+    void setPlayers(vector<Player *> *players);
+    Map *getMap() const;
+    void setMap(Map *map);
+    PHASE *getCurrentPhase() const;
+    void setCurrentPhase(PHASE *currentPhase);
+
+    // Startup
+    void startupPhase(GameEngine *game, CommandProcessor *cp, Command *command, PHASE phase, LogObserver* observer);
+    PHASE loadMap(GameEngine *game, PHASE phase, string mapFile);
+    PHASE validateMap(GameEngine *game, PHASE phase);
+    PHASE addPlayer(GameEngine *game, string playerName, int playerId, LogObserver* observer);
+    PHASE gameStart(GameEngine *game);
+    void distributeTerritories(Map *map);
+    void determinePlayerOrder(GameEngine *game);
+    void giveInitialArmies();
+    void drawCards();
+
+    // Main Game Loop
+    void mainGameLoop(GameEngine *game, PHASE phase, LogObserver* observer); // loops through game phases until win condition is met
     PHASE reinforcementPhase(); // called by mainGameLoop
-    PHASE issueOrdersPhase(); // called by mainGameLoop
+    PHASE issueOrdersPhase(LogObserver* observer); // called by mainGameLoop
     PHASE executeOrdersPhase(); // called by mainGameLoop
-    void initGameDummy(); // driver method that creates map, players, etc. for dev purposes
-    void initGameEndDummy(); // driver method that inits game with only one player to show win condition
+    PHASE checkWin(); // called by mainGameLoop
+    void initGameDummy(LogObserver* observer); // driver method that creates map, players, etc. for dev purposes
+    void initGameEndDummy(LogObserver* observer); // driver method that inits game with only one player to show win condition
+
+    PHASE win();
+    void end();
+    void stringToLog();
 
     //MEMBERS USED IN ORDERS
     static Player* neutral; //neutral player

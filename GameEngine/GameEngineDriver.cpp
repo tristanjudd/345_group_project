@@ -1,54 +1,31 @@
 #include "GameEngineDriver.h"
-#include "GameEngine.h"
 
-int gameEngineDriver() {
-    GameEngine *g = new GameEngine();
-    PHASE phase = START;
-    while (true) {
-        switch (phase) {
-            case START:
-                cout << "Start Phase" << endl;
-                phase = g->start();
-                break;
-            case MAP_LOADED:
-                cout << "Load Map Phase" << endl;
-                phase = g->loadMap();
-                break;
-            case MAP_VALIDATED:
-                cout << "Validate Map Phase" << endl;
-                phase = g->validateMap();
-                break;
-            case PLAY:
-                cout << "NEW TURN \n" << endl;
-                phase = g->mainGameLoop();
-                break;
-            case PLAYERS_ADDED:
-                cout << "Add Players Phase" << endl;
-                phase = g->addPlayers();
-                break;
-            case ASSIGN_REINFORCEMENT:
-                cout << "ASSIGN REINFORCEMENTS PHASE" << endl;
-                phase = g->reinforcementPhase();
-                break;
-            case ISSUE_ORDERS:
-                cout << "ISSUE ORDERS PHASE" << endl;
-                phase = g->issueOrdersPhase();
-                break;
-            case EXECUTE_ORDERS:
-                cout << "EXECUTE ORDERS PHASE" << endl;
-                phase = g->executeOrdersPhase();
-                break;
-            case WIN:
-                cout << "Win Phase" << endl;
-                phase = g->win();
-                break;
-            case END:
-                cout << "End Phase" << endl;
-                g->end();
-                return 0;
-            default:
-                cout << "Invalid phase" << endl;
-                break;
-        }
+int gameEngineDriver(GAME_MODE gm, const string& fileArg) {
+
+    LogObserver* observer = new LogObserver();
+    GameEngine *game = new GameEngine(observer);
+
+    // use different command processor (file/console)
+    CommandProcessor *cp;
+    if (gm == GAME_MODE::console) {
+        cp = new CommandProcessor(observer);
+        cout << "Running Warzone in console mode." << endl;
+    } else if (gm == GAME_MODE::file) {
+        cp = new FileCommandProcessorAdapter(fileArg, observer);
+        cout << "Running Warzone in file mode." << endl;
     }
+
+    Command *command;
+    PHASE phase;
+
+    phase = START;
+    game->startupPhase(game, cp, command, phase, observer);
+
+//    phase = ASSIGN_REINFORCEMENT;
+//    game->mainGameLoop(game, phase);
+
+    // TRISTAN: THESE METHODS ARE FOR DEMO PURPOSES
+    // initGameDummy();
+    // initGameEndDummy();
+    // END OF DEMO METHODS
 }

@@ -1,10 +1,10 @@
 #include "PlayerDriver.h"
 
 int playerDriver(){
-
+    LogObserver* observer = new LogObserver();
     cout << "Making a player" << endl;
 
-    Player *p = new Player();
+    Player *p = new Player(new LogObserver());
 
     cout << endl;
 
@@ -17,7 +17,7 @@ int playerDriver(){
     vector<Territory*>* defending = p->toDefend();
 
     cout << "Issuing an order" << endl;
-    p->issueOrder();
+    p->issueOrder(observer);
 
     cout << endl;
 

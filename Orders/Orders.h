@@ -12,16 +12,18 @@ using std::rand;
 using namespace std;
 
 #include "../Map/Map.h"
+#include "../GameLog/LoggingObserver.h"
 
 //forward declaration
 class Player;
+class Territory;
 
-class Order
+class Order: public ILoggable, public Subject
 {
 public:
 
-	Order();
-	Order(Player* _issuer);
+	Order(LogObserver* observer);
+	Order(Player* _issuer, LogObserver* observer);
 	Order(const Order& _o);
 	virtual ~Order();
 
@@ -34,6 +36,7 @@ public:
 	void setDesc(string _desc);
 	Player* getPlayer() const;
 	void setPlayer(Player _player);
+    void stringToLog();
 
 	void operator= (Order const &);
 	
@@ -50,8 +53,8 @@ std::ostream& operator<<(std::ostream& OUT, const Order& theOrder);
 class Deploy : public Order
 {
 public:
-	Deploy();
-	Deploy(Player* _issuer, int _nbArmies, Territory* _target);
+	Deploy(LogObserver* observer);
+	Deploy(Player* _issuer, int _nbArmies, Territory* _target, LogObserver* observer);
 	Deploy(const Deploy& _o);
 	~Deploy();
 
@@ -73,8 +76,8 @@ private:
 class Advance : public Order
 {
 public:
-	Advance();
-	Advance(Player* _issuer,int _nbArmies, Territory* _source, Territory* _target);
+	Advance(LogObserver* observer);
+	Advance(Player* _issuer,int _nbArmies, Territory* _source, Territory* _target, LogObserver* observer);
 	Advance(const Advance& _o);
 	~Advance();
 
@@ -100,8 +103,8 @@ private:
 class Bomb : public Order
 {
 public:
-	Bomb();
-	Bomb(Player* _issuer, Territory* _target);
+	Bomb(LogObserver* observer);
+	Bomb(Player* _issuer, Territory* _target, LogObserver* observer);
 	Bomb(const Bomb& _o);
 	~Bomb();
 
@@ -121,8 +124,8 @@ private:
 class Blockade : public Order
 {
 public:
-	Blockade();
-	Blockade(Player* _issuer, Territory* _target);
+	Blockade(LogObserver* observer);
+	Blockade(Player* _issuer, Territory* _target, LogObserver* observer);
 	Blockade(const Blockade& _o);
 	~Blockade();
 
@@ -143,8 +146,8 @@ private:
 class Airlift : public Order
 {
 public:
-	Airlift();
-	Airlift(Player* _issuer, int _nbArmies, Territory* _source, Territory* _target);
+	Airlift(LogObserver* observer);
+	Airlift(Player* _issuer, int _nbArmies, Territory* _source, Territory* _target, LogObserver* observer);
 	Airlift(const Airlift& _o);
 	~Airlift();
 
@@ -170,8 +173,8 @@ private:
 class Negotiate : public Order
 {
 public:
-	Negotiate();
-	Negotiate(Player* _issuer, int _victimID);
+	Negotiate(LogObserver* observer);
+	Negotiate(Player* _issuer, int _victimID, LogObserver* observer);
 	Negotiate(const Negotiate& _o);
 	~Negotiate();
 
@@ -189,12 +192,12 @@ private:
 	int* victim;
 };
 
-class OrderList
+class OrderList: public ILoggable, public Subject
 {
 public:
 
-	OrderList();
-	OrderList(const OrderList& o);
+	OrderList(LogObserver* observer);
+	OrderList(const OrderList& o, LogObserver* observer);
 	~OrderList();
 
 	bool Add(Order* _obj);
@@ -202,6 +205,7 @@ public:
 	bool move(int _objIndex, int _newIndex);
 	vector<Order* >* getList() const;
 	void operator= (OrderList const&);
+    void stringToLog();
 
 private:
 	vector<Order* >* m_theListPtr;
