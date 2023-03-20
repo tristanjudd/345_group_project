@@ -1,15 +1,17 @@
 #include "GameEngineDriver.h"
 
 int gameEngineDriver(GAME_MODE gm, const string& fileArg) {
-    GameEngine *game = new GameEngine();
+
+    LogObserver* observer = new LogObserver();
+    GameEngine *game = new GameEngine(observer);
 
     // use different command processor (file/console)
     CommandProcessor *cp;
     if (gm == GAME_MODE::console) {
-        cp = new CommandProcessor();
+        cp = new CommandProcessor(observer);
         cout << "Running Warzone in console mode." << endl;
     } else if (gm == GAME_MODE::file) {
-        cp = new FileCommandProcessorAdapter(fileArg);
+        cp = new FileCommandProcessorAdapter(fileArg, observer);
         cout << "Running Warzone in file mode." << endl;
     }
 
@@ -17,7 +19,7 @@ int gameEngineDriver(GAME_MODE gm, const string& fileArg) {
     PHASE phase;
 
     phase = START;
-    game->startupPhase(game, cp, command, phase);
+    game->startupPhase(game, cp, command, phase, observer);
 
 //    phase = ASSIGN_REINFORCEMENT;
 //    game->mainGameLoop(game, phase);

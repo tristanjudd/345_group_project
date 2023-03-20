@@ -1,6 +1,13 @@
 //
 // Created by jay on 16/03/23.
 //
+#include <string>
+#include <iostream>
+#include<fstream>
+
+using std::ofstream;
+using std::string;
+using std::endl;
 
 #include "CommandProcessing.h"
 
@@ -12,13 +19,14 @@ Command::Command() {
     effect = nullptr;
 }
 
-Command::Command(COMMAND cmd) {
+Command::Command(COMMAND cmd, LogObserver *observer) : Subject(observer) {
     name = new COMMAND(cmd);
     argument = new string("");
     effect = nullptr;
 }
 
-Command::Command(COMMAND cmd, string &arg) {
+
+Command::Command(COMMAND cmd, string &arg, LogObserver *observer) : Subject(observer) {
     name = new COMMAND(cmd);
     argument = new string(arg);
     effect = nullptr;
@@ -64,6 +72,8 @@ void Command::setArgument(const string &newArg) {
 
 void Command::saveEffect(const string &newEffect) {
     effect = new string(newEffect);
+
+    Notify(this);
 }
 
 // Operators
@@ -117,10 +127,33 @@ Command &Command::operator=(const Command &c) {
     return *this;
 }
 
+void Command::stringToLog() {
+
+    //creating file string
+    string filename = "../Log/gamelog.txt";
+    ofstream outputFile;
+
+    //checking if file exists
+    ifstream exists(filename);
+
+    if (exists.bad()) {
+        outputFile.open(filename);
+    }
+
+    // Append data to the file
+    outputFile.open(filename, std::ios_base::app);
+    outputFile << "Saving Effect: " << *(this->getEffect()) << endl;
+    outputFile.close();
+}
+
 
 // CommandProcessing
 // Constructors
 CommandProcessor::CommandProcessor() {
+    commands = new vector<Command *>();
+}
+
+CommandProcessor::CommandProcessor(LogObserver *observer) : Subject(observer) {
     commands = new vector<Command *>();
 }
 
@@ -198,6 +231,7 @@ ostream &operator<<(ostream &os, const CommandProcessor &cp) {
 // Methods
 void CommandProcessor::saveCommand(Command *command) {
     this->commands->push_back(command);
+    Notify(this);
 }
 
 string CommandProcessor::generateEffect(bool isValid, Command *cmd, PHASE currentPhase) {
@@ -261,42 +295,42 @@ bool CommandProcessor::validate(Command *cmd, PHASE currentPhase) {
     return false;
 }
 
-Command *CommandProcessor::parseCommand(string newCommand) {
+Command *CommandProcessor::parseCommand(string newCommand, LogObserver *observer) {
     vector<string> commandTokens = MapLoader::getTokens(newCommand);
 
     if (commandTokens[0] == "loadmap") {
         if (commandTokens.size() == 1) {  // no argument specified
-            return new Command(COMMAND::loadmap, *new string(""));
+            return new Command(COMMAND::loadmap, *new string(""), observer);
         } else {
-            return new Command(COMMAND::loadmap, commandTokens[1]);
+            return new Command(COMMAND::loadmap, commandTokens[1], observer);
         }
     } else if (commandTokens[0] == "validatemap") {
-        return new Command(COMMAND::validatemap);
+        return new Command(COMMAND::validatemap, observer);
     } else if (commandTokens[0] == "addplayer") {
         if (commandTokens.size() == 1) {  // no argument specified
-            return new Command(COMMAND::addplayer, *new string(""));
+            return new Command(COMMAND::addplayer, *new string(""), observer);
         } else {
-            return new Command(COMMAND::addplayer, commandTokens[1]);
+            return new Command(COMMAND::addplayer, commandTokens[1], observer);
         }
     } else if (commandTokens[0] == "gamestart") {
-        return new Command(COMMAND::gamestart);
+        return new Command(COMMAND::gamestart, observer);
     } else if (commandTokens[0] == "replay") {
-        return new Command(COMMAND::replay);
+        return new Command(COMMAND::replay, observer);
     } else if (commandTokens[0] == "quit") {
-        return new Command(COMMAND::quit);
+        return new Command(COMMAND::quit, observer);
     } else {
         return new Command();
     }
 }
 
-Command* CommandProcessor::readCommand() {
+Command* CommandProcessor::readCommand(LogObserver* observer) {
     string consoleCommand{};
 
     while (true) {
         cout << "Please enter your command: ";
         getline(cin, consoleCommand);
 
-        Command* command = parseCommand(consoleCommand);
+        Command* command = parseCommand(consoleCommand, observer);
         if (command->getName() != nullptr) {
             return command;
         } else {
@@ -305,9 +339,9 @@ Command* CommandProcessor::readCommand() {
     }
 }
 
-Command* CommandProcessor::getCommand(PHASE currentPhase, CommandProcessor* commandProcessor) {
+Command* CommandProcessor::getCommand(PHASE currentPhase, CommandProcessor* commandProcessor, LogObserver* observer) {
     while (true) {
-        Command *command = commandProcessor->readCommand();
+        Command *command = commandProcessor->readCommand(observer);
         bool cmdIsValid = validate(command, currentPhase);
         command->saveEffect(generateEffect(cmdIsValid, command, currentPhase));
         saveCommand(command);
@@ -330,6 +364,10 @@ FileLineReader::FileLineReader(const string& filePath) {
     lines = new vector<string>();
 
     ifstream file(filePath);
+    if (file.fail()) {
+        throw runtime_error("Command file does not exist. Please pass proper command line arguments.");
+    }
+
     string line;
     while (getline(file, line)) {
         lines->push_back(line);
@@ -372,6 +410,9 @@ ostream &operator<<(ostream &os, const FileLineReader &flr) {
 
 // methods
 string FileLineReader::readLineFromFile(int l) {
+    if (l >= lines->size()) {
+        throw runtime_error("Ran out of commands in file.");
+    }
     return lines->at(l);
 }
 
@@ -381,13 +422,17 @@ FileCommandProcessorAdapter::FileCommandProcessorAdapter() {
     flr = new FileLineReader();
     currentLine = new int{0};  // start at 1st line
 }
+FileCommandProcessorAdapter::FileCommandProcessorAdapter(LogObserver* observer): CommandProcessor(observer) {
+    flr = new FileLineReader();
+    currentLine = new int{0};  // start at 1st line
+}
 
-FileCommandProcessorAdapter::FileCommandProcessorAdapter(const string& cmdFilePath) {
+FileCommandProcessorAdapter::FileCommandProcessorAdapter(const string& cmdFilePath, LogObserver* observer): CommandProcessor(observer){
     flr = new FileLineReader(cmdFilePath);
     currentLine = new int{0};
 }
 
-FileCommandProcessorAdapter::FileCommandProcessorAdapter(const FileCommandProcessorAdapter &copy) {
+FileCommandProcessorAdapter::FileCommandProcessorAdapter(const FileCommandProcessorAdapter &copy) : CommandProcessor(){
     flr = new FileLineReader(*copy.flr);
     currentLine = new int(*copy.currentLine);
 }
@@ -419,8 +464,29 @@ ostream &operator<<(ostream &os, const FileCommandProcessorAdapter &fcpa) {
 }
 
 // methods
-Command *FileCommandProcessorAdapter::readCommand() {
-    Command *command = parseCommand(flr->readLineFromFile(*currentLine));
+Command *FileCommandProcessorAdapter::readCommand(LogObserver *observer) {
+    Command *command = parseCommand(flr->readLineFromFile(*currentLine), observer);
     *currentLine = *currentLine + 1;
     return command;
 }
+
+void CommandProcessor::stringToLog() {
+
+    //creating file string
+    string filename = "../Log/gamelog.txt";
+    ofstream outputFile;
+
+    //checking if file exists
+    ifstream exists(filename);
+
+    if (exists.bad()) {
+        outputFile.open(filename);
+    }
+
+    // Append data to the file
+    outputFile.open(filename, std::ios_base::app);
+    outputFile << "Saving Command: " << *(this->commands->back()->getName()) << endl;
+    outputFile.close();
+}
+
+

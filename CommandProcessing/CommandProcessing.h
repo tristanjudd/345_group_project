@@ -20,6 +20,7 @@ using std::endl;
 using std::stringstream;
 
 #include "../GameEngine/GameEngine.h"
+#include "../GameLog/LoggingObserver.h"
 
 enum COMMAND {
     loadmap,
@@ -30,7 +31,7 @@ enum COMMAND {
     quit
 };
 
-class Command {
+class Command: public ILoggable, public Subject{
 private:
     COMMAND *name;
     string *argument;
@@ -38,8 +39,8 @@ private:
 public:
     // constructors
     Command();
-    Command(COMMAND cmd);
-    Command(COMMAND cmd, string& arg);
+    Command(COMMAND cmd, LogObserver* observer);
+    Command(COMMAND cmd, string& arg, LogObserver* observer);
     Command(const Command &copy);
     ~Command();
 
@@ -56,9 +57,10 @@ public:
     void setName(COMMAND newCmd);
     void setArgument(const string& newArg);
     void saveEffect(const string& newEffect);
+    void stringToLog() override;
 };
 
-class CommandProcessor {
+class CommandProcessor: public ILoggable, public Subject{
 private:
     vector<Command*> *commands;
 
@@ -69,6 +71,7 @@ private:
 public:
     // constructors
     CommandProcessor();
+    CommandProcessor(LogObserver* observer);
     CommandProcessor(const CommandProcessor &copy);
     ~CommandProcessor();
 
@@ -79,10 +82,11 @@ public:
     // methods
     static bool validate(Command* cmd, PHASE currentPhase);
 
-    Command* parseCommand(string newCommand);
+    Command* parseCommand(string newCommand, LogObserver* observer);
 
-    virtual Command* readCommand();
-    Command* getCommand(PHASE currentPhase, CommandProcessor* commandProcessor);
+    virtual Command* readCommand(LogObserver* observer);
+    Command* getCommand(PHASE currentPhase, CommandProcessor* commandProcessor, LogObserver* observer);
+    void stringToLog() override;
 };
 
 class FileLineReader {
@@ -103,14 +107,15 @@ public:
     string readLineFromFile(int l);
 };
 
-class FileCommandProcessorAdapter : public CommandProcessor {
+class FileCommandProcessorAdapter : public CommandProcessor{
 private:
     FileLineReader *flr;
     int *currentLine;  // will start to get command at the first index in flr
 public:
     // constructors
     FileCommandProcessorAdapter();
-    FileCommandProcessorAdapter(const string& cmdFilePath);
+    FileCommandProcessorAdapter(LogObserver* observer);
+    FileCommandProcessorAdapter(const string& cmdFilePath, LogObserver* observer);
     FileCommandProcessorAdapter(const FileCommandProcessorAdapter &copy);
     ~FileCommandProcessorAdapter();
 
@@ -119,7 +124,7 @@ public:
     friend ostream& operator<<(ostream& os, const FileCommandProcessorAdapter& fcpa);
 
     // methods
-    Command* readCommand();
+    Command* readCommand(LogObserver* observer) override;
 };
 
 #endif //WARZONE_COMMANDPROCESSING_H

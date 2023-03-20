@@ -6,7 +6,7 @@ std::unordered_map<string, bool> *GameEngine::peaceStatus = new std::unordered_m
 vector<int> *GameEngine::conqStatus = new vector<int>(); //CREATING THE STATIC CONQUERED STATUS VECTOR
 
 //default constructor
-GameEngine::GameEngine() {
+GameEngine::GameEngine(LogObserver* observer) : Subject(observer){
     cout << "GameEngine default constructor called" << endl;
     winner = new int(-1);
     map = new Map();
@@ -85,9 +85,16 @@ void GameEngine::setPlayers(vector<Player *> *players) {
     GameEngine::players = players;
 }
 
+PHASE *GameEngine::getCurrentPhase() const {
+    return currentPhase;
+}
+
+void GameEngine::setCurrentPhase(PHASE *currentPhase) {
+    GameEngine::currentPhase = currentPhase;
+}
 
 // Startup
-void GameEngine::startupPhase(GameEngine *game, CommandProcessor *cp, Command *command, PHASE phase) {
+void GameEngine::startupPhase(GameEngine *game, CommandProcessor *cp, Command *command, PHASE phase, LogObserver* observer) {
     cout << "Welcome to our bootleg Warzone!" << endl;
     int playerId = 0;
     string mapFile;
@@ -96,7 +103,7 @@ void GameEngine::startupPhase(GameEngine *game, CommandProcessor *cp, Command *c
             case START: {
                 cout << "Start state" << endl;
                 // will prompt user, and should not pass for anything other than 'loadmap <mapfile>' (in this phase)
-                command = cp->getCommand(phase, cp);
+                command = cp->getCommand(phase, cp, observer);
                 cout << *command << endl;  // just to show I did my part
                 mapFile = *command->getArgument();
                 phase = loadMap(game, phase, mapFile);
@@ -104,7 +111,8 @@ void GameEngine::startupPhase(GameEngine *game, CommandProcessor *cp, Command *c
             }
             case MAP_LOADED: {
                 cout << "\nMap loaded state" << endl;
-                command = cp->getCommand(phase, cp);
+                command = cp->getCommand(phase, cp, observer);
+
                 cout << *command << endl;
                 if (*command->getName() == COMMAND::validatemap) {
                     phase = validateMap(game, phase);
@@ -117,11 +125,11 @@ void GameEngine::startupPhase(GameEngine *game, CommandProcessor *cp, Command *c
             }
             case MAP_VALIDATED: {
                 cout << "\nMap validated state" << endl;
-                command = cp->getCommand(phase, cp);
+                command = cp->getCommand(phase, cp, observer);
                 cout << *command << endl;
                 playerId = 0;
                 if (*command->getName() == COMMAND::addplayer) {
-                    phase = addPlayer(game, *command->getArgument(), playerId);
+                    phase = addPlayer(game, *command->getArgument(), playerId, observer);
                     playerId = playerId + 1;
                     break;
                 }
@@ -129,7 +137,7 @@ void GameEngine::startupPhase(GameEngine *game, CommandProcessor *cp, Command *c
             }
             case PLAYERS_ADDED: {
                 cout << "Players added state" << endl;
-                command = cp->getCommand(phase, cp);
+                command = cp->getCommand(phase, cp, observer);
                 cout << *command << endl;
                 if (*command->getName() == COMMAND::gamestart) {
                     if (game->getPlayers()->size() < 2) {
@@ -151,7 +159,7 @@ void GameEngine::startupPhase(GameEngine *game, CommandProcessor *cp, Command *c
                         game->getPlayers()->clear();
                         phase = MAP_VALIDATED;
                     } else {
-                        phase = addPlayer(game, *command->getArgument(), playerId);
+                        phase = addPlayer(game, *command->getArgument(), playerId, observer);
                         playerId = playerId + 1;
                     }
                     break;
@@ -173,6 +181,9 @@ void GameEngine::startupPhase(GameEngine *game, CommandProcessor *cp, Command *c
             }
         }
     }
+
+    setCurrentPhase(& phase);
+    Notify(this);
 }
 
 //Load map method
@@ -186,6 +197,9 @@ PHASE GameEngine::loadMap(GameEngine *game, PHASE phase, string mapFile) {
         cout << "Map not loaded \n" << endl;
         phase = START;
     }
+
+    setCurrentPhase(&phase);
+    Notify(this);
     return phase;
 }
 
@@ -199,18 +213,25 @@ PHASE GameEngine::validateMap(GameEngine *game, PHASE phase) {
         cout << "Map invalid" << endl;
         phase = START;
     }
+
+    setCurrentPhase(&phase);
+    Notify(this);
     return phase;
 }
 
 // Add player method
-PHASE GameEngine::addPlayer(GameEngine *game, string playerName, int playerId) {
-    Player *newPlayer = new Player(playerName, playerId); //create new player
+PHASE GameEngine::addPlayer(GameEngine *game, string playerName, int playerId, LogObserver* observer) {
+    Player *newPlayer = new Player(playerName, playerId, observer); //create new player
     vector<Player *> *players = game->getPlayers();
     players->push_back(newPlayer); //add player to vector of players
     cout << "Player " << *newPlayer->getName() << " added" << endl;
     cout << "Num of players: " << players->size() << endl << endl;
     game->setPlayers(players);
-    return PLAYERS_ADDED;
+
+    PHASE p = PLAYERS_ADDED;
+    setCurrentPhase(&p);
+    Notify(this);
+    return p;
 }
 
 // Game start method
@@ -219,7 +240,11 @@ PHASE GameEngine::gameStart(GameEngine *game) {
     determinePlayerOrder(game);
     giveInitialArmies();
     drawCards();
-    return END;
+
+    PHASE p = END;
+    setCurrentPhase(&p);
+    Notify(this);
+    return p;
 }
 
 // Distribute territories method
@@ -332,8 +357,8 @@ void GameEngine::end() {
 }
 
 // Start of new turn
-void GameEngine::mainGameLoop(GameEngine *game, PHASE phase) {
-    initGameDummy();
+void GameEngine::mainGameLoop(GameEngine *game, PHASE phase, LogObserver* observer) {
+    initGameDummy(observer);
     cout << "There are " << players->size() << " players" << endl;
 
     while (true) {
@@ -345,7 +370,7 @@ void GameEngine::mainGameLoop(GameEngine *game, PHASE phase) {
             }
             case ISSUE_ORDERS: {
                 cout << "Issue orders state" << endl;
-                phase = game->issueOrdersPhase();
+                phase = game->issueOrdersPhase(observer);
                 break;
             }
             case EXECUTE_ORDERS: {
@@ -411,11 +436,15 @@ PHASE GameEngine::reinforcementPhase() {
         player->setReinforcements(player->getReinforcements() + newTroops);
     }
     cout << "Reinforcements assigned.\n" << endl;
-    return ISSUE_ORDERS;
+
+    PHASE p = ISSUE_ORDERS;
+    setCurrentPhase(&p);
+    Notify(this);
+    return p;
 }
 
 //Issue orders phase
-PHASE GameEngine::issueOrdersPhase() {
+PHASE GameEngine::issueOrdersPhase(LogObserver* observer) {
 // loop through each player and call issueOrder method
     for (Player *player: *players) {
         cout << "PLAYER " << *(player->getId()) << " ISSUING ORDERS" << endl;
@@ -425,10 +454,13 @@ PHASE GameEngine::issueOrdersPhase() {
             // issue order method returns a bool
             // it will return true for any move except when
             // player selects the end turn choice
-            stillPlaying = player->issueOrder();
+            stillPlaying = player->issueOrder(observer);
         }
     }
-    return EXECUTE_ORDERS;
+    PHASE p = EXECUTE_ORDERS;
+    setCurrentPhase(&p);
+    Notify(this);
+    return p;
 }
 
 //Execute orders phase
@@ -482,7 +514,10 @@ PHASE GameEngine::executeOrdersPhase() {
         }
 
     }
-    return CHECK_WIN;
+    PHASE p = CHECK_WIN;
+    setCurrentPhase(&p);
+    Notify(this);
+    return p;
 }
 
 PHASE GameEngine::checkWin() {
@@ -507,7 +542,11 @@ PHASE GameEngine::checkWin() {
     if (players->size() == 1) {
         return WIN;
     }
-    return ASSIGN_REINFORCEMENT;
+
+    PHASE p = ASSIGN_REINFORCEMENT;
+    setCurrentPhase(&p);
+    Notify(this);
+    return p;
 }
 
 //// function for checking whether input is a number within a certain range
@@ -535,7 +574,7 @@ PHASE GameEngine::checkWin() {
 //}
 
 // inits a bunch of objects to have something to test with in dev phase
-void GameEngine::initGameDummy() {
+void GameEngine::initGameDummy(LogObserver* observer) {
     // DUMMY CODE adding players for dev purposes
     Territory *t1 = new Territory(1, 1, "A");
     Territory *t2 = new Territory(2, 1, "B");
@@ -611,23 +650,23 @@ void GameEngine::initGameDummy() {
     list3->push_back(t8);
     list3->push_back(t9);
 
-    Player *p1 = new Player();
+    Player *p1 = new Player(observer);
     p1->setPlayerTerritories(list1);
     for (Territory *t: *list1) {
         t->setOwner(p1);
     }
-    Player *p2 = new Player();
+    Player *p2 = new Player(observer);
     p2->setPlayerTerritories(list2);
     for (Territory *t: *list2) {
         t->setOwner(p2);
     }
-    Player *p3 = new Player();
+    Player *p3 = new Player(observer);
     p3->setPlayerTerritories(list3);
     for (Territory *t: *list3) {
         t->setOwner(p3);
     }
 
-    Player *p4 = new Player();
+    Player *p4 = new Player(observer);
 
     Deck *deck = new Deck();
     Hand *h1 = new Hand();
@@ -685,11 +724,74 @@ void GameEngine::initGameDummy() {
     // END OF DUMMY CODE
 }
 
-void GameEngine::initGameEndDummy() {
-    Player *p = new Player();
+void GameEngine::initGameEndDummy(LogObserver* observer) {
+    Player *p = new Player(observer);
     Territory *t = new Territory();
     vector<Territory *> *tvec = new vector<Territory *>;
     tvec->push_back(t);
     p->setPlayerTerritories(tvec);
     players->push_back(p);
 }
+
+void GameEngine::stringToLog() {
+
+    //creating file string
+    string filename = "../Log/gamelog.txt";
+    ofstream outputFile;
+
+    //checking if file exists
+    ifstream exists(filename);
+
+    if (exists.bad()) {
+        outputFile.open(filename);
+    }
+
+    // Append data to the file
+    outputFile.open(filename, std::ios_base::app);
+
+    // Print current phase enum to log
+    PHASE * currentPhase = this->getCurrentPhase();
+    string phaseString;
+    switch(*currentPhase) {
+        case START:
+            phaseString = "START";
+            break;
+        case MAP_LOADED:
+            phaseString = "MAP_LOADED";
+            break;
+        case MAP_VALIDATED:
+            phaseString = "MAP_VALIDATED";
+            break;
+        case PLAYERS_ADDED:
+            phaseString = "PLAYERS_ADDED";
+            break;
+        case PLAY:
+            phaseString = "PLAY";
+            break;
+        case ASSIGN_REINFORCEMENT:
+            phaseString = "ASSIGN_REINFORCEMENT";
+            break;
+        case ISSUE_ORDERS:
+            phaseString = "ISSUE_ORDERS";
+            break;
+        case EXECUTE_ORDERS:
+            phaseString = "EXECUTE_ORDERS";
+            break;
+        case CHECK_WIN:
+            phaseString = "CHECK_WIN";
+            break;
+        case WIN:
+            phaseString = "WIN";
+            break;
+        case END:
+            phaseString = "END";
+            break;
+        default:
+            phaseString = "UNKNOWN";
+    }
+    outputFile << "Current phase: " << phaseString << endl;
+
+    outputFile.close();
+}
+
+
