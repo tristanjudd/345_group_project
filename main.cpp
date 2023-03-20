@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
 
 
     //PART2
-    //logDriver(string(argv[1], string(argv[2]);
+    //logDriver(argc, argv[]);
 
     return 0;
 }
