@@ -22,8 +22,8 @@ int gameEngineDriver(GAME_MODE gm, const string& fileArg) {
 //    game->startupPhase(game, cp, command, phase, observer);
 
     phase = CHECK_WIN;
-    //ame->initGameDummy(observer);
-    game->initGameEndDummy(observer);
+    game->initGameDummy(observer);
+    //game->initGameEndDummy(observer);
     game->mainGameLoop(game, phase, observer);
 
 
