@@ -7,7 +7,7 @@
 
 
 
-int logDriver();
+int logDriver(int argc, char *argv[]);
 
 
 #endif //WARZONE_LOGGINGDRIVER_H
