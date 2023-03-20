@@ -4,27 +4,27 @@
 int ordersDriver() {
 
 	cout << "\nORDERS DRIVER:" << endl;
-
+    LogObserver* observer = new LogObserver();
 	//Creating objects
 	//Order *ord = new Order("");
 	cout << "Order created" << endl;
-	Deploy *dep = new Deploy();
+	Deploy *dep = new Deploy(observer);
 	cout << "Deploy created" << endl;
-	Advance *adv =  new Advance();
+	Advance *adv =  new Advance(observer);
 	cout << "Advance created" << endl;
-	Bomb *bom = new Bomb();
+	Bomb *bom = new Bomb(observer);
 	cout << "Bomb created" << endl;
-	Blockade *blo = new Blockade();
+	Blockade *blo = new Blockade(observer);
 	cout << "blockade created" << endl;
-	Airlift *air = new Airlift();
+	Airlift *air = new Airlift(observer);
 	cout << "Airlift created" << endl;
-	Negotiate *neg = new Negotiate();
+	Negotiate *neg = new Negotiate(observer);
 	cout << "Negotiate created" << endl;
 
 	//Order *invalid = new Order("invalid");
 	cout << "invalid Order created" << endl;
 	
-	OrderList L = OrderList();
+	OrderList L = OrderList(observer);
 
 	//Adding object to the list
 	//L.Add(ord);

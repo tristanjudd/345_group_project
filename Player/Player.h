@@ -7,6 +7,7 @@
 #include "../Map/Map.h"
 #include "../Orders/Orders.h"
 #include "../Cards/Cards.h"
+#include "../GameLog/LoggingObserver.h"
 
 using std::vector;
 
@@ -29,8 +30,8 @@ private:
 public:
 
     //Constructors
-    Player(); //Default Constructor
-    Player(string name, int playerId); //Constructor
+    Player(LogObserver* observer); //Default Constructor
+    Player(string name, int playerId, LogObserver* observer); //Constructor
     Player(vector<Territory *> *territories, Hand *hand, OrderList *orders, int *id); //Constructor
     Player(int id);
     Player(const Player &p);//Copy Constructor
@@ -46,7 +47,7 @@ public:
 
     vector<Territory *> *toDefend();
 
-    bool issueOrder();
+    bool issueOrder(LogObserver* observer);
 
     //getters and setters
     string *getName() const;

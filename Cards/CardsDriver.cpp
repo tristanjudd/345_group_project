@@ -3,13 +3,14 @@
 
 int cardDriver()
 {
+    LogObserver* observer = new LogObserver();
 	std::srand(time(0));
 
 	// Create deck
 	Deck deck = Deck();
 
 	// Create player
-	Player p = Player();
+	Player p = Player(observer);
 
 	// Get hand 
 	Hand* h = p.getHand();

@@ -5,10 +5,10 @@
 using std::all_of;
 
 //Default Constructor
-Player::Player() {
+Player::Player(LogObserver* observer) {
     territories = new vector<Territory *>();
     hand = new Hand();
-    orders = new OrderList();
+    orders = new OrderList(observer);
     id = new int(0);
 
     // ASSIGNMENT 2
@@ -16,11 +16,11 @@ Player::Player() {
     *reinforcements = 0;
 }
 
-Player::Player(string playerName, int playerId) {
+Player::Player(string playerName, int playerId, LogObserver* observer) {
     name = new string(playerName);
     territories = new vector<Territory *>();
     hand = new Hand();
-    orders = new OrderList();
+    orders = new OrderList(observer);
     id = new int(playerId);
     reinforcements = new int;
 }
@@ -94,7 +94,7 @@ Player::~Player() {
 
 //Function creates an order and
 //Adds it to the list of orders
-bool Player::issueOrder() {
+bool Player::issueOrder(LogObserver* observer) {
 
     vector<Territory *> playerTerritories = *territories; // TODO use toDefend() here
 
@@ -131,7 +131,7 @@ bool Player::issueOrder() {
                 // if input valid add order to order list
                 if (validNumOfTroops) {
                     // Create an order and add to order list
-                    Order *deploy = new Deploy(this, validNumOfTroops, playerTerritories.at(validTerritory - 1));
+                    Order *deploy = new Deploy(this, validNumOfTroops, playerTerritories.at(validTerritory - 1), observer);
                     orders->Add(deploy);
 
                     cout << validNumOfTroops << " troops assigned to "
@@ -219,7 +219,8 @@ bool Player::issueOrder() {
                                                 Order *advance = new Advance(this,
                                                                              validHowManyTroops,
                                                                              defendable.at(validDefendFrom - 1),
-                                                                             defendable.at(validDefendFrom - 1));
+                                                                             defendable.at(validDefendFrom - 1),
+                                                                             observer);
                                                 orders->Add(advance);
 
                                                 break;
@@ -306,7 +307,7 @@ bool Player::issueOrder() {
                                                                              validNumTroops,
                                                                              attackable.at(validAttack - 1),
                                                                              attackingTerritories.at(
-                                                                                     validAttackingTerritory - 1));
+                                                                                     validAttackingTerritory - 1), observer);
                                                 orders->Add(advance);
 
                                                 break;
@@ -405,7 +406,7 @@ bool Player::issueOrder() {
                                         }
                                         cout << "Order to bomb " << validBomb << " issued" << endl;
                                         // create bomb order
-                                        Order *bomb = new Bomb(this, toAttack()->at(validBomb - 1));
+                                        Order *bomb = new Bomb(this, toAttack()->at(validBomb - 1), observer);
                                         // add to order list
                                         orders->Add(bomb);
 
@@ -440,7 +441,7 @@ bool Player::issueOrder() {
                                              << *(playerTerritories.at(validReinforce)->getTerritoryName());
 
                                         // create order
-                                        Order *reinforce = new Deploy(this, 5, playerTerritories.at(validReinforce));
+                                        Order *reinforce = new Deploy(this, 5, playerTerritories.at(validReinforce), observer);
                                         // add to order list
                                         orders->Add(reinforce);
 
@@ -473,7 +474,7 @@ bool Player::issueOrder() {
                                         cout << "Issued order to blockade " << validBlockade << endl;
 
                                         // create order
-                                        Order *blockade = new Blockade(this, playerTerritories.at(validBlockade - 1));
+                                        Order *blockade = new Blockade(this, playerTerritories.at(validBlockade - 1), observer);
                                         // add order to list
                                         orders->Add(blockade);
 
@@ -526,7 +527,8 @@ bool Player::issueOrder() {
                                                                         this,
                                                                         validTroopsToAirlift,
                                                                         territories->at(validAirliftFrom - 1),
-                                                                        territories->at(validAirliftTo - 1)
+                                                                        territories->at(validAirliftTo - 1),
+                                                                        observer
                                                                 );
                                                                 orders->Add(airlift);
 
@@ -572,7 +574,7 @@ bool Player::issueOrder() {
                                         cout << "Using diplomacy on player " << validDiplomacyTarget << endl;
 
                                         // create order
-                                        Order *diplomacy = new Negotiate(this, validDiplomacyTarget);
+                                        Order *diplomacy = new Negotiate(this, validDiplomacyTarget, observer);
                                         // add to order list
                                         orders->Add(diplomacy);
 
