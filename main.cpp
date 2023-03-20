@@ -22,8 +22,11 @@ int main(int argc, char *argv[]) {
         cout << "[ERROR]: " << e.what() << "... Exiting program.";
         return -1;
     }
+    
 
-    //logDriver(string(argv[1], string(argv[2]);
+    //PART2
+    //logDriver(argc, argv[]);
+
 
     return 0;
 }
