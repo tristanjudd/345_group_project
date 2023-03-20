@@ -9,6 +9,7 @@ vector<int> *GameEngine::conqStatus = new vector<int>(); //CREATING THE STATIC C
 GameEngine::GameEngine(LogObserver* observer) : Subject(observer){
     cout << "GameEngine default constructor called" << endl;
     winner = new int(-1);
+    map = new Map();
     players = new vector<Player *>;
 }
 
@@ -16,6 +17,7 @@ GameEngine::GameEngine(LogObserver* observer) : Subject(observer){
 GameEngine::GameEngine(const GameEngine &gameEngine) {
     cout << "GameEngine copy constructor called" << endl;
     winner = new int(*gameEngine.winner);
+    map = gameEngine.map;
     players = gameEngine.players;
 }
 
@@ -25,6 +27,8 @@ GameEngine &GameEngine::operator=(const GameEngine &gameEngine) {
     if (this != &gameEngine) {
         delete this->winner;
         this->winner = new int(*gameEngine.winner);
+        this->map = gameEngine.map;
+        this->players = gameEngine.players;
     }
     return *this;
 }
@@ -35,8 +39,8 @@ ostream &operator<<(ostream &out, const GameEngine &gameEngine) {
     out << "Winner: " << *gameEngine.winner << endl;
     out << "Map: " << *gameEngine.map << endl;
     out << "Players: " << endl;
-    for (int i = 0; i < gameEngine.players->size(); i++) {
-        out << *gameEngine.players->at(i) << endl;
+    for (auto &player: *gameEngine.players) {
+        out << *player << endl;
     }
     return out;
 }
@@ -45,7 +49,10 @@ ostream &operator<<(ostream &out, const GameEngine &gameEngine) {
 GameEngine::~GameEngine() {
     cout << "GameEngine destructor called" << endl;
     winner = nullptr;
+    map = nullptr;
+    players = nullptr;
     delete winner;
+    delete map;
     delete players;
 
     delete neutral;
@@ -54,12 +61,12 @@ GameEngine::~GameEngine() {
 }
 
 //Getters and setters
-vector<Player *> *GameEngine::getPlayers() const {
-    return players;
+int *GameEngine::getWinner() const {
+    return winner;
 }
 
-void GameEngine::setPlayers(vector<Player *> *players) {
-    GameEngine::players = players;
+void GameEngine::setWinner(int *winner) {
+    GameEngine::winner = winner;
 }
 
 Map *GameEngine::getMap() const {
@@ -68,6 +75,14 @@ Map *GameEngine::getMap() const {
 
 void GameEngine::setMap(Map *map) {
     GameEngine::map = map;
+}
+
+vector<Player *> *GameEngine::getPlayers() const {
+    return players;
+}
+
+void GameEngine::setPlayers(vector<Player *> *players) {
+    GameEngine::players = players;
 }
 
 PHASE *GameEngine::getCurrentPhase() const {
@@ -258,7 +273,7 @@ void GameEngine::distributeTerritories(Map *map) {
     }
     //print out territories of players
     for (int i = 0; i < players->size(); i++) {
-        cout << "\nPlayer " << *players->at(i)->getId() << " has territories: " << endl;
+        cout << "\nPlayer " << *players->at(i)->getName() << " has territories: " << endl;
         vector<Territory *> *tempTerritories = players->at(i)->getPlayerTerritories();
         for (int j = 0; j < tempTerritories->size(); j++) {
             cout << *tempTerritories->at(j)->getTerritoryName() << endl;
@@ -380,7 +395,7 @@ void GameEngine::mainGameLoop(GameEngine *game, PHASE phase, LogObserver* observ
                 break;
         }
     }
-};
+}
 
 //Assign reinforcement phase
 PHASE GameEngine::reinforcementPhase() {

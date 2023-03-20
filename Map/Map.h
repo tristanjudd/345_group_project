@@ -168,7 +168,7 @@ public:
     string *getPath() const;
 
     // Methods
-    static bool loadMap(GameEngine *g, string *inputPath);
+    static bool loadMap(GameEngine *game, string *inputPath);
     static Map* readMap(string *filePath);
     static vector<string> getTokens(const string& inputString);
 };
