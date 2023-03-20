@@ -3,6 +3,7 @@
 #include "Cards/CardsDriver.h"
 #include "Orders/OrdersDriver.h"
 #include "Player/PlayerDriver.h"
+#include "GameLog/LoggingDriver.h"
 #include "GameEngine/GameEngineDriver.h"
 
 int main(int argc, char *argv[]) {
@@ -29,6 +30,6 @@ int main(int argc, char *argv[]) {
     }
 
     //PART2
-    
+    //logDriver(string(argv[1], string(argv[2]);
     return 0;
 }

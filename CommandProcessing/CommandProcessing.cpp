@@ -142,7 +142,7 @@ void Command::stringToLog() {
 
     // Append data to the file
     outputFile.open(filename, std::ios_base::app);
-    outputFile << "Saving Effect: " << this->getEffect() << endl;
+    outputFile << "Saving Effect: " << *(this->getEffect()) << endl;
     outputFile.close();
 }
 
@@ -478,7 +478,7 @@ void CommandProcessor::stringToLog() {
 
     // Append data to the file
     outputFile.open(filename, std::ios_base::app);
-    outputFile << "Saving Command: " << this->commands->back()->getName() << endl;
+    outputFile << "Saving Command: " << *(this->commands->back()->getName()) << endl;
     outputFile.close();
 }
 

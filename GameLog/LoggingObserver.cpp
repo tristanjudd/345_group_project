@@ -49,6 +49,7 @@ LogObserver::LogObserver() {}
 
 LogObserver::~LogObserver() {}
 
+
 ofstream checkFile() {
 
     //creating file string
