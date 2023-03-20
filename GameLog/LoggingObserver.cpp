@@ -26,6 +26,19 @@ Subject::Subject(Observer *observer) {
     this->observer = observer;
 }
 
+// Copy constructor for Subject class
+Subject::Subject(const Subject &copy) {
+    // Copy the observer pointer from the original object
+    observer = copy.observer;
+
+    // Downcast the observer pointer to a LogObserver*
+    LogObserver* logObserver = dynamic_cast<LogObserver*>(observer);
+
+
+    observer = new LogObserver(*logObserver);
+
+}
+
 Subject::~Subject() {
 
     delete observer;
@@ -36,9 +49,16 @@ void Subject::Notify(ILoggable *loggable) {
     observer->Update(loggable);
 }
 
-void ILoggable::stringToLog() {}
+std::ostream &operator<<(std::ostream &os, const Subject &subject) {
+    os << "observer: " << subject.observer;
+    return os;
+}
 
 //LogObserver Functions
+
+// Copy constructor for LogObserver class
+LogObserver::LogObserver(const LogObserver &copy) : Observer(copy) {
+}
 
 void LogObserver::Update(ILoggable *loggable) {
 
@@ -50,18 +70,3 @@ LogObserver::LogObserver() {}
 LogObserver::~LogObserver() {}
 
 
-ofstream checkFile() {
-
-    //creating file string
-    string filename = "../Log/gamelog.txt";
-    ofstream outputFile;
-
-    //checking if file exists
-    ofstream exists(filename);
-
-    if (exists.bad()) {
-        outputFile.open(filename);
-    }
-
-    return outputFile;
-}

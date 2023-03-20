@@ -33,8 +33,12 @@ public:
 
     virtual void Notify(ILoggable* loggable);
     Subject();
+    Subject(const Subject &copy);//copy constructor
     Subject(Observer* observer);
     ~Subject();
+
+    friend std::ostream &operator<<(std::ostream &os, const Subject &subject);
+
 private:
 
     Observer * observer;
@@ -45,13 +49,10 @@ class LogObserver: public Observer
 {
 public:
     LogObserver();
-
+    LogObserver(const LogObserver &copy);
     void Update(ILoggable* loggable);
     ~LogObserver();
 };
-
-
-ofstream checkFile();
 
 
 
