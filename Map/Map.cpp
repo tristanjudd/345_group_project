@@ -582,32 +582,32 @@ Map *MapLoader::readMap(string *filePath) {
 
         switch (mode) {
             case UNSPECIFIED: {
-                printf("No mode specified, skipping...\n");
+//                printf("No mode specified, skipping...\n");
                 break;
             }
             case FILES: {
-                printf("Skipping files for Phase 1...\n");
+//                printf("Skipping files for Phase 1...\n");
                 break;
             }
             case TERRITORIES: {
                 if (stoi(tokens[0]) < territories->size()) {
                     throw std::exception();  // if the first token is bad, exit and cannot parse
                 }
-                printf("Parsing territory %s...\n", tokens[1].c_str());
+//                printf("Parsing territory %s...\n", tokens[1].c_str());
                 territories->push_back(new Territory(stoi(tokens[0]) - 1,
                                                      stoi(tokens[2]) - 1,
                                                      tokens[1]));
                 break;
             }
             case CONTINENTS: {
-                printf("Parsing continent %s...\n", tokens[0].c_str());
+//                printf("Parsing continent %s...\n", tokens[0].c_str());
                 continents->push_back(new Continent(continentCounter++,
                                                     tokens[0],
                                                     stoi(tokens[1])));
                 break;
             }
             case BORDERS: {
-                printf("Parsing %s borders...\n", territories->at(stoi(tokens[0]) - 1)->getTerritoryName()->c_str());
+//                printf("Parsing %s borders...\n", territories->at(stoi(tokens[0]) - 1)->getTerritoryName()->c_str());
                 vector<int> *borders = new vector<int>();
 
                 for (int i = 1; i < tokens.size(); i++) {
@@ -663,16 +663,16 @@ Map *MapLoader::readMap(string *filePath) {
 // Switch the parsing mode based on the [flag]
 PARSE_MODE MapLoader::getMode(const string &inputString) {
     if (inputString.find("files") != string::npos) {
-        printf("Switching to 'files' input mode.\n");
+//        printf("Switching to 'files' input mode.\n");
         return FILES;
     } else if (inputString.find("continents") != string::npos) {
-        printf("Switching to 'continents' input mode.\n");
+//        printf("Switching to 'continents' input mode.\n");
         return CONTINENTS;
     } else if (inputString.find("countries") != string::npos) {
-        printf("Switching to 'territories' input mode.\n");
+//        printf("Switching to 'territories' input mode.\n");
         return TERRITORIES;
     } else if (inputString.find("borders") != string::npos) {
-        printf("Switching to 'borders' input mode.\n");
+//        printf("Switching to 'borders' input mode.\n");
         return BORDERS;
     }
 }
@@ -694,7 +694,7 @@ vector<string> MapLoader::getTokens(const string &inputString) {
     return tokens;
 }
 
-bool MapLoader::loadMap(GameEngine *g, string *inputPath) {
+bool MapLoader::loadMap(GameEngine *game, string *inputPath) {
     // printf("Beginning map setup...\n");
     // printf("Initializing MapLoader...\n");
     MapLoader *myMapLoader = new MapLoader();
@@ -710,18 +710,21 @@ bool MapLoader::loadMap(GameEngine *g, string *inputPath) {
     printf("Reading %s...\n", filePath.c_str());
     myMapLoader->setPath(&filePath);
 
-    Map *loadedMap = new Map();
+    Map *loadedMap = game->getMap();
     try {
         loadedMap = myMapLoader->readMap(&filePath);
-        g->setMap(loadedMap);
+        game->setMap(loadedMap);
     } catch (...) {
         printf("Could not parse map file. Discarding...\n");
+        printf("Deleting MapLoader...\n");
+        delete myMapLoader;
+        return false;
     }
 
     printf("Deleting MapLoader...\n");
     delete myMapLoader;
 
-    printf("Map selection complete.\n");  // When merging with the rest, will return map
+    printf("Map selection complete.\n\n");  // When merging with the rest, will return map
     return true;
 }
 

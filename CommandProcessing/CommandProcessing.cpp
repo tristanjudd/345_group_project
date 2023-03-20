@@ -142,7 +142,7 @@ void Command::stringToLog() {
 
     // Append data to the file
     outputFile.open(filename, std::ios_base::app);
-    outputFile << "Saving Effect: " << this->getEffect() << endl;
+    outputFile << "Saving Effect: " << *(this->getEffect()) << endl;
     outputFile.close();
 }
 
@@ -364,6 +364,10 @@ FileLineReader::FileLineReader(const string& filePath) {
     lines = new vector<string>();
 
     ifstream file(filePath);
+    if (file.fail()) {
+        throw runtime_error("Command file does not exist. Please pass proper command line arguments.");
+    }
+
     string line;
     while (getline(file, line)) {
         lines->push_back(line);
@@ -406,6 +410,9 @@ ostream &operator<<(ostream &os, const FileLineReader &flr) {
 
 // methods
 string FileLineReader::readLineFromFile(int l) {
+    if (l >= lines->size()) {
+        throw runtime_error("Ran out of commands in file.");
+    }
     return lines->at(l);
 }
 
@@ -478,7 +485,7 @@ void CommandProcessor::stringToLog() {
 
     // Append data to the file
     outputFile.open(filename, std::ios_base::app);
-    outputFile << "Saving Command: " << this->commands->back()->getName() << endl;
+    outputFile << "Saving Command: " << *(this->commands->back()->getName()) << endl;
     outputFile.close();
 }
 

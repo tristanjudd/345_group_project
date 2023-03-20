@@ -45,6 +45,7 @@ class LogObserver: public Observer
 {
 public:
     LogObserver();
+
     void Update(ILoggable* loggable);
     ~LogObserver();
 };
