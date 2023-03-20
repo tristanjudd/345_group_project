@@ -441,10 +441,10 @@ bool Player::issueOrder(LogObserver* observer) {
                                         }
 
                                         cout << "Sending 5 reinforcements to "
-                                             << *(playerTerritories.at(validReinforce)->getTerritoryName());
+                                             << *(playerTerritories.at(validReinforce - 1)->getTerritoryName());
 
                                         // create order
-                                        Order *reinforce = new Deploy(this, 5, playerTerritories.at(validReinforce), observer);
+                                        Order *reinforce = new Deploy(this, 5, playerTerritories.at(validReinforce - 1), observer);
                                         // add to order list
                                         orders->Add(reinforce);
 
