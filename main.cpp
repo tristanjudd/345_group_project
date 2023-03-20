@@ -29,7 +29,9 @@ int main(int argc, char *argv[]) {
         return -1;
     }
 
+
     //PART2
     //logDriver(string(argv[1], string(argv[2]);
+
     return 0;
 }
