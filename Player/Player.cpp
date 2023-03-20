@@ -437,10 +437,10 @@ bool Player::issueOrder() {
                                         }
 
                                         cout << "Sending 5 reinforcements to "
-                                             << *(playerTerritories.at(validReinforce)->getTerritoryName());
+                                             << *(playerTerritories.at(validReinforce - 1)->getTerritoryName());
 
                                         // create order
-                                        Order *reinforce = new Deploy(this, 5, playerTerritories.at(validReinforce));
+                                        Order *reinforce = new Deploy(this, 5, playerTerritories.at(validReinforce - 1));
                                         // add to order list
                                         orders->Add(reinforce);
 
@@ -608,12 +608,7 @@ bool Player::issueOrder() {
 
     } // end of else for other orders
 
-    return false;
-    /*Order *order = new Order("Specific order");
-    orders->push_back(order);*/
-    //changed Order to abstract class need param to create specific order
-    //Order *order = new Order("Specific order");
-    //orders->Add(order);
+    return true;
 
 }
 
@@ -623,41 +618,9 @@ bool Player::issueOrder() {
 vector<Territory *> *Player::toDefend() {
     return territories;
 
-    // Tristan commented out dummy code
-    /*vector<Territory *> *territories = new vector<Territory *>();
-    Territory *t1 = new Territory(1, 1, "France");
-    Territory *t2 = new Territory(2, 2, "England");
-    Territory *t3 = new Territory(3, 3, "Spain");
-    Territory *t4 = new Territory(4, 4, "Germany");
-    Territory *t5 = new Territory(5, 5, "Portugal");
-
-    territories->push_back(t1);
-    territories->push_back(t2);
-    territories->push_back(t3);
-    territories->push_back(t4);
-    territories->push_back(t5);
-
-    return territories; */
-
 }
 
-/*//Function creates a list of territories a player will attack
-vector<Territory *> *Player::toAttack() {
-    vector<Territory *> *territories = new vector<Territory *>();
-    Territory *t1 = new Territory(1, 1, "Japan");
-    Territory *t2 = new Territory(2, 2, "China");
-    Territory *t3 = new Territory(3, 3, "Korea");
-    Territory *t4 = new Territory(4, 4, "Vietnam");
-    Territory *t5 = new Territory(5, 5, "Singapore");
 
-    territories->push_back(t1);
-    territories->push_back(t2);
-    territories->push_back(t3);
-    territories->push_back(t4);
-    territories->push_back(t5);
-
-    return territories;
-}*/
 
 //Function creates a list of territories a player will attack
 vector<Territory *> *Player::toAttack() {

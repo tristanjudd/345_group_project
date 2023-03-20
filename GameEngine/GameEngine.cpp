@@ -301,7 +301,7 @@ PHASE GameEngine::win() {
         string playAgain;
         cin >> playAgain;
         if (playAgain == "y") {
-            return START; //go to start phase
+            return WIN; //go to start phase
         } else if (playAgain == "n") {
             cout << "Goodbye!" << endl;
             return END; //go to end phase
@@ -313,15 +313,21 @@ PHASE GameEngine::win() {
 //End phase
 void GameEngine::end() {
     cout << "Bye Bye" << endl;
+    abort();
 }
 
 // Start of new turn
 void GameEngine::mainGameLoop(GameEngine *game, PHASE phase) {
-    initGameDummy();
+    //initGameDummy();
     cout << "There are " << players->size() << " players" << endl;
 
     while (true) {
         switch (phase) {
+            case CHECK_WIN: {
+                cout << "Check victory state" << endl;
+                phase = game->checkWin();
+                break;
+            }
             case ASSIGN_REINFORCEMENT: {
                 cout << "Assign reinforcement state" << endl;
                 phase = game->reinforcementPhase();
@@ -335,11 +341,6 @@ void GameEngine::mainGameLoop(GameEngine *game, PHASE phase) {
             case EXECUTE_ORDERS: {
                 cout << "Execute orders state" << endl;
                 phase = game->executeOrdersPhase();
-                break;
-            }
-            case CHECK_WIN: {
-                cout << "Check victory state" << endl;
-                phase = game->checkWin();
                 break;
             }
             case WIN:
@@ -470,53 +471,30 @@ PHASE GameEngine::executeOrdersPhase() {
 }
 
 PHASE GameEngine::checkWin() {
-    // create new vector for surviving players
-    vector<Player *> *newPlayers = new vector<Player *>;
-    // loop through current players and only push players with territories
-    for (Player *p: *players) {
-        if (p->getPlayerTerritories()->size() > 0) {
-            newPlayers->push_back(p);
+    cout << "There are " << players->size() << " players" << endl;
+
+    // iterate through players and check if any has 0 territories
+    std::vector<Player *>::iterator it;
+    int i = 0;
+    for (it = players->begin(); it != players->end(); ) {
+        if ((*it)->getPlayerTerritories()->size() == 0) {
+            it = players->erase(it);
         } else {
-            // if player has no territories delete
-            delete p;
-            p = nullptr;
+            it++;
         }
     }
 
-    delete players; // delete old players vector
-    players = newPlayers; // assign new player vector to gameEngine attribute
     cout << "There are " << players->size() << " players" << endl;
 
     // check if there's a winner
     if (players->size() == 1) {
         return WIN;
     }
+
     return ASSIGN_REINFORCEMENT;
 }
 
-//// function for checking whether input is a number within a certain range
-//int string_is_num_in_range(string str, int n, int m) {
-//    // check that string is not empty and all chars are digits
-//    if (!str.empty() && std::all_of(str.begin(), str.end(), ::isdigit)) {
-//        // convert string to int and return
-//        int num = std::stoi(str);
-//        // if num in range return num
-//        if (num >= n && num <= m) return num;
-//            // else return false
-//        else return 0;
-//
-//    } else {
-//        // return false
-//        return 0;
-//    }
-//}
-//
-//void invalidInput() {
-//    cout << "Invalid input, try again" << endl;
-//    //clear input stream
-//    cin.clear();
-//    cin.ignore();
-//}
+
 
 // inits a bunch of objects to have something to test with in dev phase
 void GameEngine::initGameDummy() {
@@ -611,8 +589,6 @@ void GameEngine::initGameDummy() {
         t->setOwner(p3);
     }
 
-    Player *p4 = new Player();
-
     Deck *deck = new Deck();
     Hand *h1 = new Hand();
     Hand *h2 = new Hand();
@@ -642,6 +618,7 @@ void GameEngine::initGameDummy() {
     players->push_back(p1);
     players->push_back(p2);
     players->push_back(p3);
+    Player *p4 = new Player();
     players->push_back(p4);
 
     vector<Territory *> *mapList = new vector<Territory *>;
