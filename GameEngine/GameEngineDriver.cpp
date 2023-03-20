@@ -18,14 +18,15 @@ int gameEngineDriver(GAME_MODE gm, const string& fileArg) {
     Command *command;
     PHASE phase;
 
-    phase = START;
-    game->startupPhase(game, cp, command, phase, observer);
+//    phase = START;
+//    game->startupPhase(game, cp, command, phase, observer);
 
-//    phase = ASSIGN_REINFORCEMENT;
-//    game->mainGameLoop(game, phase);
+    phase = ASSIGN_REINFORCEMENT;
+    game->initGameDummy(observer);
+    game->mainGameLoop(game, phase, observer);
 
     // TRISTAN: THESE METHODS ARE FOR DEMO PURPOSES
-    // initGameDummy();
+
     // initGameEndDummy();
     // END OF DEMO METHODS
 }

@@ -363,6 +363,10 @@ void GameEngine::mainGameLoop(GameEngine *game, PHASE phase, LogObserver* observ
 
     while (true) {
         switch (phase) {
+            case WIN:
+                cout << "Win Phase" << endl;
+                phase = game->win();
+                break;
             case ASSIGN_REINFORCEMENT: {
                 cout << "Assign reinforcement state" << endl;
                 phase = game->reinforcementPhase();
@@ -383,10 +387,6 @@ void GameEngine::mainGameLoop(GameEngine *game, PHASE phase, LogObserver* observ
                 phase = game->checkWin();
                 break;
             }
-            case WIN:
-                cout << "Win Phase" << endl;
-                phase = game->win();
-                break;
             case END:
                 cout << "End Phase" << endl;
                 game->end();
