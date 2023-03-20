@@ -1,8 +1,8 @@
 #include "GameEngineDriver.h"
 
-int gameEngineDriver(GAME_MODE gm, const string& fileArg) {
+int gameEngineDriver(GAME_MODE gm, const string &fileArg) {
 
-    LogObserver* observer = new LogObserver();
+    LogObserver *observer = new LogObserver();
     GameEngine *game = new GameEngine(observer);
 
     // use different command processor (file/console)
@@ -18,13 +18,13 @@ int gameEngineDriver(GAME_MODE gm, const string& fileArg) {
     Command *command;
     PHASE phase;
 
-//    phase = START;
-//    game->startupPhase(game, cp, command, phase, observer);
+    phase = START;
+    game->startupPhase(game, cp, command, phase, observer);
 
-    phase = CHECK_WIN;
-    game->initGameDummy(observer);
-    //game->initGameEndDummy(observer);
-    game->mainGameLoop(game, phase, observer);
+//    phase = CHECK_WIN;
+//    game->initGameDummy(observer);
+//    game->initGameEndDummy(observer);
+//    game->mainGameLoop(game, phase, observer);
 
 
 }
