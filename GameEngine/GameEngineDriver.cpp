@@ -18,9 +18,11 @@ int gameEngineDriver(GAME_MODE gm, const string &fileArg) {
     Command *command;
     PHASE phase;
 
+    // startup
     phase = START;
     game->startupPhase(game, cp, command, phase, observer);
 
+    // main game loop
 //    phase = CHECK_WIN;
 //    game->initGameDummy(observer);
 //    game->initGameEndDummy(observer);
