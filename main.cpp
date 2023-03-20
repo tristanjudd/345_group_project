@@ -9,12 +9,6 @@
 int main(int argc, char *argv[]) {
     std::cout << "Welcome to our bootleg Warzone!" << std::endl;
 
-    //PART1
-    //mapDriver();  // For now, just goes through the prompt, but we will have to return the map objects here eventually
-    //cardDriver();
-    //ordersDriver(); //DOES NOT WORK ANYMORE BECAUSE ORDER CLASS IS ABSTRACT
-    //playerDriver(); //DOES NOT WORK ANYMORE BECAUSE ORDER CLASS IS ABSTRACT AND ISSUEORDER NOT DEFINE
-
     // -file /home/jay/Projects/345_group_project/CommandProcessing/test.cmd
     try {
         if (string(argv[1]) == "-console") {
@@ -28,10 +22,11 @@ int main(int argc, char *argv[]) {
         cout << "[ERROR]: " << e.what() << "... Exiting program.";
         return -1;
     }
-
+    
 
     //PART2
     //logDriver(argc, argv[]);
+
 
     return 0;
 }
