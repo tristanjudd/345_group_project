@@ -21,12 +21,10 @@ int gameEngineDriver(GAME_MODE gm, const string& fileArg) {
 //    phase = START;
 //    game->startupPhase(game, cp, command, phase, observer);
 
-    phase = ASSIGN_REINFORCEMENT;
-    game->initGameDummy(observer);
+    phase = CHECK_WIN;
+    //ame->initGameDummy(observer);
+    game->initGameEndDummy(observer);
     game->mainGameLoop(game, phase, observer);
 
-    // TRISTAN: THESE METHODS ARE FOR DEMO PURPOSES
 
-    // initGameEndDummy();
-    // END OF DEMO METHODS
 }

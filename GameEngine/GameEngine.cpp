@@ -342,7 +342,8 @@ PHASE GameEngine::win() {
         string playAgain;
         cin >> playAgain;
         if (playAgain == "y") {
-            return START; //go to start phase
+
+            return CHECK_WIN; //go to start phase
         } else if (playAgain == "n") {
             cout << "Goodbye!" << endl;
             return END; //go to end phase
@@ -354,11 +355,11 @@ PHASE GameEngine::win() {
 //End phase
 void GameEngine::end() {
     cout << "Bye Bye" << endl;
+    abort();
 }
 
 // Start of new turn
 void GameEngine::mainGameLoop(GameEngine *game, PHASE phase, LogObserver* observer) {
-    initGameDummy(observer);
     cout << "There are " << players->size() << " players" << endl;
 
     while (true) {
@@ -521,21 +522,19 @@ PHASE GameEngine::executeOrdersPhase() {
 }
 
 PHASE GameEngine::checkWin() {
-    // create new vector for surviving players
-    vector<Player *> *newPlayers = new vector<Player *>;
-    // loop through current players and only push players with territories
-    for (Player *p: *players) {
-        if (p->getPlayerTerritories()->size() > 0) {
-            newPlayers->push_back(p);
+    cout << "There are " << players->size() << " players" << endl;
+
+    // iterate through players and check if any has 0 territories
+    std::vector<Player *>::iterator it;
+    int i = 0;
+    for (it = players->begin(); it != players->end(); ) {
+        if ((*it)->getPlayerTerritories()->size() == 0) {
+            it = players->erase(it);
         } else {
-            // if player has no territories delete
-            delete p;
-            p = nullptr;
+            it++;
         }
     }
 
-    delete players; // delete old players vector
-    players = newPlayers; // assign new player vector to gameEngine attribute
     cout << "There are " << players->size() << " players" << endl;
 
     // check if there's a winner
@@ -543,10 +542,7 @@ PHASE GameEngine::checkWin() {
         return WIN;
     }
 
-    PHASE p = ASSIGN_REINFORCEMENT;
-    setCurrentPhase(&p);
-    Notify(this);
-    return p;
+    return ASSIGN_REINFORCEMENT;
 }
 
 //// function for checking whether input is a number within a certain range
