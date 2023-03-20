@@ -1,1 +1,16 @@
 
+Saving Effect: Loaded map C:\Users\Kojo\Documents\CompSci\345\345_group_project\Map\canada.map.
+Saving Command: load map
+Current phase: MAP_LOADED
+Saving Effect: Validated map.
+Saving Command: validate map
+Current phase: MAP_VALIDATED
+Saving Effect: Added player cow.
+Saving Command: add player
+Current phase: PLAYERS_ADDED
+Saving Effect: Added player pig.
+Saving Command: add player
+Current phase: PLAYERS_ADDED
+Saving Effect: Started game.
+Saving Command: game start
+Current phase: END
