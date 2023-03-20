@@ -647,22 +647,34 @@ void GameEngine::initGameDummy(LogObserver* observer) {
     list3->push_back(t9);
 
     Player *p1 = new Player(observer);
+    int* id1 = new int;
+    *id1 = 1;
+    p1->setId(id1);
     p1->setPlayerTerritories(list1);
     for (Territory *t: *list1) {
         t->setOwner(p1);
     }
+
     Player *p2 = new Player(observer);
+    int* id2 = new int;
+    *id2 = 2;
+    p2->setId(id2);
     p2->setPlayerTerritories(list2);
     for (Territory *t: *list2) {
         t->setOwner(p2);
     }
+
     Player *p3 = new Player(observer);
+    int* id3 = new int;
+    *id3 = 3;
+    p3->setId(id3);
     p3->setPlayerTerritories(list3);
     for (Territory *t: *list3) {
         t->setOwner(p3);
     }
 
     Player *p4 = new Player(observer);
+
 
     Deck *deck = new Deck();
     Hand *h1 = new Hand();
