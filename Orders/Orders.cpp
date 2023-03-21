@@ -344,8 +344,9 @@ bool Advance::execute() {
                 {
                     GameEngine::conqStatus->push_back(ID);
                     Card *theCard = new Card();
-
 					getPlayer()->getHand()->insert(theCard); //ading card to Players hand
+                    GameEngine::conqStatus->push_back(ID);
+
                     cout << "DEBUG: Card Given"<< endl;
 
                 }
