@@ -1,5 +1,9 @@
+class Player; // forward declaration
+class Territory; // forward declaration
 #pragma once
 #include "../Player/Player.h"
+#include "../GameLog/LoggingObserver.h"
+#include "../Map/Map.h"
 #include <vector>
 #include <ostream>
 
@@ -12,13 +16,16 @@ public:
     PlayerStrategy(const PlayerStrategy& ps);
     virtual ~PlayerStrategy();
 
-    virtual bool issueOrder() = 0;
+    void setPlayer(Player* newPlayer);
+    Player* getPlayer();
+
+    virtual bool issueOrder(LogObserver* observer) = 0;
     virtual vector<Territory *>* toAttack() = 0;
     virtual vector<Territory *>* toDefend() = 0;
 
 };
 
-//class Neutral : PlayerStrategy {
+//class Neutral : public PlayerStrategy {
 //    Neutral();
 //    Neutral(Neutral* neutral);
 //    Neutral(const Neutral& n);
@@ -29,12 +36,12 @@ public:
 //    // Stream operator
 //    friend ostream &operator<<(ostream &os, const Neutral& n);
 //
-//    bool issueOrder();
+//    bool issueOrder(LogObserver* observer);
 //    vector<Territory *>* toAttack();
 //    vector<Territory *>* toDefend();
 //};
 
-//class Cheater : PlayerStrategy {
+//class Cheater : public PlayerStrategy {
 //    Cheater();
 //    Cheater(Cheater* cheater);
 //    Cheater(const Cheater& c);
@@ -45,12 +52,13 @@ public:
 //    // Stream operator
 //    friend ostream &operator<<(ostream &os, const Cheater& c);
 //
-//    bool issueOrder();
+//    bool issueOrder(LogObserver* observer);
 //    vector<Territory *>* toAttack();
 //    vector<Territory *>* toDefend();
 //};
 
-class Human : PlayerStrategy {
+class Human : public PlayerStrategy {
+public:
     Human();
     Human(Player* player);
     Human(const Human& h);
@@ -61,12 +69,12 @@ class Human : PlayerStrategy {
     // Stream operator
     friend ostream &operator<<(ostream &os, const Human& h);
 
-    bool issueOrder();
+    bool issueOrder(LogObserver* observer);
     vector<Territory *>* toAttack();
     vector<Territory *>* toDefend();
 };
 
-//class Aggressive : PlayerStrategy {
+//class Aggressive : public PlayerStrategy {
 //    Aggressive();
 //    Aggressive(Player* player);
 //    Aggressive(const Aggressive& h);
@@ -77,12 +85,12 @@ class Human : PlayerStrategy {
 //    // Stream operator
 //    friend ostream &operator<<(ostream &os, const Aggressive &a);
 //
-//    bool issueOrder();
+//    bool issueOrder(LogObserver* observer);
 //    vector<Territory *>* toAttack();
 //    vector<Territory *>* toDefend();
 //};
 
-//class Benevolent : PlayerStrategy {
+//class Benevolent : public PlayerStrategy {
 //    Benevolent();
 //    Benevolent(Player* player);
 //    Benevolent(const Benevolent& b);
@@ -93,7 +101,7 @@ class Human : PlayerStrategy {
 //    // Stream operator
 //    friend ostream &operator<<(ostream &os, const Benevolent& b);
 //
-//    bool issueOrder();
+//    bool issueOrder(LogObserver* observer);
 //    vector<Territory *>* toAttack() ;
 //    vector<Territory *>* toDefend();
 //};
