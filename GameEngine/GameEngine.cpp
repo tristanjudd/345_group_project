@@ -650,7 +650,8 @@ void GameEngine::initGameDummy(LogObserver* observer) {
     list3->push_back(t8);
     list3->push_back(t9);
 
-    Player *p1 = new Player(observer);
+    Human* strat1 = new Human();
+    Player *p1 = new Player(observer, strat1);
     int* id1 = new int;
     *id1 = 1;
     p1->setId(id1);
@@ -659,7 +660,8 @@ void GameEngine::initGameDummy(LogObserver* observer) {
         t->setOwner(p1);
     }
 
-    Player *p2 = new Player(observer);
+    Human* strat2 = new Human();
+    Player *p2 = new Player(observer, strat2);
     int* id2 = new int;
     *id2 = 2;
     p2->setId(id2);
@@ -668,7 +670,8 @@ void GameEngine::initGameDummy(LogObserver* observer) {
         t->setOwner(p2);
     }
 
-    Player *p3 = new Player(observer);
+    Human* strat3 = new Human();
+    Player *p3 = new Player(observer, strat3);
     int* id3 = new int;
     *id3 = 3;
     p3->setId(id3);

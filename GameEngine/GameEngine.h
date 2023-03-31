@@ -18,6 +18,7 @@ using std::find;
 #include "../Orders/Orders.h"
 #include "../Cards/Cards.h"
 #include "../GameLog/LoggingObserver.h"
+#include "../PlayerStrategies/PlayerStrategies.h"
 
 class Command; //forward declaration
 class CommandProcessor; //forward declaration

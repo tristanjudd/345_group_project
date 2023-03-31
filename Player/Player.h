@@ -1,3 +1,4 @@
+class PlayerStrategy; // forward declaration
 //class Hand;
 #pragma once
 //#include "Map.h"
@@ -8,6 +9,7 @@
 #include "../Orders/Orders.h"
 #include "../Cards/Cards.h"
 #include "../GameLog/LoggingObserver.h"
+#include "../PlayerStrategies/PlayerStrategies.h"
 
 using std::vector;
 
@@ -27,10 +29,14 @@ private:
     // ASSIGNMENT 2
     int *reinforcements;
 
+    // ASSIGNMENT 3
+    PlayerStrategy* strategy;
+
 public:
 
     //Constructors
     Player(LogObserver* observer); //Default Constructor
+    Player(LogObserver* observer, PlayerStrategy* strategy);
     Player(string name, int playerId, LogObserver* observer); //Constructor
     Player(vector<Territory *> *territories, Hand *hand, OrderList *orders, int *id); //Constructor
     Player(int id);
@@ -75,6 +81,10 @@ public:
     int getReinforcements();
 
     void setReinforcements(int n);
+
+    // ASSIGNMENT 3
+    void setStrategy(PlayerStrategy* newStrategy);
+    PlayerStrategy* getStrategy();
 };
 
 int string_is_num_in_range(string str, int n, int m);
