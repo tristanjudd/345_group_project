@@ -9,7 +9,7 @@ PlayerStrategy::PlayerStrategy(Player* player) {
 }
 
 PlayerStrategy::~PlayerStrategy() {
-    delete p;
+    //delete p;
     p = nullptr;
 }
 
@@ -591,3 +591,129 @@ vector<Territory* >* Human::toAttack() {
 vector<Territory* >* Human::toDefend() {
     return p->getPlayerTerritories();
 }
+
+//NEUTRAL STRATEGY
+Neutral::Neutral() {}
+
+Neutral::Neutral(Player *p) {
+    this->p = p;
+}
+
+Neutral::Neutral(const Neutral& n)
+{
+    p = n.p;
+}
+
+//assignment operator
+void Neutral::operator=(const Neutral& n)
+{
+    p = n.p;
+}
+
+//destructor
+Neutral::~Neutral() {}
+
+//stream insertion operator
+ostream& operator<<(ostream& out, const Neutral& n)
+{
+    out << "Neutral Strategy" << endl;
+    return out;
+}
+
+//neutral strategy does not do anything
+bool Neutral::issueOrder(LogObserver *observer) {
+    return false;
+}
+
+vector<Territory* >* Neutral::toAttack() {
+    return nullptr;
+}
+
+vector<Territory* >* Neutral::toDefend() {
+    return nullptr;
+}
+
+//CHEATER STRATEGY
+Cheater::Cheater() {}
+
+Cheater::Cheater(Player *p) {
+    this->p = p;
+}
+
+Cheater::Cheater(const Cheater& c)
+{
+    p = c.p;
+}
+
+//assignment operator
+void Cheater::operator=(const Cheater& c)
+{
+    p = c.p;
+}
+
+//destructor
+Cheater::~Cheater() {}
+
+//stream insertion operator
+ostream& operator<<(ostream& out, const Cheater& c)
+{
+    out << "Cheater Strategy" << endl;
+    return out;
+}
+
+bool Cheater::issueOrder(LogObserver *observer) {
+
+    Cheat *cheat = new Cheat(p, observer);
+    p->getOrders()->Add(cheat);
+    return false;
+}
+
+vector<Territory* >* Cheater::toAttack() {
+    return nullptr;
+}
+
+vector<Territory* >* Cheater::toDefend() {
+    return nullptr;
+}
+
+//AGGRESSIVE STRATEGY
+Aggressive::Aggressive() {}
+
+Aggressive::Aggressive(Player *p) {
+    this->p = p;
+}
+
+Aggressive::Aggressive(const Aggressive& a)
+{
+    p = a.p;
+}
+
+//assignment operator
+void Aggressive::operator=(const Aggressive& a)
+{
+    p = a.p;
+}
+
+//destructor
+Aggressive::~Aggressive() {}
+
+//stream insertion operator
+ostream& operator<<(ostream& out, const Aggressive& a)
+{
+    out << "Aggressive Strategy" << endl;
+    return out;
+}
+
+bool Aggressive::issueOrder(LogObserver *observer) {
+    return false;
+}
+
+vector<Territory* >* Aggressive::toAttack() {
+    return nullptr;
+}
+
+vector<Territory* >* Aggressive::toDefend() {
+    return nullptr;
+}
+
+

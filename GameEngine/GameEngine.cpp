@@ -446,9 +446,6 @@ PHASE GameEngine::reinforcementPhase() {
 
 //Issue orders phase
 PHASE GameEngine::issueOrdersPhase(LogObserver* observer) {
-    //clear peaceStatus and conqStatus
-    peaceStatus->clear();
-    conqStatus->clear();
 
 // loop through each player and call issueOrder method
     for (Player *player: *players) {
@@ -519,6 +516,11 @@ PHASE GameEngine::executeOrdersPhase() {
         }
 
     }
+
+    //clear peaceStatus and conqStatus
+    peaceStatus->clear();
+    conqStatus->clear();
+
     PHASE p = CHECK_WIN;
     setCurrentPhase(&p);
     Notify(this);

@@ -164,6 +164,7 @@ bool Deploy::execute() {
 
         //calc new nb of armies and assign it to target
         int *armies = new int(*(target->getArmyCount()) + *nbArmies);
+        delete target->getArmyCount(); //delete old value
         target->setArmyCount(armies);
 
         //create exec effect
@@ -290,14 +291,31 @@ bool Advance::execute() {
             //calc new nb of armies
             int *leave = new int(*(source->getArmyCount()) - *nbArmies);
             int *arrive = new int(*(target->getArmyCount()) + *nbArmies);
-            
+
+            //assign new nb of armies
+            delete source->getArmyCount();
+            delete target->getArmyCount();
+
 			source->setArmyCount(leave);
 			target->setArmyCount(arrive);
 			execEffect = *(target->getTerritoryName()) + " now has " + to_string(*arrive) + " armies";
 		}
 
+
         // battle between 2 armies
         else {
+
+            //check if target is a neutral strategy
+            Neutral* neutralCheck = dynamic_cast<Neutral*>(target->getOwner()->getStrategy());
+
+            if (neutralCheck != nullptr) {
+                //change target player strategy to aggressive
+                delete target->getOwner()->getStrategy();
+                PlayerStrategy* aggressive = new Aggressive(target->getOwner());
+                target->getOwner()->setStrategy(aggressive);
+                cout << "DEBUG: Neutral player strategy changed to aggressive" << endl;
+            }
+
             int attackingArmies = *nbArmies;
             int defendingArmies = *(target->getArmyCount());
 
@@ -318,9 +336,11 @@ bool Advance::execute() {
             {
                 //remove army from source
                 int *leave = new int(*(source->getArmyCount()) - *nbArmies);
+                delete source->getArmyCount();
                 source->setArmyCount(leave);
 
                 //move army and change owner of target
+                delete target->getArmyCount();
                 target->setArmyCount(new int(attackingArmies)); //change army count
                 target->setOwner(getPlayer()); //change ownership
 
@@ -344,8 +364,9 @@ bool Advance::execute() {
                 {
                     GameEngine::conqStatus->push_back(ID);
                     Card *theCard = new Card();
-
 					getPlayer()->getHand()->insert(theCard); //ading card to Players hand
+                    GameEngine::conqStatus->push_back(ID);
+
                     cout << "DEBUG: Card Given"<< endl;
 
                 }
@@ -464,8 +485,19 @@ bool Bomb::execute() {
     if (valid) {
         cout << "DEBUG: Bomb order executed" << endl;
 
+        //check if target is a neutral strategy
+        Neutral* neutralCheck = dynamic_cast<Neutral*>(target->getOwner()->getStrategy());
+
+        if (neutralCheck != nullptr) {
+            //change target player strategy to aggressive
+            delete target->getOwner()->getStrategy();
+            target->getOwner()->setStrategy(new Aggressive(target->getOwner()));
+            cout << "DEBUG: Neutral player strategy changed to aggressive" << endl;
+        }
+
         //calc new nb of armies
         int *survive = new int((*(target->getArmyCount())) / 2);
+        delete target->getArmyCount();
         target->setArmyCount(survive);
 
         string execEffect = *(target->getTerritoryName()) + " now has " + to_string(*survive) + " armies";
@@ -540,6 +572,7 @@ bool Blockade::execute() {
 
         //double nb of armies
         int *doubled = new int((*(target->getArmyCount())) * 2);
+        delete target->getArmyCount();
         target->setArmyCount(doubled);
         
 		string execEffect = *(target->getTerritoryName()) + " now has " + to_string(*doubled) + " armies and is owned by Neutral player";
@@ -654,6 +687,9 @@ bool Airlift::execute() {
         int *fly = new int(*(source->getArmyCount()) - *nbArmies);
         int *land = new int(*(target->getArmyCount()) + *nbArmies);
 
+        //set new nb of armies
+        delete source->getArmyCount();
+        delete target->getArmyCount();
         source->setArmyCount(fly);
         target->setArmyCount(land);
 
@@ -751,6 +787,71 @@ void Negotiate::operator=(Negotiate const &obj) {
     victim = obj.victim;
 }
 
+//CHEAT class
+Cheat::Cheat(Player* _issuer, LogObserver *observer) : Order(_issuer, observer)
+{
+    setDesc("This is a Cheat order");
+}
+
+Cheat::Cheat(const Cheat &_o) : Order(_o) {
+}
+
+Cheat::~Cheat() {
+}
+
+bool Cheat::validate() {
+
+    //check if player is already conqured this turn
+    int ID = *getPlayer()->getId();
+    if (std::find(GameEngine::conqStatus->begin(), GameEngine::conqStatus->end(), ID) == GameEngine::conqStatus->end())
+    {
+        return true;
+    }
+
+    return false;
+
+}
+
+bool Cheat::execute() {
+    bool valid = validate();
+
+    if (valid) {
+        cout << "DEBUG: Cheat order executed" << endl;
+        string execEffect = "Player " + to_string(*getPlayer()->getId()) + " conquers all adjacent territories";
+        setEffect(execEffect);
+        GameEngine::conqStatus->push_back(*getPlayer()->getId());
+
+
+        //conquer all territories adjacent to player's territories
+        for (int i = 0; i < getPlayer()->getPlayerTerritories()->size(); i++)
+        {
+            for (int j = 0; j < getPlayer()->getPlayerTerritories()->at(i)->getBorderedTerritories()->size(); j++)
+            {
+                //check if territory is already owned by the player
+                if (getPlayer()->getPlayerTerritories()->at(i)->getBorderedTerritories()->at(j)->getOwner()->getId() != getPlayer()->getId())
+                {
+                    //conquer territory
+                    getPlayer()->getPlayerTerritories()->at(i)->getBorderedTerritories()->at(j)->setOwner(getPlayer());
+                    getPlayer()->getPlayerTerritories()->push_back(getPlayer()->getPlayerTerritories()->at(i)->getBorderedTerritories()->at(j));
+                }
+            }
+        }
+
+        return true;
+    }
+
+    else {
+        cout << "DEBUG: Cheat order not executed" << endl;
+        return false;
+    }
+
+}
+
+void Cheat::operator=(Cheat const &obj) {
+    Order::operator=(obj);
+}
+
+
 //OrderList class
 OrderList::OrderList(LogObserver *observer) : Subject(observer) {
     m_theListPtr = new std::vector<Order *>;
@@ -832,7 +933,6 @@ void OrderList::stringToLog() {
     outputFile << "Adding order: " << this->getList()->back()->getDesc() << endl;
     outputFile.close();
 }
-
 
 
 
