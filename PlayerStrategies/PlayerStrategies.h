@@ -25,25 +25,25 @@ public:
 
 };
 
-//class Neutral : public PlayerStrategy {
-//    Neutral();
-//    Neutral(Neutral* neutral);
-//    Neutral(const Neutral& n);
-//    ~Neutral();
-//
-//    // Assignment operator
-//    void operator= (Neutral const& n);
-//    // Stream operator
-//    friend ostream &operator<<(ostream &os, const Neutral& n);
-//
-//    bool issueOrder(LogObserver* observer);
-//    vector<Territory *>* toAttack();
-//    vector<Territory *>* toDefend();
-//};
+class Neutral : public PlayerStrategy {
+    Neutral();
+    Neutral(Player* player);
+    Neutral(const Neutral& n);
+    ~Neutral();
+
+    // Assignment operator
+    void operator= (Neutral const& n);
+
+    // Stream operator
+    friend ostream &operator<<(ostream &os, const Neutral& n);
+
+    bool issueOrder(LogObserver* observer);
+    vector<Territory *>* toAttack();
+    vector<Territory *>* toDefend();
+};
 
 //class Cheater : public PlayerStrategy {
 //    Cheater();
-//    Cheater(Cheater* cheater);
 //    Cheater(const Cheater& c);
 //    ~Cheater();
 //
@@ -74,21 +74,22 @@ public:
     vector<Territory *>* toDefend();
 };
 
-//class Aggressive : public PlayerStrategy {
-//    Aggressive();
-//    Aggressive(Player* player);
-//    Aggressive(const Aggressive& h);
-//    ~Aggressive();
-//
-//    // Assignment operator
-//    void operator= (Aggressive const& a);
-//    // Stream operator
-//    friend ostream &operator<<(ostream &os, const Aggressive &a);
-//
-//    bool issueOrder(LogObserver* observer);
-//    vector<Territory *>* toAttack();
-//    vector<Territory *>* toDefend();
-//};
+class Aggressive : public PlayerStrategy {
+public:
+    Aggressive();
+    Aggressive(Player* player);
+    Aggressive(const Aggressive& h);
+    ~Aggressive();
+
+    // Assignment operator
+    void operator= (Aggressive const& a);
+    // Stream operator
+    friend ostream &operator<<(ostream &os, const Aggressive &a);
+
+    bool issueOrder(LogObserver* observer);
+    vector<Territory *>* toAttack();
+    vector<Territory *>* toDefend();
+};
 
 //class Benevolent : public PlayerStrategy {
 //    Benevolent();

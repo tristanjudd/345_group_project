@@ -591,3 +591,50 @@ vector<Territory* >* Human::toAttack() {
 vector<Territory* >* Human::toDefend() {
     return p->getPlayerTerritories();
 }
+
+//NEUTRAL STRATEGY
+Neutral::Neutral() {}
+
+Neutral::Neutral(Player *p) {
+    this->p = p;
+}
+
+Neutral::Neutral(const Neutral& n)
+{
+    p = n.p;
+}
+
+//assignment operator
+void Neutral::operator=(const Neutral& n)
+{
+    p = n.p;
+}
+
+//destructor
+Neutral::~Neutral() {}
+
+//stream insertion operator
+ostream& operator<<(ostream& out, const Neutral& n)
+{
+    out << "Neutral Strategy" << endl;
+    return out;
+}
+
+//neutral strategy does not do anything
+bool Neutral::issueOrder(LogObserver *observer) {
+    return false;
+}
+
+vector<Territory* >* Neutral::toAttack() {
+    return nullptr;
+}
+
+vector<Territory* >* Neutral::toDefend() {
+    return nullptr;
+}
+
+
+
+
+
+

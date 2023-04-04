@@ -164,6 +164,7 @@ bool Deploy::execute() {
 
         //calc new nb of armies and assign it to target
         int *armies = new int(*(target->getArmyCount()) + *nbArmies);
+        delete target->getArmyCount(); //delete old value
         target->setArmyCount(armies);
 
         //create exec effect
@@ -290,14 +291,30 @@ bool Advance::execute() {
             //calc new nb of armies
             int *leave = new int(*(source->getArmyCount()) - *nbArmies);
             int *arrive = new int(*(target->getArmyCount()) + *nbArmies);
-            
+
+            //assign new nb of armies
+            delete source->getArmyCount();
+            delete target->getArmyCount();
+
 			source->setArmyCount(leave);
 			target->setArmyCount(arrive);
 			execEffect = *(target->getTerritoryName()) + " now has " + to_string(*arrive) + " armies";
 		}
 
+
         // battle between 2 armies
         else {
+
+            //check if target is a neutral strategy
+            Neutral* neutralCheck = dynamic_cast<Neutral*>(target->getOwner()->getStrategy());
+
+            if (neutralCheck != nullptr) {
+                //change target player strategy to aggressive
+                delete target->getOwner()->getStrategy();
+                target->getOwner()->setStrategy(new Aggressive(target->getOwner()));
+                cout << "DEBUG: Neutral player strategy changed to aggressive" << endl;
+            }
+
             int attackingArmies = *nbArmies;
             int defendingArmies = *(target->getArmyCount());
 
@@ -318,9 +335,11 @@ bool Advance::execute() {
             {
                 //remove army from source
                 int *leave = new int(*(source->getArmyCount()) - *nbArmies);
+                delete source->getArmyCount();
                 source->setArmyCount(leave);
 
                 //move army and change owner of target
+                delete target->getArmyCount();
                 target->setArmyCount(new int(attackingArmies)); //change army count
                 target->setOwner(getPlayer()); //change ownership
 
@@ -465,8 +484,19 @@ bool Bomb::execute() {
     if (valid) {
         cout << "DEBUG: Bomb order executed" << endl;
 
+        //check if target is a neutral strategy
+        Neutral* neutralCheck = dynamic_cast<Neutral*>(target->getOwner()->getStrategy());
+
+        if (neutralCheck != nullptr) {
+            //change target player strategy to aggressive
+            delete target->getOwner()->getStrategy();
+            target->getOwner()->setStrategy(new Aggressive(target->getOwner()));
+            cout << "DEBUG: Neutral player strategy changed to aggressive" << endl;
+        }
+
         //calc new nb of armies
         int *survive = new int((*(target->getArmyCount())) / 2);
+        delete target->getArmyCount();
         target->setArmyCount(survive);
 
         string execEffect = *(target->getTerritoryName()) + " now has " + to_string(*survive) + " armies";
@@ -541,6 +571,7 @@ bool Blockade::execute() {
 
         //double nb of armies
         int *doubled = new int((*(target->getArmyCount())) * 2);
+        delete target->getArmyCount();
         target->setArmyCount(doubled);
         
 		string execEffect = *(target->getTerritoryName()) + " now has " + to_string(*doubled) + " armies and is owned by Neutral player";
@@ -655,6 +686,9 @@ bool Airlift::execute() {
         int *fly = new int(*(source->getArmyCount()) - *nbArmies);
         int *land = new int(*(target->getArmyCount()) + *nbArmies);
 
+        //set new nb of armies
+        delete source->getArmyCount();
+        delete target->getArmyCount();
         source->setArmyCount(fly);
         target->setArmyCount(land);
 
