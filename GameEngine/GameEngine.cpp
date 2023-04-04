@@ -342,7 +342,8 @@ PHASE GameEngine::win() {
         string playAgain;
         cin >> playAgain;
         if (playAgain == "y") {
-            return START; //go to start phase
+
+            return CHECK_WIN; //go to start phase
         } else if (playAgain == "n") {
             cout << "Goodbye!" << endl;
             return END; //go to end phase
@@ -354,15 +355,19 @@ PHASE GameEngine::win() {
 //End phase
 void GameEngine::end() {
     cout << "Bye Bye" << endl;
+    abort();
 }
 
 // Start of new turn
 void GameEngine::mainGameLoop(GameEngine *game, PHASE phase, LogObserver* observer) {
-    initGameDummy(observer);
     cout << "There are " << players->size() << " players" << endl;
 
     while (true) {
         switch (phase) {
+            case WIN:
+                cout << "Win Phase" << endl;
+                phase = game->win();
+                break;
             case ASSIGN_REINFORCEMENT: {
                 cout << "Assign reinforcement state" << endl;
                 phase = game->reinforcementPhase();
@@ -383,10 +388,6 @@ void GameEngine::mainGameLoop(GameEngine *game, PHASE phase, LogObserver* observ
                 phase = game->checkWin();
                 break;
             }
-            case WIN:
-                cout << "Win Phase" << endl;
-                phase = game->win();
-                break;
             case END:
                 cout << "End Phase" << endl;
                 game->end();
@@ -525,21 +526,19 @@ PHASE GameEngine::executeOrdersPhase() {
 }
 
 PHASE GameEngine::checkWin() {
-    // create new vector for surviving players
-    vector<Player *> *newPlayers = new vector<Player *>;
-    // loop through current players and only push players with territories
-    for (Player *p: *players) {
-        if (p->getPlayerTerritories()->size() > 0) {
-            newPlayers->push_back(p);
+    cout << "There are " << players->size() << " players" << endl;
+
+    // iterate through players and check if any has 0 territories
+    std::vector<Player *>::iterator it;
+    int i = 0;
+    for (it = players->begin(); it != players->end(); ) {
+        if ((*it)->getPlayerTerritories()->size() == 0) {
+            it = players->erase(it);
         } else {
-            // if player has no territories delete
-            delete p;
-            p = nullptr;
+            it++;
         }
     }
 
-    delete players; // delete old players vector
-    players = newPlayers; // assign new player vector to gameEngine attribute
     cout << "There are " << players->size() << " players" << endl;
 
     // check if there's a winner
@@ -547,10 +546,7 @@ PHASE GameEngine::checkWin() {
         return WIN;
     }
 
-    PHASE p = ASSIGN_REINFORCEMENT;
-    setCurrentPhase(&p);
-    Notify(this);
-    return p;
+    return ASSIGN_REINFORCEMENT;
 }
 
 //// function for checking whether input is a number within a certain range
@@ -654,23 +650,38 @@ void GameEngine::initGameDummy(LogObserver* observer) {
     list3->push_back(t8);
     list3->push_back(t9);
 
-    Player *p1 = new Player(observer);
+    Human* strat1 = new Human();
+    Player *p1 = new Player(observer, strat1);
+    int* id1 = new int;
+    *id1 = 1;
+    p1->setId(id1);
     p1->setPlayerTerritories(list1);
     for (Territory *t: *list1) {
         t->setOwner(p1);
     }
-    Player *p2 = new Player(observer);
+
+    Human* strat2 = new Human();
+    Player *p2 = new Player(observer, strat2);
+    int* id2 = new int;
+    *id2 = 2;
+    p2->setId(id2);
     p2->setPlayerTerritories(list2);
     for (Territory *t: *list2) {
         t->setOwner(p2);
     }
-    Player *p3 = new Player(observer);
+
+    Human* strat3 = new Human();
+    Player *p3 = new Player(observer, strat3);
+    int* id3 = new int;
+    *id3 = 3;
+    p3->setId(id3);
     p3->setPlayerTerritories(list3);
     for (Territory *t: *list3) {
         t->setOwner(p3);
     }
 
     Player *p4 = new Player(observer);
+
 
     Deck *deck = new Deck();
     Hand *h1 = new Hand();

@@ -1,4 +1,4 @@
-loadmap C:\Users\Kojo\Documents\CompSci\345\345_group_project\Map\canada.map
+loadmap /Users/mike/Desktop/345_group_project/CommandProcessing/test.cmd
 validatemap
 addplayer cow
 addplayer pig
