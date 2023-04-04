@@ -26,6 +26,7 @@ public:
 };
 
 class Neutral : public PlayerStrategy {
+public:
     Neutral();
     Neutral(Player* player);
     Neutral(const Neutral& n);
@@ -42,20 +43,22 @@ class Neutral : public PlayerStrategy {
     vector<Territory *>* toDefend();
 };
 
-//class Cheater : public PlayerStrategy {
-//    Cheater();
-//    Cheater(const Cheater& c);
-//    ~Cheater();
-//
-//    // Assignment operator
-//    void operator= (Cheater const& c);
-//    // Stream operator
-//    friend ostream &operator<<(ostream &os, const Cheater& c);
-//
-//    bool issueOrder(LogObserver* observer);
-//    vector<Territory *>* toAttack();
-//    vector<Territory *>* toDefend();
-//};
+class Cheater : public PlayerStrategy {
+public:
+    Cheater();
+    Cheater(Player* player);
+    Cheater(const Cheater& c);
+    ~Cheater();
+
+    // Assignment operator
+    void operator= (Cheater const& c);
+    // Stream operator
+    friend ostream &operator<<(ostream &os, const Cheater& c);
+
+    bool issueOrder(LogObserver* observer);
+    vector<Territory *>* toAttack();
+    vector<Territory *>* toDefend();
+};
 
 class Human : public PlayerStrategy {
 public:

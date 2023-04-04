@@ -5,6 +5,8 @@
 #include "Player/PlayerDriver.h"
 #include "GameLog/LoggingDriver.h"
 #include "GameEngine/GameEngineDriver.h"
+#include "PlayerStrategies/NeutralDriver.h"
+#include "PlayerStrategies/CheaterDriver.h"
 
 int main(int argc, char *argv[]) {
     std::cout << "Welcome to our bootleg Warzone!" << std::endl;
@@ -27,6 +29,10 @@ int main(int argc, char *argv[]) {
     //PART2
     //ordersDriver();
     //logDriver(argc, argv);
+
+    //PART3
+    //neutralDriver();
+    //cheaterDriver();
 
 
     return 0;

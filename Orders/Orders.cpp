@@ -311,7 +311,8 @@ bool Advance::execute() {
             if (neutralCheck != nullptr) {
                 //change target player strategy to aggressive
                 delete target->getOwner()->getStrategy();
-                target->getOwner()->setStrategy(new Aggressive(target->getOwner()));
+                PlayerStrategy* aggressive = new Aggressive(target->getOwner());
+                target->getOwner()->setStrategy(aggressive);
                 cout << "DEBUG: Neutral player strategy changed to aggressive" << endl;
             }
 
@@ -786,6 +787,71 @@ void Negotiate::operator=(Negotiate const &obj) {
     victim = obj.victim;
 }
 
+//CHEAT class
+Cheat::Cheat(Player* _issuer, LogObserver *observer) : Order(_issuer, observer)
+{
+    setDesc("This is a Cheat order");
+}
+
+Cheat::Cheat(const Cheat &_o) : Order(_o) {
+}
+
+Cheat::~Cheat() {
+}
+
+bool Cheat::validate() {
+
+    //check if player is already conqured this turn
+    int ID = *getPlayer()->getId();
+    if (std::find(GameEngine::conqStatus->begin(), GameEngine::conqStatus->end(), ID) == GameEngine::conqStatus->end())
+    {
+        return true;
+    }
+
+    return false;
+
+}
+
+bool Cheat::execute() {
+    bool valid = validate();
+
+    if (valid) {
+        cout << "DEBUG: Cheat order executed" << endl;
+        string execEffect = "Player " + to_string(*getPlayer()->getId()) + " conquers all adjacent territories";
+        setEffect(execEffect);
+        GameEngine::conqStatus->push_back(*getPlayer()->getId());
+
+
+        //conquer all territories adjacent to player's territories
+        for (int i = 0; i < getPlayer()->getPlayerTerritories()->size(); i++)
+        {
+            for (int j = 0; j < getPlayer()->getPlayerTerritories()->at(i)->getBorderedTerritories()->size(); j++)
+            {
+                //check if territory is already owned by the player
+                if (getPlayer()->getPlayerTerritories()->at(i)->getBorderedTerritories()->at(j)->getOwner()->getId() != getPlayer()->getId())
+                {
+                    //conquer territory
+                    getPlayer()->getPlayerTerritories()->at(i)->getBorderedTerritories()->at(j)->setOwner(getPlayer());
+                    getPlayer()->getPlayerTerritories()->push_back(getPlayer()->getPlayerTerritories()->at(i)->getBorderedTerritories()->at(j));
+                }
+            }
+        }
+
+        return true;
+    }
+
+    else {
+        cout << "DEBUG: Cheat order not executed" << endl;
+        return false;
+    }
+
+}
+
+void Cheat::operator=(Cheat const &obj) {
+    Order::operator=(obj);
+}
+
+
 //OrderList class
 OrderList::OrderList(LogObserver *observer) : Subject(observer) {
     m_theListPtr = new std::vector<Order *>;
@@ -867,7 +933,6 @@ void OrderList::stringToLog() {
     outputFile << "Adding order: " << this->getList()->back()->getDesc() << endl;
     outputFile.close();
 }
-
 
 
 

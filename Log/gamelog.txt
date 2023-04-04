@@ -34,3 +34,10 @@ Current phase: ISSUE_ORDERS
 Current phase: ISSUE_ORDERS
 Adding order: Deploy order: Player 1  deploys 2 armies to A
 Adding order: Deploy order: Player 1  deploys 2 armies to A
+Current phase: ISSUE_ORDERS
+Adding order: This is a Cheat order
+Adding order: This is a Cheat order
+Adding order: This is a Cheat order
+Adding order: This is a Cheat order
+Adding order: This is a Cheat order
+Adding order: This is a Cheat order

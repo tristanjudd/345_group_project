@@ -192,6 +192,22 @@ private:
 	int* victim;
 };
 
+//Cheat Order for Cheater Strategy
+class Cheat: public Order
+{
+    public:
+        Cheat(Player* _issuer, LogObserver* observer);
+        Cheat(const Cheat& _o);
+        ~Cheat();
+
+        bool validate();
+        bool execute();
+
+        void operator= (Cheat const &);
+
+};
+
+
 class OrderList: public ILoggable, public Subject
 {
 public:
