@@ -21,6 +21,7 @@ Territory::Territory(int inId, int inContinentId, string inTerritoryName) {
     territoryName = new string(inTerritoryName);
     borders = new vector<int>();
     owner = nullptr;
+    borderedTerritories = new vector<Territory *>();
     cout << "Territory constructor called" << endl;
 }
 
@@ -32,6 +33,7 @@ Territory::Territory(const Territory &copy) {
     territoryName = new string(*copy.territoryName);
     borders = new vector<int>(*copy.borders);
     owner = copy.owner;
+    borderedTerritories = copy.borderedTerritories;
     cout << "Territory copy constructor called" << endl;
 }
 

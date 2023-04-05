@@ -29,19 +29,23 @@ int cheaterDriver(){
     t6->setBorders(&borders6);
 
     //set bordered territories for territories
-    vector<Territory*> borderedTerritories1 = { t2, t3 };
-    vector<Territory*> borderedTerritories2 = { t1, t4 };
-    vector<Territory*> borderedTerritories3 = { t1, t4, t5 };
-    vector<Territory*> borderedTerritories4 = { t2, t3, t6 };
-    vector<Territory*> borderedTerritories5 = { t3, t6 };
-    vector<Territory*> borderedTerritories6 = { t4, t5 };
+    //cout << t1->getBorderedTerritories()->size() << endl;
+    t1->getBorderedTerritories()->push_back(t2);
+    t1->getBorderedTerritories()->push_back(t3);
+    t2->getBorderedTerritories()->push_back(t1);
+    t2->getBorderedTerritories()->push_back(t4);
+    t3->getBorderedTerritories()->push_back(t1);
+    t3->getBorderedTerritories()->push_back(t4);
+    t3->getBorderedTerritories()->push_back(t5);
+    t4->getBorderedTerritories()->push_back(t2);
+    t4->getBorderedTerritories()->push_back(t3);
+    t4->getBorderedTerritories()->push_back(t6);
+    t5->getBorderedTerritories()->push_back(t3);
+    t5->getBorderedTerritories()->push_back(t6);
+    t6->getBorderedTerritories()->push_back(t4);
+    t6->getBorderedTerritories()->push_back(t5);
 
-//    t1->setBorderedTerritories(t1, &borderedTerritories1);
-//    t2->setBorderedTerritories(t2, &borderedTerritories2);
-//    t3->setBorderedTerritories(t3, &borderedTerritories3);
-//    t4->setBorderedTerritories(t4, &borderedTerritories4);
-//    t5->setBorderedTerritories(t5, &borderedTerritories5);
-//    t6->setBorderedTerritories(t6, &borderedTerritories6);
+
 
     //creating players for testing
     Player* p1 = new Player(1);
@@ -51,7 +55,7 @@ int cheaterDriver(){
     OrderList* orderList1 = new OrderList(o1);
     p1->setOrders(orderList1);
 
-    //setting neutral Strategy for players
+    //setting Strategy for players
     p1->setStrategy(new Cheater(p1));
     p2->setStrategy(new Neutral(p2));
 
@@ -93,20 +97,23 @@ int cheaterDriver(){
     */
 
     //p1 cheats
-    cout << "Player 1 cheats" << endl;
+    cout << "\nPlayer 1 cheats" << endl;
     p1->issueOrder(o1);
 
     //execute Player1 order
-    //p1->getOrders()->getList()->at(0)->execute();
+    cout << *p1->getOrders()->getList()->at(0) << endl;
+
+    p1->getOrders()->getList()->at(0)->execute();
 
     //check if he conquered all adjacent territories (B2, C3)
+    cout << "Check if Player1 conquered all adjacent territories (B2, C3)" << endl;
     cout << "Owner of B2: " << *t2->getOwner()->getId() << endl;
     cout << "Owner of C3: " << *t3->getOwner()->getId() << endl;
 
     //check if we cant issue the order twice
-    cout << "Player 1 cheats again" << endl;
+    cout << "\nPlayer 1 tries cheats again in the same turn" << endl;
     p1->issueOrder(o1);
-    //p1->getOrders()->getList()->at(1)->execute();
+    p1->getOrders()->getList()->at(1)->execute();
 
 
 
