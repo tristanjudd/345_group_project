@@ -831,12 +831,13 @@ bool Cheat::execute() {
                 if (getPlayer()->getPlayerTerritories()->at(i)->getBorderedTerritories()->at(j)->getOwner()->getId() != getPlayer()->getId())
                 {
                     //conquer territory
-                    getPlayer()->getPlayerTerritories()->at(i)->getBorderedTerritories()->at(j)->setOwner(getPlayer());
-                    getPlayer()->getPlayerTerritories()->push_back(getPlayer()->getPlayerTerritories()->at(i)->getBorderedTerritories()->at(j));
+                    getPlayer()->getPlayerTerritories()->at(i)->getBorderedTerritories()->at(j)->setOwner(getPlayer()); //set owner
+                    getPlayer()->getPlayerTerritories()->push_back(getPlayer()->getPlayerTerritories()->at(i)->getBorderedTerritories()->at(j)); //add to player's territory list
                 }
             }
         }
 
+        Notify(this);
         return true;
     }
 
