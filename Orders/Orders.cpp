@@ -830,6 +830,17 @@ bool Cheat::execute() {
                 //check if territory is already owned by the player
                 if (getPlayer()->getPlayerTerritories()->at(i)->getBorderedTerritories()->at(j)->getOwner()->getId() != getPlayer()->getId())
                 {
+                    //remove territory from other player's territory list
+                    Player *otherPlayer = getPlayer()->getPlayerTerritories()->at(i)->getBorderedTerritories()->at(j)->getOwner();
+
+                    vector<Territory*>* newTerritories = otherPlayer->getPlayerTerritories();
+                    auto it = std::find(newTerritories->begin(), newTerritories->end(), getPlayer()->getPlayerTerritories()->at(i)->getBorderedTerritories()->at(j));
+                    if (it != newTerritories->end()) {
+                        newTerritories->erase(it);
+                    }
+
+                    otherPlayer->setPlayerTerritories(newTerritories);
+
                     //conquer territory
                     getPlayer()->getPlayerTerritories()->at(i)->getBorderedTerritories()->at(j)->setOwner(getPlayer()); //set owner
                     getPlayer()->getPlayerTerritories()->push_back(getPlayer()->getPlayerTerritories()->at(i)->getBorderedTerritories()->at(j)); //add to player's territory list
