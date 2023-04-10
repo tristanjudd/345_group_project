@@ -111,15 +111,17 @@ GameEngine::startupPhase(GameEngine *game, CommandProcessor *cp, Command *comman
             case START: {
                 cout << "Start state" << endl;
                 // will prompt user, and should not pass for anything other than 'loadmap <mapfile>' (in this phase)
-                // also accepts tournament command! tournament will start a new game with its own file command processor
+                // also accepts tournament command!
                 command = cp->getCommand(phase, cp, observer);
                 cout << *command << endl;  // just to show I did my part
                 if (*command->getName() == COMMAND::loadmap) {
                     mapFile = *command->getArgument();
                     phase = loadMap(game, phase, mapFile);
                 } else if (*command->getName() == COMMAND::tournament) {
-                    loadTournament(*command->getArgument());
-                    // start the tournament here!
+                    int maxTurns = loadTournament(*command->getArgument());
+                    if (maxTurns >= 0) {  // -1 means error
+                        // start the tournament here! tournament will start a new game with its own file command processor or something
+                    }
                 }
                 break;
             }
@@ -838,8 +840,8 @@ void GameEngine::stringToLog() {
     outputFile.close();
 }
 
-// This is void because it does not change the PHASE of the game, it simply creates command files for each tournament!
-void GameEngine::loadTournament(string arguments) {
+// This is int because it does not change the PHASE of the game, it simply creates command files for each tournament and returns the max amount of turns
+int GameEngine::loadTournament(string arguments) {
     vector<string> commandTokens = MapLoader::getTokens(arguments, ' ');
 
     vector<string> mapFiles = *new vector<string>();
@@ -864,6 +866,7 @@ void GameEngine::loadTournament(string arguments) {
         maxNumberOfTurns = stoi(commandTokens[7]);
     } else {
         cout << "Tournament command invalid. Please try again!" << endl;
+        return -1;
     }
 
     // Create tournament directory
@@ -892,4 +895,6 @@ void GameEngine::loadTournament(string arguments) {
             newGameFile.close();
         }
     }
+
+    return maxNumberOfTurns;
 }
