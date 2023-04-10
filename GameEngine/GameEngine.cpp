@@ -879,15 +879,19 @@ int GameEngine::loadTournament(string arguments) {
 
     // Create tournament files
     int tournamentCounter = 0;
-    for (const string &mapFile: mapFiles) {
-        for (int i = 0; i < numberOfGames; i++) {
+    for (int i = 0; i < mapFiles.size(); i++) {
+        stringstream *mapDirectory = new stringstream();
+        *mapDirectory << "map" << i;
+        fs::path mapPath = tournamentPath.append(mapDirectory->str());
+        fs::create_directory(mapPath);
+        for (int j = 0; j < numberOfGames; j++) {
             // Create a tournament file and increment counter
             stringstream *gameFileName = new stringstream();
-            *gameFileName << "tournament/game" << tournamentCounter++ << ".cmd";
+            *gameFileName << "tournament/map" << i << "/game" << tournamentCounter++ << ".cmd";
             ofstream newGameFile(gameFileName->str());
 
             // Each tournament game file includes
-            newGameFile << "loadmap " << mapFile << endl;
+            newGameFile << "loadmap " << mapFiles[i] << endl;
             newGameFile << "validatemap" << endl;
 
             int playerCounter = 0;
