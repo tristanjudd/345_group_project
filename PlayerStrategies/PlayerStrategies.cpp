@@ -676,6 +676,76 @@ vector<Territory* >* Cheater::toDefend() {
     return nullptr;
 }
 
+//BENEVOLENT STRATEGY
+Benevolent::Benevolent() {}
+
+Benevolent::Benevolent(Player *p) {
+    this->p = p;
+}
+
+Benevolent::Benevolent(const Benevolent& b) {
+
+    p = b.p;
+}
+
+
+//assignment operator
+void Benevolent::operator=(const Benevolent& b)
+{
+    p = b.p;
+}
+Benevolent::~Benevolent() = default;
+
+//stream insertion operator
+ostream& operator<<(ostream& out, const Benevolent& b)
+{
+    out << "Benevolent Strategy" << endl;
+    return out;
+}
+
+bool Benevolent::issueOrder(LogObserver *observer) {
+
+    Territory* t = getTerrWithSmallestArmy();
+
+    Order * deploy = new Deploy(this->p,this->p->getReinforcements(), t, observer);
+    this->p->getOrders()->Add(deploy);
+
+    return false;
+}
+
+Territory* Benevolent::getTerrWithSmallestArmy() {
+
+    //Taking the first territory in the list of territories
+    Territory* smallestT = this->p->getPlayerTerritories()->at(0);
+
+    //looping through the player's list of territories
+    for(auto currentT : *this->p->getPlayerTerritories()){
+
+        //assigning a dummy variable to the current territory
+        //in the loop
+        if (smallestT->getArmyCount() > currentT->getArmyCount()){
+
+            smallestT = currentT;
+        }
+    }
+
+    return smallestT;
+}
+
+vector<Territory*>* Benevolent::toAttack() {
+
+    return nullptr;
+}
+
+vector<Territory*>* Benevolent::toDefend(){
+
+    return nullptr;
+}
+
+
+
+
+
 //AGGRESSIVE STRATEGY
 Aggressive::Aggressive() {}
 
@@ -695,7 +765,7 @@ void Aggressive::operator=(const Aggressive& a)
 }
 
 //destructor
-Aggressive::~Aggressive() {}
+Aggressive::~Aggressive() = default;
 
 //stream insertion operator
 ostream& operator<<(ostream& out, const Aggressive& a)
@@ -705,10 +775,62 @@ ostream& operator<<(ostream& out, const Aggressive& a)
 }
 
 bool Aggressive::issueOrder(LogObserver *observer) {
+
+
+    Territory* t = getTerrWithLargestArmy();
+
+    Order * deploy = new Deploy(this->p,this->p->getReinforcements(), t, observer);
+    this->p->getOrders()->Add(deploy);
+
+    vector<Territory*>* playerTerritories = this->p->getPlayerTerritories();
+
+    //Loop though player territories;
+    for(auto currentT : *playerTerritories){
+
+        //checking if there's any armies available to attack from this territory
+        if(*currentT->getArmyCount() == 0){
+            continue;
+        }
+
+        //Loop through adjacent territories;
+        for(auto adjacentT : *currentT->getBorderedTerritories()){
+
+            //Check if they are an opposing or free territory
+            if(std::find(playerTerritories->begin(), playerTerritories->end(), adjacentT) != playerTerritories->end()){
+
+                //Attack the first/current one available
+                Order* advance = new Advance(this->p, *currentT->getArmyCount(), currentT, adjacentT, observer);
+
+                this->p->getOrders()->Add(advance);
+                break;
+            }
+        }
+    }
     return false;
 }
 
+Territory* Aggressive::getTerrWithLargestArmy(){
+
+    //Taking the first territory in the list of territories
+    Territory* greatestT = this->p->getPlayerTerritories()->at(0);
+
+    //looping through the player's list of territories
+    for(auto currentT : *this->p->getPlayerTerritories()){
+
+        //assigning a dummy variable to the current territory
+        //in the loop
+        if (greatestT->getArmyCount() < currentT->getArmyCount()){
+
+            greatestT = currentT;
+        }
+    }
+
+    return greatestT;
+}
+
+
 vector<Territory* >* Aggressive::toAttack() {
+
     return nullptr;
 }
 
