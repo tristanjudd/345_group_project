@@ -112,4 +112,6 @@ public:
     bool issueOrder(LogObserver* observer);
     vector<Territory *>* toAttack() ;
     vector<Territory *>* toDefend();
+
+    Territory* getTerrWithSmallestArmy();
 };

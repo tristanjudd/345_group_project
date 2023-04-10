@@ -676,6 +676,76 @@ vector<Territory* >* Cheater::toDefend() {
     return nullptr;
 }
 
+//BENEVOLENT STRATEGY
+Benevolent::Benevolent() {}
+
+Benevolent::Benevolent(Player *p) {
+    this->p = p;
+}
+
+Benevolent::Benevolent(const Benevolent& b) {
+
+    p = b.p;
+}
+
+
+//assignment operator
+void Benevolent::operator=(const Benevolent& b)
+{
+    p = b.p;
+}
+Benevolent::~Benevolent() = default;
+
+//stream insertion operator
+ostream& operator<<(ostream& out, const Benevolent& b)
+{
+    out << "Benevolent Strategy" << endl;
+    return out;
+}
+
+bool Benevolent::issueOrder(LogObserver *observer) {
+
+    Territory* t = getTerrWithSmallestArmy();
+
+    Order * deploy = new Deploy(this->p,this->p->getReinforcements(), t, observer);
+    this->p->getOrders()->Add(deploy);
+
+    return false;
+}
+
+Territory* Benevolent::getTerrWithSmallestArmy() {
+
+    //Taking the first territory in the list of territories
+    Territory* smallestT = this->p->getPlayerTerritories()->at(0);
+
+    //looping through the player's list of territories
+    for(auto currentT : *this->p->getPlayerTerritories()){
+
+        //assigning a dummy variable to the current territory
+        //in the loop
+        if (smallestT->getArmyCount() > currentT->getArmyCount()){
+
+            smallestT = currentT;
+        }
+    }
+
+    return smallestT;
+}
+
+vector<Territory*>* Benevolent::toAttack() {
+
+    return nullptr;
+}
+
+vector<Territory*>* Benevolent::toDefend(){
+
+    return nullptr;
+}
+
+
+
+
+
 //AGGRESSIVE STRATEGY
 Aggressive::Aggressive() {}
 
@@ -761,26 +831,7 @@ Territory* Aggressive::getTerrWithLargestArmy(){
 
 vector<Territory* >* Aggressive::toAttack() {
 
-    set<Territory *> attackable;
-    vector<Territory *>* territories = p->getPlayerTerritories();
-    // go through each of player's territories
-    for (Territory *t: *territories) {
-        // for each territory, go through each of its bordering territories
-        for (Territory *bordering: *(t->getBorderedTerritories())) {
-            // if it doesn't belong to the player, add it to the set of attackable territories
-            if (std::find(territories->begin(), territories->end(), bordering) == territories->end()) {
-                attackable.insert(bordering);
-            }
-        }
-    }
-
-    // convert set to vector
-    auto *attackableVector = new vector<Territory *>;
-    for (Territory *t: attackable) {
-        attackableVector->push_back(t);
-    }
-
-    return attackableVector;
+    return nullptr;
 }
 
 vector<Territory* >* Aggressive::toDefend() {
