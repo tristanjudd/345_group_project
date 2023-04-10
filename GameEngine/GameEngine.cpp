@@ -842,6 +842,10 @@ void GameEngine::stringToLog() {
 
 // This is int because it does not change the PHASE of the game, it simply creates command files for each tournament and returns the max amount of turns
 int GameEngine::loadTournament(string arguments) {
+    // delete existing tournament if exists
+    fs::remove_all("tournament");
+
+    // create new tournament
     vector<string> commandTokens = MapLoader::getTokens(arguments, ' ');
 
     vector<string> mapFiles = *new vector<string>();
