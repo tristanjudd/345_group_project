@@ -46,6 +46,8 @@ private:
     vector<Player *> *players; // list of players currently in the game, in order of turns
     PHASE *currentPhase;
 
+    void loadTournament(string arguments);
+
 public:
     GameEngine(LogObserver* observer); //default constructor
     GameEngine(const GameEngine &copy); //copy constructor

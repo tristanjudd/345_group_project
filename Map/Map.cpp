@@ -577,7 +577,7 @@ Map *MapLoader::readMap(string *filePath) {
             continue;
         }
 
-        tokens = getTokens(line);
+        tokens = getTokens(line, ' ');
         if (tokens.empty()) {
             continue;  // Skip empty line
         }
@@ -680,9 +680,8 @@ PARSE_MODE MapLoader::getMode(const string &inputString) {
 }
 
 // Split the line into each relevant token of information
-vector<string> MapLoader::getTokens(const string &inputString) {
+vector<string> MapLoader::getTokens(const string &inputString, const char &delimiter) {
     vector<string> tokens;
-    char delimiter = ' ';
 
     char start = inputString.find_first_not_of(delimiter);
     char end;

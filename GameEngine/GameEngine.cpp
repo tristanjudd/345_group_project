@@ -1,12 +1,19 @@
 #include "GameEngine.h"
 #include "../CommandProcessing/CommandProcessing.h"
 
+#include <filesystem>
+#include <fstream>
+#include <sstream>
+namespace fs = std::filesystem;
+using std::ofstream;
+using std::stringstream;
+
 Player *GameEngine::neutral = new Player(-1); //CREATING THE STATIC NEUTRAL PLAYER ID = -1
 std::unordered_map<string, bool> *GameEngine::peaceStatus = new std::unordered_map<string, bool>(); //CREATING THE STATIC PEACE STATUS MAP
 vector<int> *GameEngine::conqStatus = new vector<int>(); //CREATING THE STATIC CONQUERED STATUS VECTOR
 
 //default constructor
-GameEngine::GameEngine(LogObserver* observer) : Subject(observer){
+GameEngine::GameEngine(LogObserver *observer) : Subject(observer) {
     cout << "GameEngine default constructor called" << endl;
     winner = new int(-1);
     map = new Map();
@@ -94,7 +101,8 @@ void GameEngine::setCurrentPhase(PHASE *currentPhase) {
 }
 
 // Startup
-void GameEngine::startupPhase(GameEngine *game, CommandProcessor *cp, Command *command, PHASE phase, LogObserver* observer) {
+void
+GameEngine::startupPhase(GameEngine *game, CommandProcessor *cp, Command *command, PHASE phase, LogObserver *observer) {
     cout << "Welcome to our bootleg Warzone!" << endl;
     int playerId = 0;
     string mapFile;
@@ -103,10 +111,16 @@ void GameEngine::startupPhase(GameEngine *game, CommandProcessor *cp, Command *c
             case START: {
                 cout << "Start state" << endl;
                 // will prompt user, and should not pass for anything other than 'loadmap <mapfile>' (in this phase)
+                // also accepts tournament command! tournament will start a new game with its own file command processor
                 command = cp->getCommand(phase, cp, observer);
                 cout << *command << endl;  // just to show I did my part
-                mapFile = *command->getArgument();
-                phase = loadMap(game, phase, mapFile);
+                if (*command->getName() == COMMAND::loadmap) {
+                    mapFile = *command->getArgument();
+                    phase = loadMap(game, phase, mapFile);
+                } else if (*command->getName() == COMMAND::tournament) {
+                    loadTournament(*command->getArgument());
+                    // start the tournament here!
+                }
                 break;
             }
             case MAP_LOADED: {
@@ -182,7 +196,7 @@ void GameEngine::startupPhase(GameEngine *game, CommandProcessor *cp, Command *c
         }
     }
 
-    setCurrentPhase(& phase);
+    setCurrentPhase(&phase);
     Notify(this);
 }
 
@@ -220,13 +234,26 @@ PHASE GameEngine::validateMap(GameEngine *game, PHASE phase) {
 }
 
 // Add player method
-PHASE GameEngine::addPlayer(GameEngine *game, string playerName, int playerId, LogObserver* observer) {
+PHASE GameEngine::addPlayer(GameEngine *game, string playerName, int playerId, LogObserver *observer) {
     Player *newPlayer = new Player(playerName, playerId, observer); //create new player
     vector<Player *> *players = game->getPlayers();
     players->push_back(newPlayer); //add player to vector of players
     cout << "Player " << *newPlayer->getName() << " added" << endl;
     cout << "Num of players: " << players->size() << endl << endl;
     game->setPlayers(players);
+
+    // if the new player name startswith any of the valid strategies assign that strategy, else Human
+    if (playerName.starts_with("aggressive")) {
+        newPlayer->setStrategy(new Aggressive());
+    } else if (playerName.starts_with("benevolent")) {
+        newPlayer->setStrategy(new Benevolent());
+    } else if (playerName.starts_with("neutral")) {
+        newPlayer->setStrategy(new Neutral());
+    } else if (playerName.starts_with("cheater")) {
+        newPlayer->setStrategy(new Cheater());
+    } else {
+        newPlayer->setStrategy(new Human());
+    }
 
     PHASE p = PLAYERS_ADDED;
     setCurrentPhase(&p);
@@ -359,7 +386,7 @@ void GameEngine::end() {
 }
 
 // Start of new turn
-void GameEngine::mainGameLoop(GameEngine *game, PHASE phase, LogObserver* observer) {
+void GameEngine::mainGameLoop(GameEngine *game, PHASE phase, LogObserver *observer) {
     cout << "There are " << players->size() << " players" << endl;
 
     while (true) {
@@ -445,7 +472,7 @@ PHASE GameEngine::reinforcementPhase() {
 }
 
 //Issue orders phase
-PHASE GameEngine::issueOrdersPhase(LogObserver* observer) {
+PHASE GameEngine::issueOrdersPhase(LogObserver *observer) {
 
 // loop through each player and call issueOrder method
     for (Player *player: *players) {
@@ -533,7 +560,7 @@ PHASE GameEngine::checkWin() {
     // iterate through players and check if any has 0 territories
     std::vector<Player *>::iterator it;
     int i = 0;
-    for (it = players->begin(); it != players->end(); ) {
+    for (it = players->begin(); it != players->end();) {
         if ((*it)->getPlayerTerritories()->size() == 0) {
             it = players->erase(it);
         } else {
@@ -576,7 +603,7 @@ PHASE GameEngine::checkWin() {
 //}
 
 // inits a bunch of objects to have something to test with in dev phase
-void GameEngine::initGameDummy(LogObserver* observer) {
+void GameEngine::initGameDummy(LogObserver *observer) {
     // DUMMY CODE adding players for dev purposes
     Territory *t1 = new Territory(1, 1, "A");
     Territory *t2 = new Territory(2, 1, "B");
@@ -652,9 +679,9 @@ void GameEngine::initGameDummy(LogObserver* observer) {
     list3->push_back(t8);
     list3->push_back(t9);
 
-    Human* strat1 = new Human();
+    Human *strat1 = new Human();
     Player *p1 = new Player(observer, strat1);
-    int* id1 = new int;
+    int *id1 = new int;
     *id1 = 1;
     p1->setId(id1);
     p1->setPlayerTerritories(list1);
@@ -662,9 +689,9 @@ void GameEngine::initGameDummy(LogObserver* observer) {
         t->setOwner(p1);
     }
 
-    Human* strat2 = new Human();
+    Human *strat2 = new Human();
     Player *p2 = new Player(observer, strat2);
-    int* id2 = new int;
+    int *id2 = new int;
     *id2 = 2;
     p2->setId(id2);
     p2->setPlayerTerritories(list2);
@@ -672,9 +699,9 @@ void GameEngine::initGameDummy(LogObserver* observer) {
         t->setOwner(p2);
     }
 
-    Human* strat3 = new Human();
+    Human *strat3 = new Human();
     Player *p3 = new Player(observer, strat3);
-    int* id3 = new int;
+    int *id3 = new int;
     *id3 = 3;
     p3->setId(id3);
     p3->setPlayerTerritories(list3);
@@ -741,7 +768,7 @@ void GameEngine::initGameDummy(LogObserver* observer) {
     // END OF DUMMY CODE
 }
 
-void GameEngine::initGameEndDummy(LogObserver* observer) {
+void GameEngine::initGameEndDummy(LogObserver *observer) {
     Player *p = new Player(observer);
     Territory *t = new Territory();
     vector<Territory *> *tvec = new vector<Territory *>;
@@ -767,9 +794,9 @@ void GameEngine::stringToLog() {
     outputFile.open(filename, std::ios_base::app);
 
     // Print current phase enum to log
-    PHASE * currentPhase = this->getCurrentPhase();
+    PHASE *currentPhase = this->getCurrentPhase();
     string phaseString;
-    switch(*currentPhase) {
+    switch (*currentPhase) {
         case START:
             phaseString = "START";
             break;
@@ -811,4 +838,58 @@ void GameEngine::stringToLog() {
     outputFile.close();
 }
 
+// This is void because it does not change the PHASE of the game, it simply creates command files for each tournament!
+void GameEngine::loadTournament(string arguments) {
+    vector<string> commandTokens = MapLoader::getTokens(arguments, ' ');
 
+    vector<string> mapFiles = *new vector<string>();
+    vector<string> strategyStrings = *new vector<string>();
+    int numberOfGames;
+    int maxNumberOfTurns;
+
+    if (commandTokens.size() == 8 &&
+        commandTokens[0] == "-M" &&
+        commandTokens[2] == "-P" &&
+        commandTokens[4] == "-G" &&
+        commandTokens[6] == "-D") {
+
+        // get each map file
+        vector<string> mapFileStrings = MapLoader::getTokens(commandTokens[1], ',');
+        for (const string &mapFileString: mapFileStrings) {
+            mapFiles.push_back(mapFileString);
+        }
+
+        strategyStrings = MapLoader::getTokens(commandTokens[3], ',');
+        numberOfGames = stoi(commandTokens[5]);
+        maxNumberOfTurns = stoi(commandTokens[7]);
+    } else {
+        cout << "Tournament command invalid. Please try again!" << endl;
+    }
+
+    // Create tournament directory
+    fs::path tournamentPath = fs::current_path().append("tournament");
+    fs::create_directory(tournamentPath);
+
+    // Create tournament files
+    int tournamentCounter = 0;
+    for (const string &mapFile: mapFiles) {
+        for (int i = 0; i < numberOfGames; i++) {
+            // Create a tournament file and increment counter
+            stringstream *gameFileName = new stringstream();
+            *gameFileName << "tournament/game" << tournamentCounter++ << ".cmd";
+            ofstream newGameFile(gameFileName->str());
+
+            // Each tournament game file includes
+            newGameFile << "loadmap " << mapFile << endl;
+            newGameFile << "validatemap" << endl;
+
+            int playerCounter = 0;
+            for (string strategyString : strategyStrings) {
+                newGameFile << "addplayer " << strategyString << playerCounter++ << endl;
+            }
+
+            newGameFile << "gamestart" << endl;
+            newGameFile.close();
+        }
+    }
+}

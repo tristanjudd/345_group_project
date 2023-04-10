@@ -97,6 +97,8 @@ ostream &operator<<(ostream &os, COMMAND c) {
         case quit:
             os << "quit";
             break;
+        case tournament:
+            os << "tournament";
     }
 
     return os;
@@ -257,6 +259,8 @@ string CommandProcessor::generateEffect(bool isValid, Command *cmd, PHASE curren
             case quit:
                 out << "Quit the game.";
                 break;
+            case tournament:
+                out << "Prepared tournament.";
         }
     } else {
         out << "[ERROR] Cannot " << *cmd->getName() << " from phase " << currentPhase;
@@ -290,13 +294,17 @@ bool CommandProcessor::validate(Command *cmd, PHASE currentPhase) {
         if (currentPhase == PHASE::WIN) {
             return true;
         }
+    } else if (*cmd->getName() == COMMAND::tournament) {
+        if (currentPhase == PHASE::START) {
+            return true;
+        }
     }
 
     return false;
 }
 
 Command *CommandProcessor::parseCommand(string newCommand, LogObserver *observer) {
-    vector<string> commandTokens = MapLoader::getTokens(newCommand);
+    vector<string> commandTokens = MapLoader::getTokens(newCommand, ' ');
 
     if (commandTokens[0] == "loadmap") {
         if (commandTokens.size() == 1) {  // no argument specified
@@ -318,6 +326,8 @@ Command *CommandProcessor::parseCommand(string newCommand, LogObserver *observer
         return new Command(COMMAND::replay, observer);
     } else if (commandTokens[0] == "quit") {
         return new Command(COMMAND::quit, observer);
+    } else if (commandTokens[0] == "tournament") {
+        return new Command(COMMAND::tournament, newCommand.erase(0, 11), observer);
     } else {
         return new Command();
     }
