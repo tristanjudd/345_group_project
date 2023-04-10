@@ -874,7 +874,7 @@ int GameEngine::loadTournament(string arguments) {
     }
 
     // Create tournament directory
-    fs::path tournamentPath = fs::current_path().append("tournament");
+    fs::path tournamentPath = fs::current_path() / "tournament";
     fs::create_directory(tournamentPath);
 
     // Create tournament files
@@ -882,7 +882,7 @@ int GameEngine::loadTournament(string arguments) {
     for (int i = 0; i < mapFiles.size(); i++) {
         stringstream *mapDirectory = new stringstream();
         *mapDirectory << "map" << i;
-        fs::path mapPath = tournamentPath.append(mapDirectory->str());
+        fs::path mapPath = tournamentPath / mapDirectory->str();
         fs::create_directory(mapPath);
         for (int j = 0; j < numberOfGames; j++) {
             // Create a tournament file and increment counter
