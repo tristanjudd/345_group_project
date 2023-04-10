@@ -683,8 +683,8 @@ PARSE_MODE MapLoader::getMode(const string &inputString) {
 vector<string> MapLoader::getTokens(const string &inputString, const char &delimiter) {
     vector<string> tokens;
 
-    char start = inputString.find_first_not_of(delimiter);
-    char end;
+    int start = inputString.find_first_not_of(delimiter);
+    int end;
 
     while (start != string::npos) {
         end = inputString.find(delimiter, start);
