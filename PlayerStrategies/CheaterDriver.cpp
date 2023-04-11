@@ -115,6 +115,20 @@ int cheaterDriver(){
     p1->issueOrder(o1);
     p1->getOrders()->getList()->at(1)->execute();
 
+    //print the ID of player 1 territories
+    cout << "\nPlayer 1 territories: " << endl;
+
+    for (int i = 0; i < p1->getPlayerTerritories()->size(); i++) {
+        cout << *p1->getPlayerTerritories()->at(i)->getId() << " ";
+    }
+
+    //print the ID of player 2 territories
+    cout << "\nPlayer 2 territories: " << endl;
+
+    for (int i = 0; i < p2->getPlayerTerritories()->size(); i++) {
+        cout << *p2->getPlayerTerritories()->at(i)->getId() << " ";
+    }
+
 
 
     return 0;
