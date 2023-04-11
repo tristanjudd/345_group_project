@@ -139,7 +139,7 @@ void Territory::setBorderedTerritories(Territory *inTerritory, vector<Territory 
         tempTerritory->push_back(territories->at(inTerritory->getBorders()->at(i)));
     }
     inTerritory->borderedTerritories = tempTerritory;
-    tempTerritory->clear();
+    tempTerritory = nullptr;
     delete tempTerritory;
 }
 
@@ -234,7 +234,7 @@ void Continent::setTerritoriesInContinent(Continent *inContinent, vector<Territo
         }
     }
     inContinent->territoriesInContinent = tempTerritory;
-    tempTerritory->clear();
+    tempTerritory = nullptr;
     delete tempTerritory;
 }
 
@@ -500,6 +500,8 @@ bool Map::oneContinentPerTerritory() {
             }
         }
     }
+    temp = nullptr;
+    delete temp;
     //return true if territory size = terrCount meaning that all territories are in a continent
     //return true if continent size = contCount meaning that all continents have at least 1 territory
     if (*terrCount == territories->size() && *contCount == continents->size() && *terrCount != 0 && *contCount != 0) {

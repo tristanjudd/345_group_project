@@ -199,8 +199,17 @@ ostream &operator<<(ostream &os, PHASE p) {
         case EXECUTE_ORDERS:
             os << "execute orders";
             break;
+        case CHECK_WIN:
+            os << "check win";
+            break;
         case WIN:
             os << "win";
+            break;
+        case CHECK_DRAW:
+            os << "check draw";
+            break;
+        case DRAW:
+            os << "draw";
             break;
         case END:
             os << "end";
@@ -333,14 +342,14 @@ Command *CommandProcessor::parseCommand(string newCommand, LogObserver *observer
     }
 }
 
-Command* CommandProcessor::readCommand(LogObserver* observer) {
+Command *CommandProcessor::readCommand(LogObserver *observer) {
     string consoleCommand{};
 
     while (true) {
         cout << "Please enter your command: ";
         getline(cin, consoleCommand);
 
-        Command* command = parseCommand(consoleCommand, observer);
+        Command *command = parseCommand(consoleCommand, observer);
         if (command->getName() != nullptr) {
             return command;
         } else {
@@ -349,7 +358,7 @@ Command* CommandProcessor::readCommand(LogObserver* observer) {
     }
 }
 
-Command* CommandProcessor::getCommand(PHASE currentPhase, CommandProcessor* commandProcessor, LogObserver* observer) {
+Command *CommandProcessor::getCommand(PHASE currentPhase, CommandProcessor *commandProcessor, LogObserver *observer) {
     while (true) {
         Command *command = commandProcessor->readCommand(observer);
         bool cmdIsValid = validate(command, currentPhase);
@@ -370,7 +379,7 @@ FileLineReader::FileLineReader() {
     lines = new vector<string>();
 }
 
-FileLineReader::FileLineReader(const string& filePath) {
+FileLineReader::FileLineReader(const string &filePath) {
     lines = new vector<string>();
 
     ifstream file(filePath);
@@ -386,7 +395,7 @@ FileLineReader::FileLineReader(const string& filePath) {
 
 FileLineReader::FileLineReader(const FileLineReader &copy) {
     lines = new vector<string>();
-    for (string line : *copy.lines) {
+    for (string line: *copy.lines) {
         lines->push_back(line);
     }
 }
@@ -401,7 +410,7 @@ FileLineReader::~FileLineReader() {
 FileLineReader &FileLineReader::operator=(const FileLineReader &flr) {
     if (this != &flr) {
         lines->clear();
-        for (string line : *flr.lines) {
+        for (string line: *flr.lines) {
             lines->push_back(line);
         }
     }
@@ -411,7 +420,7 @@ FileLineReader &FileLineReader::operator=(const FileLineReader &flr) {
 
 ostream &operator<<(ostream &os, const FileLineReader &flr) {
     os << "FileLineReader with lines: " << endl;
-    for (string line : *flr.lines) {
+    for (string line: *flr.lines) {
         os << line;
     }
 
@@ -432,17 +441,19 @@ FileCommandProcessorAdapter::FileCommandProcessorAdapter() {
     flr = new FileLineReader();
     currentLine = new int{0};  // start at 1st line
 }
-FileCommandProcessorAdapter::FileCommandProcessorAdapter(LogObserver* observer): CommandProcessor(observer) {
+
+FileCommandProcessorAdapter::FileCommandProcessorAdapter(LogObserver *observer) : CommandProcessor(observer) {
     flr = new FileLineReader();
     currentLine = new int{0};  // start at 1st line
 }
 
-FileCommandProcessorAdapter::FileCommandProcessorAdapter(const string& cmdFilePath, LogObserver* observer): CommandProcessor(observer){
+FileCommandProcessorAdapter::FileCommandProcessorAdapter(const string &cmdFilePath, LogObserver *observer)
+        : CommandProcessor(observer) {
     flr = new FileLineReader(cmdFilePath);
     currentLine = new int{0};
 }
 
-FileCommandProcessorAdapter::FileCommandProcessorAdapter(const FileCommandProcessorAdapter &copy) : CommandProcessor(){
+FileCommandProcessorAdapter::FileCommandProcessorAdapter(const FileCommandProcessorAdapter &copy) : CommandProcessor() {
     flr = new FileLineReader(*copy.flr);
     currentLine = new int(*copy.currentLine);
 }

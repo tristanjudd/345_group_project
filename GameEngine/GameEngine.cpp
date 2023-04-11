@@ -2,8 +2,8 @@
 #include "../CommandProcessing/CommandProcessing.h"
 
 #include <filesystem>
-#include <fstream>
 #include <sstream>
+
 namespace fs = std::filesystem;
 using std::ofstream;
 using std::stringstream;
@@ -18,6 +18,8 @@ GameEngine::GameEngine(LogObserver *observer) : Subject(observer) {
     winner = new int(-1);
     map = new Map();
     players = new vector<Player *>;
+    currentTurn = new int(0);
+    maxTurns = new int(0);
 }
 
 //copy constructor
@@ -26,6 +28,8 @@ GameEngine::GameEngine(const GameEngine &gameEngine) {
     winner = new int(*gameEngine.winner);
     map = gameEngine.map;
     players = gameEngine.players;
+    currentTurn = gameEngine.currentTurn;
+    maxTurns = gameEngine.maxTurns;
 }
 
 //assignment operator
@@ -36,6 +40,8 @@ GameEngine &GameEngine::operator=(const GameEngine &gameEngine) {
         this->winner = new int(*gameEngine.winner);
         this->map = gameEngine.map;
         this->players = gameEngine.players;
+        this->currentTurn = gameEngine.currentTurn;
+        this->maxTurns = gameEngine.maxTurns;
     }
     return *this;
 }
@@ -49,6 +55,8 @@ ostream &operator<<(ostream &out, const GameEngine &gameEngine) {
     for (auto &player: *gameEngine.players) {
         out << *player << endl;
     }
+    out << "Current turn: " << *gameEngine.currentTurn << endl;
+    out << "Max turns" << gameEngine.maxTurns << endl;
     return out;
 }
 
@@ -58,9 +66,13 @@ GameEngine::~GameEngine() {
     winner = nullptr;
     map = nullptr;
     players = nullptr;
+    currentTurn = nullptr;
+    maxTurns = nullptr;
     delete winner;
     delete map;
     delete players;
+    delete currentTurn;
+    delete maxTurns;
 
     delete neutral;
     delete peaceStatus;
@@ -100,6 +112,22 @@ void GameEngine::setCurrentPhase(PHASE *currentPhase) {
     GameEngine::currentPhase = currentPhase;
 }
 
+int *GameEngine::getCurrentTurn() const {
+    return currentTurn;
+}
+
+void GameEngine::setCurrentTurn(int *currentTurn) {
+    GameEngine::currentTurn = currentTurn;
+}
+
+int *GameEngine::getMaxTurns() const {
+    return maxTurns;
+}
+
+void GameEngine::setMaxTurns(int *maxTurns) {
+    GameEngine::maxTurns = maxTurns;
+}
+
 // Startup
 void
 GameEngine::startupPhase(GameEngine *game, CommandProcessor *cp, Command *command, PHASE phase, LogObserver *observer) {
@@ -112,16 +140,73 @@ GameEngine::startupPhase(GameEngine *game, CommandProcessor *cp, Command *comman
                 cout << "Start state" << endl;
                 // will prompt user, and should not pass for anything other than 'loadmap <mapfile>' (in this phase)
                 // also accepts tournament command!
+                int numGames = 0;
+                int numMaps = 0;
                 command = cp->getCommand(phase, cp, observer);
                 cout << *command << endl;  // just to show I did my part
                 if (*command->getName() == COMMAND::loadmap) {
                     mapFile = *command->getArgument();
                     phase = loadMap(game, phase, mapFile);
                 } else if (*command->getName() == COMMAND::tournament) {
-                    int maxTurns = loadTournament(*command->getArgument());
-                    if (maxTurns >= 0) {  // -1 means error
-                        // start the tournament here! tournament will start a new game with its own file command processor or something
+                    int maxTurnsInt = loadTournament(*command->getArgument());
+                    // set numGames to the number of files in the map0 folder in tournamnet
+                    for (const auto &gameFile: fs::directory_iterator("tournament/map0")) {
+                        numGames++;
                     }
+                    game->setMaxTurns(&maxTurnsInt);
+                    auto *winners = new vector<string>();
+                    if (maxTurnsInt >= 10) {  // -1 means error
+                        for (const auto &mapFolder: fs::directory_iterator("tournament")) {
+                            if (mapFolder.is_directory()) {
+                                cout << mapFolder.path() << endl;
+                                for (const auto &gameFile: fs::directory_iterator(mapFolder.path())) {
+                                    if (gameFile.is_regular_file()) {
+                                        cout << gameFile.path() << endl;
+
+                                        int gameCount = 0;
+                                        //create a new game
+                                        GameEngine *gameT = new GameEngine(observer);
+                                        CommandProcessor *cpT = new FileCommandProcessorAdapter(gameFile.path(),
+                                                                                                observer);
+                                        Command *commandT = new Command();
+                                        PHASE phaseT = START;
+                                        gameT->setMaxTurns(game->getMaxTurns());
+
+                                        cout << "Game " << gameCount++ << ": " << gameFile.path() << endl;
+                                        //run the startup and read the commands from the file
+                                        gameT->startupPhase(gameT, cpT, commandT, phaseT, observer);
+                                        phaseT = ASSIGN_REINFORCEMENT;
+                                        gameT->mainGameLoop(gameT, phaseT, observer);
+                                        //add winner name to winners
+                                        if (*gameT->getWinner() == -2) {
+                                            winners->push_back("Draw");
+                                        } else {
+                                            winners->push_back(
+                                                    *gameT->getPlayers()->at(*gameT->getWinner())->getName());
+                                        }
+                                    }
+                                }
+                            }
+                            numMaps++;
+                        }
+                    } else {
+                        cout << maxTurnsInt << " num of turns is invalid" << endl;
+                    }
+
+                    //print out the result in a matrix format where Game num is column name and map num is row name then the winner is the value
+                    cout << "Results: " << endl << "\t";
+                    for (int i = 0; i < numGames; i++) {
+                        cout << "Game " << i + 1 << "\t";
+                    }
+                    cout << endl;
+                    for (int i = 0; i < numMaps; i++) {
+                        cout << "Map " << i + 1 << ":  ";
+                        for (int j = 0; j < numGames; j++) {
+                            cout << winners->at(i) << "\t";
+                        }
+                        cout << endl;
+                    }
+                    return;
                 }
                 break;
             }
@@ -207,7 +292,7 @@ PHASE GameEngine::loadMap(GameEngine *game, PHASE phase, string mapFile) {
     cout << "Load Map Method" << endl;
     if (MapLoader::loadMap(game, &mapFile)) {
         cout << *game->getMap() << endl;
-        cout << *game->map->getName() << " map loaded" << endl;
+        cout << *game->getMap()->getName() << " map loaded" << endl;
         phase = MAP_LOADED;
     } else { // restart if map not loaded
         cout << "Map not loaded \n" << endl;
@@ -246,15 +331,15 @@ PHASE GameEngine::addPlayer(GameEngine *game, string playerName, int playerId, L
 
     // if the new player name startswith any of the valid strategies assign that strategy, else Human
     if (playerName.starts_with("aggressive")) {
-        newPlayer->setStrategy(new Aggressive());
+        newPlayer->setStrategy(new Aggressive(newPlayer));
     } else if (playerName.starts_with("benevolent")) {
-        newPlayer->setStrategy(new Benevolent());
+        newPlayer->setStrategy(new Benevolent(newPlayer));
     } else if (playerName.starts_with("neutral")) {
-        newPlayer->setStrategy(new Neutral());
+        newPlayer->setStrategy(new Neutral(newPlayer));
     } else if (playerName.starts_with("cheater")) {
-        newPlayer->setStrategy(new Cheater());
+        newPlayer->setStrategy(new Cheater(newPlayer));
     } else {
-        newPlayer->setStrategy(new Human());
+        newPlayer->setStrategy(new Human(newPlayer));
     }
 
     PHASE p = PLAYERS_ADDED;
@@ -265,10 +350,10 @@ PHASE GameEngine::addPlayer(GameEngine *game, string playerName, int playerId, L
 
 // Game start method
 PHASE GameEngine::gameStart(GameEngine *game) {
-    distributeTerritories(game->getMap());
+    distributeTerritories(game);
     determinePlayerOrder(game);
-    giveInitialArmies();
-    drawCards();
+    giveInitialArmies(game);
+    drawCards(game);
 
     PHASE p = END;
     setCurrentPhase(&p);
@@ -277,37 +362,36 @@ PHASE GameEngine::gameStart(GameEngine *game) {
 }
 
 // Distribute territories method
-void GameEngine::distributeTerritories(Map *map) {
+void GameEngine::distributeTerritories(GameEngine *game) {
     cout << "Distributing territories..." << endl;
-    vector<Territory *> *territories = map->getTerritories();
-    int numPlayers = players->size();
+    vector<Territory *> *territories = game->getMap()->getTerritories();
+    int numPlayers = game->getPlayers()->size();
     int numTerritories = territories->size();
     int territoriesPerPlayer = numTerritories / numPlayers;
     int remainderTerritories = numTerritories % numPlayers;
 
     //distribute all the territories to the players and set owner of territory
     for (int i = 0; i < numPlayers; i++) {
-        vector<Territory *> *territoriesForPlayers = players->at(i)->getPlayerTerritories();
+        vector<Territory *> *territoriesForPlayers = game->getPlayers()->at(i)->getPlayerTerritories();
         for (int j = 0; j < territoriesPerPlayer; j++) {
             territoriesForPlayers->push_back(territories->at(i * territoriesPerPlayer + j)); //add territory to player
-            territories->at(i * territoriesPerPlayer + j)->setOwner(players->at(i)); //set owner of territory
+            territories->at(i * territoriesPerPlayer + j)->setOwner(game->getPlayers()->at(i)); //set owner of territory
         }
-        players->at(i)->setPlayerTerritories(territoriesForPlayers);
+        game->getPlayers()->at(i)->setPlayerTerritories(territoriesForPlayers);
     }
     //distribute the remainder of the territories to the players and set owner of territory
     for (int i = 0; i < remainderTerritories; i++) {
-        players->at(i)->getPlayerTerritories()->push_back(
+        game->getPlayers()->at(i)->getPlayerTerritories()->push_back(
                 territories->at(i + numPlayers * territoriesPerPlayer)); //add territory to player
         territories->at(i + numPlayers * territoriesPerPlayer)->setOwner(players->at(i)); //set owner of territory
     }
     //print out territories of players
-    for (int i = 0; i < players->size(); i++) {
-        cout << "\nPlayer " << *players->at(i)->getName() << " has territories: " << endl;
-        vector<Territory *> *tempTerritories = players->at(i)->getPlayerTerritories();
+    for (int i = 0; i < game->getPlayers()->size(); i++) {
+        cout << "\nPlayer " << *game->getPlayers()->at(i)->getName() << " has territories: " << endl;
+        vector<Territory *> *tempTerritories = game->getPlayers()->at(i)->getPlayerTerritories();
         for (int j = 0; j < tempTerritories->size(); j++) {
             cout << *tempTerritories->at(j)->getTerritoryName() << endl;
         }
-        delete tempTerritories;
         tempTerritories = nullptr;
     }
 }
@@ -334,29 +418,31 @@ void GameEngine::determinePlayerOrder(GameEngine *game) {
 }
 
 // Give initial armies method
-void GameEngine::giveInitialArmies() {
+void GameEngine::giveInitialArmies(GameEngine *game) {
     //give initial armies of 50 to each player
     cout << "\nGiving initial armies..." << endl;
-    for (int i = 0; i < players->size(); i++) {
-        players->at(i)->setReinforcements(50);
-        cout << "Player " << *players->at(i)->getName() << " has " << players->at(i)->getReinforcements()
+    for (int i = 0; i < game->getPlayers()->size(); i++) {
+        game->getPlayers()->at(i)->setReinforcements(50);
+        cout << "Player " << *game->getPlayers()->at(i)->getName() << " has "
+             << game->getPlayers()->at(i)->getReinforcements()
              << " armies" << endl;
     }
 }
 
 // Draw cards method
-void GameEngine::drawCards() {
+void GameEngine::drawCards(GameEngine *game) {
     cout << "\nDrawing cards for players..." << endl;
     Deck *deck = new Deck();
-    for (int i = 0; i < players->size(); i++) {
+    for (int i = 0; i < game->getPlayers()->size(); i++) {
         Hand *hand = new Hand();
         hand->insert(deck->draw());
         hand->insert(deck->draw());
-        players->at(i)->setHand(hand);
+        game->getPlayers()->at(i)->setHand(hand);
     }
     //print hand of players
-    for (int i = 0; i < players->size(); i++) {
-        cout << "Player " << *players->at(i)->getName() << " has " << players->at(i)->getHand()->size()
+    for (int i = 0; i < game->getPlayers()->size(); i++) {
+        cout << "Player " << *game->getPlayers()->at(i)->getName() << " has "
+             << game->getPlayers()->at(i)->getHand()->size()
              << " cards" << endl;
     }
 
@@ -372,7 +458,7 @@ PHASE GameEngine::win() {
         cin >> playAgain;
         if (playAgain == "y") {
 
-            return CHECK_WIN; //go to start phase
+            return START; //go to start phase
         } else if (playAgain == "n") {
             cout << "Goodbye!" << endl;
             return END; //go to end phase
@@ -384,27 +470,20 @@ PHASE GameEngine::win() {
 //End phase
 void GameEngine::end() {
     cout << "Bye Bye" << endl;
-    abort();
 }
 
 // Start of new turn
 void GameEngine::mainGameLoop(GameEngine *game, PHASE phase, LogObserver *observer) {
-    cout << "There are " << players->size() << " players" << endl;
-
     while (true) {
         switch (phase) {
-            case WIN:
-                cout << "Win Phase" << endl;
-                phase = game->win();
-                break;
             case ASSIGN_REINFORCEMENT: {
                 cout << "Assign reinforcement state" << endl;
-                phase = game->reinforcementPhase();
+                phase = game->reinforcementPhase(game);
                 break;
             }
             case ISSUE_ORDERS: {
                 cout << "Issue orders state" << endl;
-                phase = game->issueOrdersPhase(observer);
+                phase = game->issueOrdersPhase(game, observer);
                 break;
             }
             case EXECUTE_ORDERS: {
@@ -417,9 +496,26 @@ void GameEngine::mainGameLoop(GameEngine *game, PHASE phase, LogObserver *observ
                 phase = game->checkWin();
                 break;
             }
+            case WIN:
+                cout << "Win Phase" << endl;
+                // phase = game->win();
+                game->setWinner(game->getPlayers()->at(0)->getId());
+                break;
+            case CHECK_DRAW: {
+                cout << "Check draw state" << endl;
+                phase = game->checkDraw(game);
+                break;
+            }
+            case DRAW: {
+                cout << "Draw state" << endl;
+                int *draw = new int(-2);
+                game->setWinner(draw);
+                return;
+            }
             case END:
                 cout << "End Phase" << endl;
                 game->end();
+                break;
             default:
                 cout << "Invalid phase" << endl;
                 break;
@@ -428,11 +524,11 @@ void GameEngine::mainGameLoop(GameEngine *game, PHASE phase, LogObserver *observ
 }
 
 //Assign reinforcement phase
-PHASE GameEngine::reinforcementPhase() {
+PHASE GameEngine::reinforcementPhase(GameEngine *game) {
     cout << "Assigning reinforcements to all players..." << endl;
 
     // loop through all current players and assign reinforcements based on game logic
-    for (Player *player: *players) {
+    for (Player *player: *game->getPlayers()) {
         // get current player's territories
         vector<Territory *> playerTerritories = *(player->getPlayerTerritories());
 
@@ -444,7 +540,7 @@ PHASE GameEngine::reinforcementPhase() {
 
         // Add continent bonus
         // loop through all continents
-        for (Continent *c: *(map->getContinents())) {
+        for (Continent *c: *(game->getMap()->getContinents())) {
             // get all member territories of continent
             vector<Territory *> conts = *(c->getTerritoriesInContinent());
 
@@ -474,10 +570,10 @@ PHASE GameEngine::reinforcementPhase() {
 }
 
 //Issue orders phase
-PHASE GameEngine::issueOrdersPhase(LogObserver *observer) {
+PHASE GameEngine::issueOrdersPhase(GameEngine *game, LogObserver *observer) {
 
 // loop through each player and call issueOrder method
-    for (Player *player: *players) {
+    for (Player *player: *game->getPlayers()) {
         cout << "PLAYER " << *(player->getId()) << " ISSUING ORDERS" << endl;
         bool stillPlaying = true;
 
@@ -576,7 +672,16 @@ PHASE GameEngine::checkWin() {
     if (players->size() == 1) {
         return WIN;
     }
+    return CHECK_DRAW;
+}
 
+PHASE GameEngine::checkDraw(GameEngine *game) {
+    int *tempCurrentTurn = new int(*game->getCurrentTurn() + 1);
+    game->setCurrentTurn(tempCurrentTurn);
+    cout << "Turn: " << *game->getCurrentTurn() << endl;
+    if (*game->getCurrentTurn() >= *game->getMaxTurns()) {
+        return DRAW;
+    }
     return ASSIGN_REINFORCEMENT;
 }
 
@@ -823,6 +928,12 @@ void GameEngine::stringToLog() {
         case EXECUTE_ORDERS:
             phaseString = "EXECUTE_ORDERS";
             break;
+        case CHECK_DRAW:
+            phaseString = "CHECK_DRAW";
+            break;
+        case DRAW:
+            phaseString = "DRAW";
+            break;
         case CHECK_WIN:
             phaseString = "CHECK_WIN";
             break;
@@ -895,7 +1006,7 @@ int GameEngine::loadTournament(string arguments) {
             newGameFile << "validatemap" << endl;
 
             int playerCounter = 0;
-            for (string strategyString : strategyStrings) {
+            for (string strategyString: strategyStrings) {
                 newGameFile << "addplayer " << strategyString << playerCounter++ << endl;
             }
 
