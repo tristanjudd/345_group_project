@@ -821,32 +821,36 @@ bool Cheat::execute() {
         setEffect(execEffect);
         GameEngine::conqStatus->push_back(*getPlayer()->getId());
 
+        //create a copy of player territories
+        vector<Territory*> originalTerritories = *getPlayer()->getPlayerTerritories();
 
-        //conquer all territories adjacent to player's territories
-        for (int i = 0; i < getPlayer()->getPlayerTerritories()->size(); i++)
+        //conquer all territories adjacent to player's originalterritories and add them to player's territory list
+        for (int i = 0; i < originalTerritories.size(); i++)
         {
-            for (int j = 0; j < getPlayer()->getPlayerTerritories()->at(i)->getBorderedTerritories()->size(); j++)
+            for (int j = 0; j < originalTerritories.at(i)->getBorderedTerritories()->size(); j++)
             {
                 //check if territory is already owned by the player
-                if (getPlayer()->getPlayerTerritories()->at(i)->getBorderedTerritories()->at(j)->getOwner()->getId() != getPlayer()->getId())
+                if (originalTerritories.at(i)->getBorderedTerritories()->at(j)->getOwner()->getId() != getPlayer()->getId())
                 {
                     //remove territory from other player's territory list
-                    Player *otherPlayer = getPlayer()->getPlayerTerritories()->at(i)->getBorderedTerritories()->at(j)->getOwner();
+                    Player *otherPlayer = originalTerritories.at(i)->getBorderedTerritories()->at(j)->getOwner();
 
                     vector<Territory*>* newTerritories = otherPlayer->getPlayerTerritories();
-                    auto it = std::find(newTerritories->begin(), newTerritories->end(), getPlayer()->getPlayerTerritories()->at(i)->getBorderedTerritories()->at(j));
-                    if (it != newTerritories->end()) {
+                    auto it = std::find(newTerritories->begin(), newTerritories->end(), originalTerritories.at(i)->getBorderedTerritories()->at(j));
+                    if (it != newTerritories->end())
+                    {
                         newTerritories->erase(it);
                     }
 
-                    otherPlayer->setPlayerTerritories(newTerritories);
+                    //add territory to player's territory list
+                    getPlayer()->getPlayerTerritories()->push_back(originalTerritories.at(i)->getBorderedTerritories()->at(j));
 
-                    //conquer territory
-                    getPlayer()->getPlayerTerritories()->at(i)->getBorderedTerritories()->at(j)->setOwner(getPlayer()); //set owner
-                    getPlayer()->getPlayerTerritories()->push_back(getPlayer()->getPlayerTerritories()->at(i)->getBorderedTerritories()->at(j)); //add to player's territory list
+                    //set new owner
+                    originalTerritories.at(i)->getBorderedTerritories()->at(j)->setOwner(getPlayer());
                 }
             }
         }
+
 
         Notify(this);
         return true;
