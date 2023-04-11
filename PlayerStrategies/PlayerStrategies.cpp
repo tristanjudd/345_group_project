@@ -131,63 +131,60 @@ bool Human::issueOrder(LogObserver* observer) {
                         }
                         // take user input
                         string toDefend;
+                        int validDefend;
                         cout << "Enter the number of the territory to defend: ";
-                        cin >> toDefend;
 
-                        // loop until valid input
+                        // get valid input
                         while (true) {
-                            // check if number corresponds to an option given
-                            int validDefend = string_is_num_in_range(toDefend, 1, defendable.size());
-                            if (validDefend) {
-                                cout << "To defend territory " << *(defendable.at(validDefend - 1)->getTerritoryName())
-                                     << " enter the number of the territory to send troops from: ";
-                                // take user input
-                                string defendFrom;
-                                cin >> defendFrom;
-                                int validDefendFrom = string_is_num_in_range(defendFrom, 1, defendable.size());
+                            cin >> toDefend;
+                            validDefend =  string_is_num_in_range(toDefend, 1, defendable.size());
 
-                                // loop until valid input
-                                while (true) {
-                                    if (validDefendFrom) {
-                                        string howManyTroops;
-                                        cout << "How many troops do you want to defend with? ";
+                            if (validDefend) break;
+                            else invalidInput();
+                        }
 
-                                        while (true) {
-                                            cin >> howManyTroops;
-                                            int validHowManyTroops = string_is_num_in_range(howManyTroops, 1, 999999);
+                        cout << "To defend territory " << *(defendable.at(validDefend - 1)->getTerritoryName())
+                             << " enter the number of the territory to send troops from: ";
+                        // take user input
+                        string defendFrom;
+                        int validDefendFrom;
 
-                                            if (validHowManyTroops) {
-                                                cout << "Defend "
-                                                     << *(defendable.at(validDefend - 1)->getTerritoryName())
-                                                     << " from "
-                                                     << *(defendable.at(validDefendFrom - 1)->getTerritoryName())
-                                                     << " with " << validHowManyTroops << " troops." << endl;
-                                                // Issue order
-                                                Order *advance = new Advance(p,
-                                                                             validHowManyTroops,
-                                                                             defendable.at(validDefendFrom - 1),
-                                                                             defendable.at(validDefendFrom - 1),
-                                                                             observer);
-                                                orders->Add(advance);
+                        // get valid input
+                        while (true) {
+                            cin >> defendFrom;
+                            validDefendFrom = string_is_num_in_range(defendFrom, 1, defendable.size());
 
-                                                break;
-                                            } else {
-                                                invalidInput();
-                                            }
-                                        } // end while for how many troops
+                            if (validDefendFrom) break;
+                            else invalidInput();
+                        }
 
-                                        break;
-                                    } else {
-                                        invalidInput();
-                                    }
-                                } // end of while loop
-                                // exit while loop
-                                break;
-                            } else {
-                                invalidInput();
-                            }
-                        } // end of while loop
+                        string howManyTroops;
+                        int validHowManyTroops;
+                        cout << "How many troops do you want to defend with? ";
+
+                        while (true) {
+                            cin >> howManyTroops;
+                            validHowManyTroops = string_is_num_in_range(howManyTroops, 1, 999999);
+
+                            if (validHowManyTroops) break;
+                            else invalidInput();
+                        }
+
+                        cout << "Defend "
+                             << *(defendable.at(validDefend - 1)->getTerritoryName())
+                             << " from "
+                             << *(defendable.at(validDefendFrom - 1)->getTerritoryName())
+                             << " with " << validHowManyTroops << " troops." << endl;
+                        // Issue order
+                        Order *advance = new Advance(p,
+                                                     validHowManyTroops,
+                                                     defendable.at(validDefendFrom - 1),
+                                                     defendable.at(validDefendFrom - 1),
+                                                     observer);
+                        orders->Add(advance);
+
                         break;
+
                     } // end of case 1
                         // case attack territory
                     case 2: {
