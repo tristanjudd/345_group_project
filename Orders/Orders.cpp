@@ -342,8 +342,6 @@ bool Advance::execute() {
                 //move army and change owner of target
                 delete target->getArmyCount();
                 target->setArmyCount(new int(attackingArmies)); //change army count
-                target->setOwner(getPlayer()); //change ownership
-
 
                 //remove territory from defender
                 Player *otherPlayer = target->getOwner();
@@ -356,6 +354,12 @@ bool Advance::execute() {
 
 				otherPlayer->setPlayerTerritories(newTerritories);
 
+                target->setOwner(getPlayer()); //change ownership
+
+                //add territory to attacker
+                vector<Territory*>* newTerritories2 = getPlayer()->getPlayerTerritories();
+                newTerritories2->push_back(target);
+                getPlayer()->setPlayerTerritories(newTerritories2);
 
                 //Give card to player
                 int ID = *getPlayer()->getId();
