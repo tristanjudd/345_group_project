@@ -116,6 +116,19 @@ int ordersDriver() {
 	cout << *t2->getArmyCount() << endl;
 	cout << *t2->getOwner()->getId() << endl;
 
+    //print player 1 territories ID
+    cout << "\nPlayer 1 territories ID: " << endl;
+    for (int i = 0; i < p1->getPlayerTerritories()->size(); i++) {
+        cout << *p1->getPlayerTerritories()->at(i)->getId() << " ";
+    }
+
+    //print player 2 territories ID
+    cout << "\nPlayer 2 territories ID: " << endl;
+    for (int i = 0; i < p2->getPlayerTerritories()->size(); i++) {
+        cout << *p2->getPlayerTerritories()->at(i)->getId() << " ";
+    }
+
+
 	cout << endl;
 	Negotiate* n1 = new Negotiate(p1, 2, o1); //Player 1 negotiates with Player 2;
 	n1->execute();
