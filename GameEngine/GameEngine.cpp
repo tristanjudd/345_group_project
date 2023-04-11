@@ -177,12 +177,10 @@ GameEngine::startupPhase(GameEngine *game, CommandProcessor *cp, Command *comman
                                         gameT->startupPhase(gameT, cpT, commandT, phaseT, observer);
                                         phaseT = ASSIGN_REINFORCEMENT;
                                         gameT->mainGameLoop(gameT, phaseT, observer);
-                                        //add winner name to winners
                                         if (*gameT->getWinner() == -2) {
                                             winners->push_back("Draw");
                                         } else {
-                                            winners->push_back(
-                                                    *gameT->getPlayers()->at(*gameT->getWinner())->getName());
+                                            winners->push_back(*gameT->getPlayers()->at(0)->getName());
                                         }
                                     }
                                 }
@@ -500,7 +498,7 @@ void GameEngine::mainGameLoop(GameEngine *game, PHASE phase, LogObserver *observ
                 cout << "Win Phase" << endl;
                 // phase = game->win();
                 game->setWinner(game->getPlayers()->at(0)->getId());
-                break;
+                return;
             case CHECK_DRAW: {
                 cout << "Check draw state" << endl;
                 phase = game->checkDraw(game);
@@ -618,9 +616,8 @@ PHASE GameEngine::executeOrdersPhase() {
                 currentOrderList.erase(currentOrderList.begin());
                 // check if order is a deploy order
                 auto *isDeploy = dynamic_cast<Deploy *>(toExecute);
-
                 // if order is deploy, nothing needs to be checked and it can be executed right away
-                if (isDeploy) {
+                if (toExecute) {
                     toExecute->execute();
                     // set deploy flag to true to indicate there was a deployment this round
                     deployFlag = true;
@@ -636,10 +633,8 @@ PHASE GameEngine::executeOrdersPhase() {
                         toExecute->execute();
                     }
                 }
-
             }
         }
-
     }
 
     //clear peaceStatus and conqStatus
