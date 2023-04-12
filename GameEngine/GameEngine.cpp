@@ -19,7 +19,7 @@ GameEngine::GameEngine(LogObserver *observer) : Subject(observer) {
     map = new Map();
     players = new vector<Player *>;
     currentTurn = new int(0);
-    maxTurns = new int(0);
+    maxTurns = new int(50); //default max turns is 50
 }
 
 //copy constructor
@@ -148,22 +148,22 @@ GameEngine::startupPhase(GameEngine *game, CommandProcessor *cp, Command *comman
                     mapFile = *command->getArgument();
                     phase = loadMap(game, phase, mapFile);
                 } else if (*command->getName() == COMMAND::tournament) {
-                    int maxTurnsInt = loadTournament(*command->getArgument());
-                    // set numGames to the number of files in the map0 folder in tournamnet
+                    int maxTurnsInt = loadTournament(*command->getArgument()); //get maxTurns
+                    // set numGames to the number of files in the map0 folder in tournament
                     for (const auto &gameFile: fs::directory_iterator("tournament/map0")) {
                         numGames++;
                     }
                     game->setMaxTurns(&maxTurnsInt);
-                    auto *winners = new vector<string>();
-                    if (maxTurnsInt >= 10) {  // -1 means error
-                        for (const auto &mapFolder: fs::directory_iterator("tournament")) {
+                    auto *winners = new vector<string>(); //vector of winners
+                    if (maxTurnsInt >= 10) {
+                        for (const auto &mapFolder: fs::directory_iterator(
+                                "tournament")) { //loop through all the map folders
                             if (mapFolder.is_directory()) {
                                 cout << mapFolder.path() << endl;
-                                for (const auto &gameFile: fs::directory_iterator(mapFolder.path())) {
+                                for (const auto &gameFile: fs::directory_iterator(
+                                        mapFolder.path())) { //loop through all the game files
                                     if (gameFile.is_regular_file()) {
                                         cout << gameFile.path() << endl;
-
-                                        int gameCount = 0;
                                         //create a new game
                                         GameEngine *gameT = new GameEngine(observer);
                                         CommandProcessor *cpT = new FileCommandProcessorAdapter(gameFile.path(),
@@ -172,11 +172,14 @@ GameEngine::startupPhase(GameEngine *game, CommandProcessor *cp, Command *comman
                                         PHASE phaseT = START;
                                         gameT->setMaxTurns(game->getMaxTurns());
 
-                                        cout << "Game " << gameCount++ << ": " << gameFile.path() << endl;
                                         //run the startup and read the commands from the file
                                         gameT->startupPhase(gameT, cpT, commandT, phaseT, observer);
+
+                                        //run the main game loop
                                         phaseT = ASSIGN_REINFORCEMENT;
                                         gameT->mainGameLoop(gameT, phaseT, observer);
+
+                                        //check who won
                                         if (*gameT->getWinner() == -2) {
                                             winners->push_back("Draw");
                                         } else {
@@ -674,7 +677,7 @@ PHASE GameEngine::checkDraw(GameEngine *game) {
     int *tempCurrentTurn = new int(*game->getCurrentTurn() + 1);
     game->setCurrentTurn(tempCurrentTurn);
     cout << "Turn: " << *game->getCurrentTurn() << endl;
-    if (*game->getCurrentTurn() >= *game->getMaxTurns()) {
+    if (*game->getCurrentTurn() == *game->getMaxTurns()) {
         return DRAW;
     }
     return ASSIGN_REINFORCEMENT;
