@@ -97,6 +97,7 @@ public:
     PHASE win();
     void end();
     void stringToLog();
+    void stringToLogTournament(int numGames, int numMaps, vector<string> *winners);
 
     //MEMBERS USED IN ORDERS
     static Player* neutral; //neutral player

@@ -195,6 +195,7 @@ GameEngine::startupPhase(GameEngine *game, CommandProcessor *cp, Command *comman
                     }
 
                     //print out the result in a matrix format where Game num is column name and map num is row name then the winner is the value
+                    stringToLogTournament(numGames, numMaps, winners);
                     cout << "Results: " << endl << "\t";
                     for (int i = 0; i < numGames; i++) {
                         cout << "Game " << i + 1 << "\t";
@@ -286,6 +287,38 @@ GameEngine::startupPhase(GameEngine *game, CommandProcessor *cp, Command *comman
 
     setCurrentPhase(&phase);
     Notify(this);
+}
+
+void GameEngine::stringToLogTournament(int numGames, int numMaps, vector<std::string> *winners) {
+    //creating file string
+    string filename = "../Log/gamelog.txt";
+    ofstream outputFile;
+
+    //checking if file exists
+    ifstream exists(filename);
+
+    if (exists.bad()) {
+        outputFile.open(filename);
+    }
+
+    // Append data to the file
+    outputFile.open(filename, std::ios_base::app);
+
+    //print out the result in a matrix format where Game num is column name and map num is row name then the winner is the value
+    outputFile << "Results: " << endl << "\t";
+    for (int i = 0; i < numGames; i++) {
+        outputFile << "Game " << i + 1 << "\t";
+    }
+    outputFile << endl;
+    for (int i = 0; i < numMaps; i++) {
+        outputFile << "Map " << i + 1 << ":  ";
+        for (int j = 0; j < numGames; j++) {
+            outputFile << winners->at(i) << "\t";
+        }
+        outputFile << endl;
+    }
+
+    outputFile.close();
 }
 
 //Load map method
@@ -501,7 +534,8 @@ void GameEngine::mainGameLoop(GameEngine *game, PHASE phase, LogObserver *observ
                 cout << "Win Phase" << endl;
                 // phase = game->win();
                 game->setWinner(game->getPlayers()->at(0)->getId());
-                return;
+                phase = END;
+                break;
             case CHECK_DRAW: {
                 cout << "Check draw state" << endl;
                 phase = game->checkDraw(game);
@@ -511,12 +545,13 @@ void GameEngine::mainGameLoop(GameEngine *game, PHASE phase, LogObserver *observ
                 cout << "Draw state" << endl;
                 int *draw = new int(-2);
                 game->setWinner(draw);
-                return;
+                phase = END;
+                break;
             }
             case END:
                 cout << "End Phase" << endl;
                 game->end();
-                break;
+                return;
             default:
                 cout << "Invalid phase" << endl;
                 break;
