@@ -244,17 +244,17 @@ void Advance::setTarget(Territory _target) {
 //check if territory has enough armies
 bool Advance::validate() {
 
-	//check if territory has enough troops
-	if (*(source->getArmyCount()) < *nbArmies) {
-		cout << "DEBUG: Advance not valid, source doesn't have enough troops" << endl;
-		return false;
-	}
-	
-	//check owner of source
-	if ((*(source->getOwner())->getId()) != (*(getPlayer()->getId()))) {
-		cout << "DEBUG: Advance not valid, player doesn't own the source" << endl;
-		return false;
-	}
+    //check if territory has enough troops
+    if (*(source->getArmyCount()) < *nbArmies) {
+        cout << "DEBUG: Advance not valid, source doesn't have enough troops" << endl;
+        return false;
+    }
+
+    //check owner of source
+    if ((*(source->getOwner())->getId()) != (*(getPlayer()->getId()))) {
+        cout << "DEBUG: Advance not valid, player doesn't own the source" << endl;
+        return false;
+    }
 
     //check if players at peace
     string peaceDuo1 = to_string(*(getPlayer()->getId())) + "/" + to_string(*(target->getOwner()->getId()));
@@ -296,22 +296,22 @@ bool Advance::execute() {
             delete source->getArmyCount();
             delete target->getArmyCount();
 
-			source->setArmyCount(leave);
-			target->setArmyCount(arrive);
-			execEffect = *(target->getTerritoryName()) + " now has " + to_string(*arrive) + " armies";
-		}
+            source->setArmyCount(leave);
+            target->setArmyCount(arrive);
+            execEffect = *(target->getTerritoryName()) + " now has " + to_string(*arrive) + " armies";
+        }
 
 
-        // battle between 2 armies
+            // battle between 2 armies
         else {
 
             //check if target is a neutral strategy
-            Neutral* neutralCheck = dynamic_cast<Neutral*>(target->getOwner()->getStrategy());
+            Neutral *neutralCheck = dynamic_cast<Neutral *>(target->getOwner()->getStrategy());
 
             if (neutralCheck != nullptr) {
                 //change target player strategy to aggressive
                 delete target->getOwner()->getStrategy();
-                PlayerStrategy* aggressive = new Aggressive(target->getOwner());
+                PlayerStrategy *aggressive = new Aggressive(target->getOwner());
                 target->getOwner()->setStrategy(aggressive);
                 cout << "DEBUG: Neutral player strategy changed to aggressive" << endl;
             }
@@ -346,18 +346,18 @@ bool Advance::execute() {
                 //remove territory from defender
                 Player *otherPlayer = target->getOwner();
 
-				vector<Territory*>* newTerritories = otherPlayer->getPlayerTerritories();
-				auto it = std::find(newTerritories->begin(), newTerritories->end(), target);
-				if (it != newTerritories->end()) {
-					newTerritories->erase(it);
-				}
+                vector<Territory *> *newTerritories = otherPlayer->getPlayerTerritories();
+                auto it = std::find(newTerritories->begin(), newTerritories->end(), target);
+                if (it != newTerritories->end()) {
+                    newTerritories->erase(it);
+                }
 
-				otherPlayer->setPlayerTerritories(newTerritories);
+                otherPlayer->setPlayerTerritories(newTerritories);
 
                 target->setOwner(getPlayer()); //change ownership
 
                 //add territory to attacker
-                vector<Territory*>* newTerritories2 = getPlayer()->getPlayerTerritories();
+                vector<Territory *> *newTerritories2 = getPlayer()->getPlayerTerritories();
                 newTerritories2->push_back(target);
                 getPlayer()->setPlayerTerritories(newTerritories2);
 
@@ -368,10 +368,10 @@ bool Advance::execute() {
                 {
                     GameEngine::conqStatus->push_back(ID);
                     Card *theCard = new Card();
-					getPlayer()->getHand()->insert(theCard); //ading card to Players hand
+                    getPlayer()->getHand()->insert(theCard); //ading card to Players hand
                     GameEngine::conqStatus->push_back(ID);
 
-                    cout << "DEBUG: Card Given"<< endl;
+                    cout << "DEBUG: Card Given" << endl;
 
                 }
 
@@ -461,12 +461,11 @@ bool Bomb::validate() {
         return false;
     }
 
-	//check if adjacent to one of the player's territories
-	bool adjacent = false;
-	
-	for (int i = 0; i < getPlayer()->getPlayerTerritories()->size(); i++)
-	{
-		vector<int>*bvec = (*(getPlayer()->getPlayerTerritories()))[i]->getBorders();
+    //check if adjacent to one of the player's territories
+    bool adjacent = false;
+
+    for (int i = 0; i < getPlayer()->getPlayerTerritories()->size(); i++) {
+        vector<int> *bvec = (*(getPlayer()->getPlayerTerritories()))[i]->getBorders();
 
         if (find(bvec->begin(), bvec->end(), (*(target->getId()))) != bvec->end()) {
             adjacent = true;
@@ -490,7 +489,7 @@ bool Bomb::execute() {
         cout << "DEBUG: Bomb order executed" << endl;
 
         //check if target is a neutral strategy
-        Neutral* neutralCheck = dynamic_cast<Neutral*>(target->getOwner()->getStrategy());
+        Neutral *neutralCheck = dynamic_cast<Neutral *>(target->getOwner()->getStrategy());
 
         if (neutralCheck != nullptr) {
             //change target player strategy to aggressive
@@ -578,23 +577,24 @@ bool Blockade::execute() {
         int *doubled = new int((*(target->getArmyCount())) * 2);
         delete target->getArmyCount();
         target->setArmyCount(doubled);
-        
-		string execEffect = *(target->getTerritoryName()) + " now has " + to_string(*doubled) + " armies and is owned by Neutral player";
-		setEffect(execEffect);
 
-		//REMOVE territory from player
-		vector<Territory*> *newTerritories = getPlayer()->getPlayerTerritories();
+        string execEffect = *(target->getTerritoryName()) + " now has " + to_string(*doubled) +
+                            " armies and is owned by Neutral player";
+        setEffect(execEffect);
+
+        //REMOVE territory from player
+        vector<Territory *> *newTerritories = getPlayer()->getPlayerTerritories();
 
 
         auto it = std::find(newTerritories->begin(), newTerritories->end(), target);
         if (it != newTerritories->end()) {
             newTerritories->erase(it);
         }
-		getPlayer()->setPlayerTerritories(newTerritories);
+        getPlayer()->setPlayerTerritories(newTerritories);
 
-		//GIVE TERRITORY TO NEUTRAL PLAYER
-		GameEngine::neutral->getPlayerTerritories()->push_back(target);
-		target->setOwner(GameEngine::neutral);
+        //GIVE TERRITORY TO NEUTRAL PLAYER
+        GameEngine::neutral->getPlayerTerritories()->push_back(target);
+        target->setOwner(GameEngine::neutral);
 
         return true;
     } else {
@@ -701,9 +701,7 @@ bool Airlift::execute() {
         string execEffect = *(target->getTerritoryName()) + " now has " + to_string(*land) + " armies";
         setEffect(execEffect);
         return true;
-    } 
-    
-    else {
+    } else {
         cout << "DEBUG: Airlift order not executed" << endl;
         return false;
     }
@@ -792,8 +790,7 @@ void Negotiate::operator=(Negotiate const &obj) {
 }
 
 //CHEAT class
-Cheat::Cheat(Player* _issuer, LogObserver *observer) : Order(_issuer, observer)
-{
+Cheat::Cheat(Player *_issuer, LogObserver *observer) : Order(_issuer, observer) {
     setDesc("This is a Cheat order");
 }
 
@@ -807,8 +804,8 @@ bool Cheat::validate() {
 
     //check if player is already conqured this turn
     int ID = *getPlayer()->getId();
-    if (std::find(GameEngine::conqStatus->begin(), GameEngine::conqStatus->end(), ID) == GameEngine::conqStatus->end())
-    {
+    if (std::find(GameEngine::conqStatus->begin(), GameEngine::conqStatus->end(), ID) ==
+        GameEngine::conqStatus->end()) {
         return true;
     }
 
@@ -826,28 +823,27 @@ bool Cheat::execute() {
         GameEngine::conqStatus->push_back(*getPlayer()->getId());
 
         //create a copy of player territories
-        vector<Territory*> originalTerritories = *getPlayer()->getPlayerTerritories();
+        vector<Territory *> originalTerritories = *getPlayer()->getPlayerTerritories();
 
         //conquer all territories adjacent to player's originalterritories and add them to player's territory list
-        for (int i = 0; i < originalTerritories.size(); i++)
-        {
-            for (int j = 0; j < originalTerritories.at(i)->getBorderedTerritories()->size(); j++)
-            {
+        for (int i = 0; i < originalTerritories.size(); i++) {
+            for (int j = 0; j < originalTerritories.at(i)->getBorderedTerritories()->size(); j++) {
                 //check if territory is already owned by the player
-                if (originalTerritories.at(i)->getBorderedTerritories()->at(j)->getOwner()->getId() != getPlayer()->getId())
-                {
+                if (originalTerritories.at(i)->getBorderedTerritories()->at(j)->getOwner()->getId() !=
+                    getPlayer()->getId()) {
                     //remove territory from other player's territory list
                     Player *otherPlayer = originalTerritories.at(i)->getBorderedTerritories()->at(j)->getOwner();
 
-                    vector<Territory*>* newTerritories = otherPlayer->getPlayerTerritories();
-                    auto it = std::find(newTerritories->begin(), newTerritories->end(), originalTerritories.at(i)->getBorderedTerritories()->at(j));
-                    if (it != newTerritories->end())
-                    {
+                    vector<Territory *> *newTerritories = otherPlayer->getPlayerTerritories();
+                    auto it = std::find(newTerritories->begin(), newTerritories->end(),
+                                        originalTerritories.at(i)->getBorderedTerritories()->at(j));
+                    if (it != newTerritories->end()) {
                         newTerritories->erase(it);
                     }
 
                     //add territory to player's territory list
-                    getPlayer()->getPlayerTerritories()->push_back(originalTerritories.at(i)->getBorderedTerritories()->at(j));
+                    getPlayer()->getPlayerTerritories()->push_back(
+                            originalTerritories.at(i)->getBorderedTerritories()->at(j));
 
                     //set new owner
                     originalTerritories.at(i)->getBorderedTerritories()->at(j)->setOwner(getPlayer());
@@ -858,9 +854,7 @@ bool Cheat::execute() {
 
         Notify(this);
         return true;
-    }
-
-    else {
+    } else {
         cout << "DEBUG: Cheat order not executed" << endl;
         return false;
     }
