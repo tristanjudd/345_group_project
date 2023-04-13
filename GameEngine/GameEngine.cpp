@@ -150,6 +150,7 @@ GameEngine::startupPhase(GameEngine *game, CommandProcessor *cp, Command *comman
                 } else if (*command->getName() == COMMAND::tournament) {
                     int maxTurnsInt = loadTournament(*command->getArgument()); //get maxTurns
                     // set numGames to the number of files in the map0 folder in tournament
+                    // Michael you still need to check if load tournament gave an error (returned -1) here, because it won't create these files otherwise
                     for (const auto &gameFile: fs::directory_iterator("tournament/map0")) {
                         numGames++;
                     }
@@ -1012,8 +1013,17 @@ int GameEngine::loadTournament(string arguments) {
         strategyStrings = MapLoader::getTokens(commandTokens[3], ',');
         numberOfGames = stoi(commandTokens[5]);
         maxNumberOfTurns = stoi(commandTokens[7]);
+
+        // validate
+        if (mapFiles.size() < 1 || mapFiles.size() > 5 ||
+            strategyStrings.size() < 2 || strategyStrings.size() > 4 ||
+            numberOfGames < 1 || numberOfGames > 5 ||
+            maxNumberOfTurns < 10 || maxNumberOfTurns > 50) {
+            cout << "Tournament command invalid: Incorrect arg values. Please try again!" << endl;
+            return -1;
+        }
     } else {
-        cout << "Tournament command invalid. Please try again!" << endl;
+        cout << "Tournament command invalid: Incorrect args. Please try again!" << endl;
         return -1;
     }
 
