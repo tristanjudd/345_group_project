@@ -134,7 +134,8 @@ GameEngine::startupPhase(GameEngine *game, CommandProcessor *cp, Command *comman
     cout << "Welcome to our bootleg Warzone!" << endl;
     int playerId = 0;
     string mapFile;
-    while (true) {
+    int maxTurnsInt = 0;
+    while (maxTurnsInt != -1) {
         switch (phase) {
             case START: {
                 cout << "Start state" << endl;
@@ -148,51 +149,50 @@ GameEngine::startupPhase(GameEngine *game, CommandProcessor *cp, Command *comman
                     mapFile = *command->getArgument();
                     phase = loadMap(game, phase, mapFile);
                 } else if (*command->getName() == COMMAND::tournament) {
-                    int maxTurnsInt = loadTournament(*command->getArgument()); //get maxTurns
+                    maxTurnsInt = loadTournament(*command->getArgument()); //get maxTurns
+                    if (maxTurnsInt == -1) {
+                        cout << "Tournament command invalid. Please try again!" << endl;
+                        break;
+                    }
                     // set numGames to the number of files in the map0 folder in tournament
-                    // Michael you still need to check if load tournament gave an error (returned -1) here, because it won't create these files otherwise
                     for (const auto &gameFile: fs::directory_iterator("tournament/map0")) {
                         numGames++;
                     }
                     game->setMaxTurns(&maxTurnsInt);
                     auto *winners = new vector<string>(); //vector of winners
-                    if (maxTurnsInt >= 10) {
-                        for (const auto &mapFolder: fs::directory_iterator(
-                                "tournament")) { //loop through all the map folders
-                            if (mapFolder.is_directory()) {
-                                cout << mapFolder.path() << endl;
-                                for (const auto &gameFile: fs::directory_iterator(
-                                        mapFolder.path())) { //loop through all the game files
-                                    if (gameFile.is_regular_file()) {
-                                        cout << gameFile.path() << endl;
-                                        //create a new game
-                                        GameEngine *gameT = new GameEngine(observer);
-                                        CommandProcessor *cpT = new FileCommandProcessorAdapter(gameFile.path(),
-                                                                                                observer);
-                                        Command *commandT = new Command();
-                                        PHASE phaseT = START;
-                                        gameT->setMaxTurns(game->getMaxTurns());
+                    for (const auto &mapFolder: fs::directory_iterator(
+                            "tournament")) { //loop through all the map folders
+                        if (mapFolder.is_directory()) {
+                            cout << mapFolder.path() << endl;
+                            for (const auto &gameFile: fs::directory_iterator(
+                                    mapFolder.path())) { //loop through all the game files
+                                if (gameFile.is_regular_file()) {
+                                    cout << gameFile.path() << endl;
+                                    //create a new game
+                                    GameEngine *gameT = new GameEngine(observer);
+                                    CommandProcessor *cpT = new FileCommandProcessorAdapter(gameFile.path(),
+                                                                                            observer);
+                                    Command *commandT = new Command();
+                                    PHASE phaseT = START;
+                                    gameT->setMaxTurns(game->getMaxTurns());
 
-                                        //run the startup and read the commands from the file
-                                        gameT->startupPhase(gameT, cpT, commandT, phaseT, observer);
+                                    //run the startup and read the commands from the file
+                                    gameT->startupPhase(gameT, cpT, commandT, phaseT, observer);
 
-                                        //run the main game loop
-                                        phaseT = ASSIGN_REINFORCEMENT;
-                                        gameT->mainGameLoop(gameT, phaseT, observer);
+                                    //run the main game loop
+                                    phaseT = ASSIGN_REINFORCEMENT;
+                                    gameT->mainGameLoop(gameT, phaseT, observer);
 
-                                        //check who won
-                                        if (*gameT->getWinner() == -2) {
-                                            winners->push_back("Draw");
-                                        } else {
-                                            winners->push_back(*gameT->getPlayers()->at(0)->getName());
-                                        }
+                                    //check who won
+                                    if (*gameT->getWinner() == -2) {
+                                        winners->push_back("Draw");
+                                    } else {
+                                        winners->push_back(*gameT->getPlayers()->at(0)->getName());
                                     }
                                 }
                             }
-                            numMaps++;
                         }
-                    } else {
-                        cout << maxTurnsInt << " num of turns is invalid" << endl;
+                        numMaps++;
                     }
 
                     //print out the result in a matrix format where Game num is column name and map num is row name then the winner is the value
