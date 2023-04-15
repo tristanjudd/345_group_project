@@ -468,25 +468,35 @@ PHASE GameEngine::issueOrdersPhase(LogObserver* observer) {
 //Execute orders phase
 PHASE GameEngine::executeOrdersPhase() {
 
+    // pointer to current player's order list
     vector<Order *>* currentOrderList;
 
+    // flags for deploy order and other order round-robin logic
+    // initially set to true so we can enter loop
     bool deployFlag = true;
     bool orderFlag = true;
 
+    // while there are deploy orders left to execute
     while (deployFlag) {
+        // set to false immediately, if anyone executes a deploy order it will be set to true
         deployFlag = false;
 
+        // go through all players and get order at top of list
         for (Player* player : *players) {
+            // get list of orders
             currentOrderList = player->getOrders()->getList();
 
+            // if there is an order to execute
             if (!currentOrderList->empty()) {
                 Order* toExecute = currentOrderList->at(0);
 
+                // cast to deploy
                 auto *isDeploy = dynamic_cast<Deploy *>(toExecute);
-
+                // if it's a deploy order execute it and remove from order list
                 if (isDeploy) {
                     toExecute->execute();
                     currentOrderList->erase(currentOrderList->begin());
+                    // set falg to true as there was a deploy order this round
                     deployFlag = true;
                 }
 
@@ -495,15 +505,21 @@ PHASE GameEngine::executeOrdersPhase() {
         } // end Player for
     } // end while deployFlag
 
+    // while there are still other orders to execute
     while (orderFlag) {
+        // set flag to false immediately, will be set to true if someone executes an order
          orderFlag = false;
 
+         // go through all players and get first order in list
         for (Player* player : *players) {
+            // get order list
             currentOrderList = player->getOrders()->getList();
 
+            // if order list is not empty execute order and remove it from list
             if (!currentOrderList->empty()) {
                 currentOrderList->at(0)->execute();
                 currentOrderList->erase(currentOrderList->begin());
+                // set flag to true because there may still be orders left
                 orderFlag = true;
 
             } // end if order list not empty
@@ -511,51 +527,6 @@ PHASE GameEngine::executeOrdersPhase() {
         } // end Player for
     } // end while deployFlag
 
-
-
-
-
-
-
-/*    while (modFlag) {
-        // set flag to false at the beginning of each round-robin
-        modFlag = false;
-        // go through each player and execute the first order in their list
-        for (Player *player: *players) {
-            // get current player's order list
-            currentOrderList = *(player->getOrders()->getList());
-
-            // if there is at least one order left to execute
-            if (currentOrderList.size() > 0) {
-                //get top order
-                Order *toExecute = currentOrderList.at(0);
-                // remove order from front of list
-                currentOrderList.erase(currentOrderList.begin());
-                // check if order is a deploy order
-                auto *isDeploy = dynamic_cast<Deploy *>(toExecute);
-
-                // if order is deploy, nothing needs to be checked and it can be executed right away
-                if (isDeploy) {
-                    toExecute->execute();
-                    // set deploy flag to true to indicate there was a deployment this round
-                    deployFlag = true;
-                } else {
-                    // if this is set, either another player deployed this turn
-                    // or a player deployed last turn and we need to run through a round-robin to make sure no others deploy
-                    if (deployFlag) {
-                        // set to false so that if nobody else deploys this turn, next turn other orders execute
-                        deployFlag = false;
-                    } else {
-                        // if flag is false, nobody deployed for a whole turn so non-deploy orders are now
-                        // safe to execute
-                        toExecute->execute();
-                    }
-                }
-
-            }
-        }
-
-    }*/
 
     //clear peaceStatus and conqStatus
     peaceStatus->clear();
