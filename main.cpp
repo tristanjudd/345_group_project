@@ -10,6 +10,7 @@
 
 int main(int argc, char *argv[]) {
     // -file /home/jay/Projects/345_group_project/CommandProcessing/test.cmd
+    //C:\Users\Kojo\OneDrive\Documents\compsci\345\345_group_project\Map\canada.map
     try {
         if (string(argv[1]) == "-console") {
             gameEngineDriver(GAME_MODE::console, "");

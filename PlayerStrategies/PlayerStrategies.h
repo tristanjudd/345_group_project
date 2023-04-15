@@ -92,6 +92,7 @@ public:
     bool issueOrder(LogObserver* observer);
     vector<Territory *>* toAttack();
     vector<Territory *>* toDefend();
+    vector<Territory *>* toAttack(Territory*); //Territories to attack based on selected territory
 
     Territory * getTerrWithLargestArmy();
 };

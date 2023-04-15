@@ -170,7 +170,7 @@ GameEngine::startupPhase(GameEngine *game, CommandProcessor *cp, Command *comman
                                     cout << gameFile.path() << endl;
                                     //create a new game
                                     GameEngine *gameT = new GameEngine(observer);
-                                    CommandProcessor *cpT = new FileCommandProcessorAdapter(gameFile.path(),
+                                    CommandProcessor *cpT = new FileCommandProcessorAdapter(gameFile.path().string(),
                                                                                             observer);
                                     Command *commandT = new Command();
                                     PHASE phaseT = START;
@@ -648,7 +648,7 @@ PHASE GameEngine::executeOrdersPhase() {
             currentOrderList = *(player->getOrders()->getList());
 
             // if there is at least one order left to execute
-            if (currentOrderList.size() > 0) {
+            while (currentOrderList.size() > 0) {
                 //get top order
                 Order *toExecute = currentOrderList.at(0);
                 // remove order from front of list

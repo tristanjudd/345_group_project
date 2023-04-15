@@ -664,6 +664,7 @@ bool Cheater::issueOrder(LogObserver *observer) {
 }
 
 vector<Territory *> *Cheater::toAttack() {
+
     return nullptr;
 }
 
@@ -767,7 +768,25 @@ bool Aggressive::issueOrder(LogObserver *observer) {
 
     Territory *t = getTerrWithLargestArmy();
 
-    Order *deploy = new Deploy(this->p, this->p->getReinforcements(), t, observer);
+    //Checking if the territory with the most armies
+    //has any territories to attack
+    Order *deploy;
+    if (!toAttack(t)->empty()) {
+        deploy = new Deploy(this->p, this->p->getReinforcements(), t, observer);
+    }
+    else{
+        vector<Territory *> *playerTerritories = this->p->getPlayerTerritories();
+
+        for(auto currentT : *playerTerritories){
+
+            if(!toAttack(currentT)->empty()){
+
+                deploy = new Deploy(this->p, this->p->getReinforcements(), currentT, observer);
+                break;
+            }
+        }
+    }
+
     this->p->getOrders()->Add(deploy);
 
     vector<Territory *> *playerTerritories = this->p->getPlayerTerritories();
@@ -787,6 +806,7 @@ bool Aggressive::issueOrder(LogObserver *observer) {
             if (std::find(playerTerritories->begin(), playerTerritories->end(), adjacentT) !=
                 playerTerritories->end()) {
 
+                cout << "TERRITORY TO ATTACK IS AVAILABLE" << endl;
                 //Attack the first/current one available
                 Order *advance = new Advance(this->p, *currentT->getArmyCount(), currentT, adjacentT, observer);
 
@@ -797,6 +817,7 @@ bool Aggressive::issueOrder(LogObserver *observer) {
     }
     return false;
 }
+
 
 Territory *Aggressive::getTerrWithLargestArmy() {
 
@@ -817,6 +838,26 @@ Territory *Aggressive::getTerrWithLargestArmy() {
     return greatestT;
 }
 
+
+vector<Territory *> *Aggressive::toAttack(Territory* t) {
+
+    auto* toAttack = new vector<Territory*>;
+    vector<Territory *> *playerTerritories = this->p->getPlayerTerritories();
+
+    //Loop through adjacent territories;
+    for (auto adjacentT: *t->getBorderedTerritories()) {
+
+        //Check if they are an opposing or free territory
+        if (std::find(playerTerritories->begin(), playerTerritories->end(), adjacentT) !=
+            playerTerritories->end()) {
+
+            //adding to the attack list
+            toAttack->push_back(adjacentT);
+        }
+    }
+
+    return toAttack;
+}
 
 vector<Territory *> *Aggressive::toAttack() {
 
