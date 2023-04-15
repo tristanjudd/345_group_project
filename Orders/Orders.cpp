@@ -170,13 +170,14 @@ bool Deploy::execute() {
         //create exec effect
         string execEffect = *(target->getTerritoryName()) + " now has " + to_string(*armies) + " armies";
         setEffect(execEffect);
+        Notify(this);
         return true;
     } else {
         cout << "DEBUG: Deploy order not executed" << endl;
         return false;
     }
 
-    Notify(this);
+
 }
 
 //assign op
@@ -394,13 +395,14 @@ bool Advance::execute() {
 
         //set effect
         setEffect(execEffect);
+        Notify(this);
         return true;
     } else {
         cout << "DEBUG: Advance order not executed" << endl;
         return false;
     }
 
-    Notify(this);
+
 }
 
 //assign op
@@ -505,13 +507,14 @@ bool Bomb::execute() {
 
         string execEffect = *(target->getTerritoryName()) + " now has " + to_string(*survive) + " armies";
         setEffect(execEffect);
+        Notify(this);
         return true;
     } else {
         cout << "DEBUG: Bomb order not executed" << endl;
         return false;
     }
 
-    Notify(this);
+
 }
 
 //assign op
@@ -596,13 +599,14 @@ bool Blockade::execute() {
         GameEngine::neutral->getPlayerTerritories()->push_back(target);
         target->setOwner(GameEngine::neutral);
 
+        Notify(this);
         return true;
     } else {
         cout << "DEBUG: Blockade order not executed" << endl;
         return false;
     }
 
-    Notify(this);
+
 }
 
 //assign op
@@ -700,13 +704,14 @@ bool Airlift::execute() {
         //create exec effect string
         string execEffect = *(target->getTerritoryName()) + " now has " + to_string(*land) + " armies";
         setEffect(execEffect);
+        Notify(this);
         return true;
     } else {
         cout << "DEBUG: Airlift order not executed" << endl;
         return false;
     }
 
-    Notify(this);
+
 }
 
 //assign op
@@ -774,13 +779,13 @@ bool Negotiate::execute() {
         string execEffect = "Players " + to_string(*getPlayer()->getId()) + " and " + to_string(*victim) +
                             " are at peace for the rest of the round.";
         setEffect(execEffect);
+        Notify(this);
         return true;
     } else {
         cout << "DEBUG: Negotiate order not executed" << endl;
         return false;
     }
 
-    Notify(this);
 }
 
 //assign op
