@@ -468,16 +468,56 @@ PHASE GameEngine::issueOrdersPhase(LogObserver* observer) {
 //Execute orders phase
 PHASE GameEngine::executeOrdersPhase() {
 
-    vector<Order *> currentOrderList;
-    // flag indicating whether an order has been executed
-    // initialized to true so that we can enter the execution loop
-    bool modFlag = true;
-    // flag indicating whether a deployment was executed
-    // initialized to true to make sure all deployments are executed before other orders
-    bool deployFlag = true;
+    vector<Order *>* currentOrderList;
 
-    // loop executing orders until there are no orders left
-    while (modFlag) {
+    bool deployFlag = true;
+    bool orderFlag = true;
+
+    while (deployFlag) {
+        deployFlag = false;
+
+        for (Player* player : *players) {
+            currentOrderList = player->getOrders()->getList();
+
+            if (!currentOrderList->empty()) {
+                Order* toExecute = currentOrderList->at(0);
+
+                auto *isDeploy = dynamic_cast<Deploy *>(toExecute);
+
+                if (isDeploy) {
+                    toExecute->execute();
+                    currentOrderList->erase(currentOrderList->begin());
+                    deployFlag = true;
+                }
+
+            } // end if order list not empty
+
+        } // end Player for
+    } // end while deployFlag
+
+    while (orderFlag) {
+         orderFlag = false;
+
+        for (Player* player : *players) {
+            currentOrderList = player->getOrders()->getList();
+
+            if (!currentOrderList->empty()) {
+                currentOrderList->at(0)->execute();
+                currentOrderList->erase(currentOrderList->begin());
+                orderFlag = true;
+
+            } // end if order list not empty
+
+        } // end Player for
+    } // end while deployFlag
+
+
+
+
+
+
+
+/*    while (modFlag) {
         // set flag to false at the beginning of each round-robin
         modFlag = false;
         // go through each player and execute the first order in their list
@@ -515,7 +555,7 @@ PHASE GameEngine::executeOrdersPhase() {
             }
         }
 
-    }
+    }*/
 
     //clear peaceStatus and conqStatus
     peaceStatus->clear();
