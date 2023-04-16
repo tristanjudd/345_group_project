@@ -1,9 +1,4 @@
 #include "Cards.h"
-#include <cstdlib>
-#include <chrono>
-#include <algorithm>
-#include <random>
-#include <iostream>
 
 #include "../Player/Player.h"
 #include "../Orders/Orders.h"
@@ -264,8 +259,7 @@ void Deck::insert(Card* card) {
 
 // Re-arranges pointers in contents vector into random order
 void Deck::shuffleDeck() {
-	std::shuffle(contents->begin(), contents->end(), default_random_engine(time(0)));
-	
+	std::shuffle(contents->begin(), contents->end(), std::default_random_engine(time(0)));
 }
 
 // Returns number of cards in deck
