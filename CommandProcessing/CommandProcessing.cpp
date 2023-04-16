@@ -97,6 +97,8 @@ ostream &operator<<(ostream &os, COMMAND c) {
         case quit:
             os << "quit";
             break;
+        case tournament:
+            os << "tournament";
     }
 
     return os;
@@ -197,8 +199,17 @@ ostream &operator<<(ostream &os, PHASE p) {
         case EXECUTE_ORDERS:
             os << "execute orders";
             break;
+        case CHECK_WIN:
+            os << "check win";
+            break;
         case WIN:
             os << "win";
+            break;
+        case CHECK_DRAW:
+            os << "check draw";
+            break;
+        case DRAW:
+            os << "draw";
             break;
         case END:
             os << "end";
@@ -257,6 +268,8 @@ string CommandProcessor::generateEffect(bool isValid, Command *cmd, PHASE curren
             case quit:
                 out << "Quit the game.";
                 break;
+            case tournament:
+                out << "Prepared tournament.";
         }
     } else {
         out << "[ERROR] Cannot " << *cmd->getName() << " from phase " << currentPhase;
@@ -290,13 +303,17 @@ bool CommandProcessor::validate(Command *cmd, PHASE currentPhase) {
         if (currentPhase == PHASE::WIN) {
             return true;
         }
+    } else if (*cmd->getName() == COMMAND::tournament) {
+        if (currentPhase == PHASE::START) {
+            return true;
+        }
     }
 
     return false;
 }
 
 Command *CommandProcessor::parseCommand(string newCommand, LogObserver *observer) {
-    vector<string> commandTokens = MapLoader::getTokens(newCommand);
+    vector<string> commandTokens = MapLoader::getTokens(newCommand, ' ');
 
     if (commandTokens[0] == "loadmap") {
         if (commandTokens.size() == 1) {  // no argument specified
@@ -318,19 +335,21 @@ Command *CommandProcessor::parseCommand(string newCommand, LogObserver *observer
         return new Command(COMMAND::replay, observer);
     } else if (commandTokens[0] == "quit") {
         return new Command(COMMAND::quit, observer);
+    } else if (commandTokens[0] == "tournament") {
+        return new Command(COMMAND::tournament, newCommand.erase(0, 11), observer);
     } else {
         return new Command();
     }
 }
 
-Command* CommandProcessor::readCommand(LogObserver* observer) {
+Command *CommandProcessor::readCommand(LogObserver *observer) {
     string consoleCommand{};
 
     while (true) {
         cout << "Please enter your command: ";
         getline(cin, consoleCommand);
 
-        Command* command = parseCommand(consoleCommand, observer);
+        Command *command = parseCommand(consoleCommand, observer);
         if (command->getName() != nullptr) {
             return command;
         } else {
@@ -339,7 +358,7 @@ Command* CommandProcessor::readCommand(LogObserver* observer) {
     }
 }
 
-Command* CommandProcessor::getCommand(PHASE currentPhase, CommandProcessor* commandProcessor, LogObserver* observer) {
+Command *CommandProcessor::getCommand(PHASE currentPhase, CommandProcessor *commandProcessor, LogObserver *observer) {
     while (true) {
         Command *command = commandProcessor->readCommand(observer);
         bool cmdIsValid = validate(command, currentPhase);
@@ -360,12 +379,12 @@ FileLineReader::FileLineReader() {
     lines = new vector<string>();
 }
 
-FileLineReader::FileLineReader(const string& filePath) {
+FileLineReader::FileLineReader(const string &filePath) {
     lines = new vector<string>();
 
     ifstream file(filePath);
     if (file.fail()) {
-        throw runtime_error("Command file does not exist. Please pass proper command line arguments.");
+        throw std::runtime_error("Command file does not exist. Please pass proper command line arguments.");
     }
 
     string line;
@@ -376,7 +395,7 @@ FileLineReader::FileLineReader(const string& filePath) {
 
 FileLineReader::FileLineReader(const FileLineReader &copy) {
     lines = new vector<string>();
-    for (string line : *copy.lines) {
+    for (string line: *copy.lines) {
         lines->push_back(line);
     }
 }
@@ -391,7 +410,7 @@ FileLineReader::~FileLineReader() {
 FileLineReader &FileLineReader::operator=(const FileLineReader &flr) {
     if (this != &flr) {
         lines->clear();
-        for (string line : *flr.lines) {
+        for (string line: *flr.lines) {
             lines->push_back(line);
         }
     }
@@ -401,7 +420,7 @@ FileLineReader &FileLineReader::operator=(const FileLineReader &flr) {
 
 ostream &operator<<(ostream &os, const FileLineReader &flr) {
     os << "FileLineReader with lines: " << endl;
-    for (string line : *flr.lines) {
+    for (string line: *flr.lines) {
         os << line;
     }
 
@@ -411,7 +430,7 @@ ostream &operator<<(ostream &os, const FileLineReader &flr) {
 // methods
 string FileLineReader::readLineFromFile(int l) {
     if (l >= lines->size()) {
-        throw runtime_error("Ran out of commands in file.");
+        throw std::runtime_error("Ran out of commands in file.");
     }
     return lines->at(l);
 }
@@ -422,17 +441,19 @@ FileCommandProcessorAdapter::FileCommandProcessorAdapter() {
     flr = new FileLineReader();
     currentLine = new int{0};  // start at 1st line
 }
-FileCommandProcessorAdapter::FileCommandProcessorAdapter(LogObserver* observer): CommandProcessor(observer) {
+
+FileCommandProcessorAdapter::FileCommandProcessorAdapter(LogObserver *observer) : CommandProcessor(observer) {
     flr = new FileLineReader();
     currentLine = new int{0};  // start at 1st line
 }
 
-FileCommandProcessorAdapter::FileCommandProcessorAdapter(const string& cmdFilePath, LogObserver* observer): CommandProcessor(observer){
+FileCommandProcessorAdapter::FileCommandProcessorAdapter(const string &cmdFilePath, LogObserver *observer)
+        : CommandProcessor(observer) {
     flr = new FileLineReader(cmdFilePath);
     currentLine = new int{0};
 }
 
-FileCommandProcessorAdapter::FileCommandProcessorAdapter(const FileCommandProcessorAdapter &copy) : CommandProcessor(){
+FileCommandProcessorAdapter::FileCommandProcessorAdapter(const FileCommandProcessorAdapter &copy) : CommandProcessor() {
     flr = new FileLineReader(*copy.flr);
     currentLine = new int(*copy.currentLine);
 }

@@ -28,7 +28,8 @@ enum COMMAND {
     addplayer,
     gamestart,
     replay,
-    quit
+    quit,
+    tournament
 };
 
 class Command: public ILoggable, public Subject{
