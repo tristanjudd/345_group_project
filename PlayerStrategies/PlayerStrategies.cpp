@@ -567,7 +567,7 @@ bool Human::issueOrder(LogObserver *observer) {
 }
 
 vector<Territory *> *Human::toAttack() {
-    set<Territory *> attackable;
+    std::set<Territory *> attackable;
     vector<Territory *> *territories = p->getPlayerTerritories();
     // go through each of player's territories
     for (Territory *t: *territories) {

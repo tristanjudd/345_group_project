@@ -5,7 +5,7 @@
 
 //Order class
 Order::Order(LogObserver *observer) : Subject(observer) {
-    m_playerPtr = NULL; //player issuing the order
+    m_playerPtr = nullptr; //player issuing the order
     m_descriptionPtr = new string("This is an Order."); //Description of the Order
     m_effectPtr = new string(""); //Effect of the Order after being executed
 }
@@ -30,10 +30,10 @@ Order::~Order() {
 
 //GETTER AND SETTER ORDER
 string Order::getDesc() const {
-    if (m_descriptionPtr != NULL) {
-        return *m_descriptionPtr;
+    if (m_descriptionPtr == nullptr) {
+        return "null";
     }
-    return "null";
+    return *m_descriptionPtr;
 }
 
 void Order::setDesc(string _desc) {
@@ -41,7 +41,7 @@ void Order::setDesc(string _desc) {
 }
 
 string Order::getEffect() const {
-    if (m_effectPtr != NULL) {
+    if (m_effectPtr != nullptr) {
         return *m_effectPtr;
     }
     return "null";
@@ -307,9 +307,12 @@ bool Advance::execute() {
         else {
 
             //check if target is a neutral strategy
-            Neutral *neutralCheck = dynamic_cast<Neutral *>(target->getOwner()->getStrategy());
+            bool isNeutral = false;
+            if (typeid(target->getOwner()->getStrategy()) == typeid(Neutral)) {
+                isNeutral = true;
+            }
 
-            if (neutralCheck != nullptr) {
+            if (isNeutral) {
                 //change target player strategy to aggressive
                 delete target->getOwner()->getStrategy();
                 PlayerStrategy *aggressive = new Aggressive(target->getOwner());
