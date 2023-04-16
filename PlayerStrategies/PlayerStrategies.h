@@ -93,6 +93,7 @@ public:
     vector<Territory *>* toAttack();
     vector<Territory *>* toDefend();
     vector<Territory *>* toAttack(Territory*); //Territories to attack based on selected territory
+    bool checkOpposingOrFree(vector<Territory *> *playerTerritories, Territory*);
 
     Territory * getTerrWithLargestArmy();
 };

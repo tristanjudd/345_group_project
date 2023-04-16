@@ -803,8 +803,7 @@ bool Aggressive::issueOrder(LogObserver *observer) {
         for (auto adjacentT: *currentT->getBorderedTerritories()) {
 
             //Check if they are an opposing or free territory
-            if (std::find(playerTerritories->begin(), playerTerritories->end(), adjacentT) !=
-                playerTerritories->end()) {
+            if (checkOpposingOrFree(playerTerritories, adjacentT)) {
 
                 cout << "TERRITORY TO ATTACK IS AVAILABLE" << endl;
                 //Attack the first/current one available
@@ -839,6 +838,18 @@ Territory *Aggressive::getTerrWithLargestArmy() {
 }
 
 
+bool Aggressive::checkOpposingOrFree(vector<Territory *> *playerTerritories, Territory *adjacentT) {
+
+    for(auto playerTerritory : *playerTerritories){
+
+        if (playerTerritory->getId() == adjacentT->getId()){
+
+            return false;
+        }
+    }
+    return true;
+}
+
 vector<Territory *> *Aggressive::toAttack(Territory* t) {
 
     auto* toAttack = new vector<Territory*>;
@@ -848,12 +859,11 @@ vector<Territory *> *Aggressive::toAttack(Territory* t) {
     for (auto adjacentT: *t->getBorderedTerritories()) {
 
         //Check if they are an opposing or free territory
-        if (std::find(playerTerritories->begin(), playerTerritories->end(), adjacentT) !=
-            playerTerritories->end()) {
+        if (checkOpposingOrFree(playerTerritories, adjacentT)){
+            toAttack->push_back( adjacentT);
 
-            //adding to the attack list
-            toAttack->push_back(adjacentT);
         }
+
     }
 
     return toAttack;

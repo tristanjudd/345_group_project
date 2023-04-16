@@ -596,7 +596,7 @@ PHASE GameEngine::reinforcementPhase(GameEngine *game) {
             }
         }
         // Update player's reinforcement pool
-        player->setReinforcements(player->getReinforcements() + newTroops);
+        player->setReinforcements(newTroops);
     }
     cout << "Reinforcements assigned.\n" << endl;
 
