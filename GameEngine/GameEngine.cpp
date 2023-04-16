@@ -205,7 +205,7 @@ GameEngine::startupPhase(GameEngine *game, CommandProcessor *cp, Command *comman
                     for (int i = 0; i < numMaps; i++) {
                         cout << "Map " << i + 1 << ":  ";
                         for (int j = 0; j < numGames; j++) {
-                            cout << winners->at(i) << "\t";
+                            cout << winners->at(i) << " ";
                         }
                         cout << endl;
                     }
@@ -314,7 +314,7 @@ void GameEngine::stringToLogTournament(int numGames, int numMaps, vector<std::st
     for (int i = 0; i < numMaps; i++) {
         outputFile << "Map " << i + 1 << ":  ";
         for (int j = 0; j < numGames; j++) {
-            outputFile << winners->at(i) << "\t";
+            outputFile << winners->at(i) << " ";
         }
         outputFile << endl << endl;
     }
