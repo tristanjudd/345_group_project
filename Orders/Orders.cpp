@@ -306,16 +306,27 @@ bool Advance::execute() {
             // battle between 2 armies
         else {
 
-            //check if target is a neutral strategy
-            bool isNeutral = false;
-            if (typeid(target->getOwner()->getStrategy()) == typeid(Neutral)) {
-                isNeutral = true;
-            }
+//            //check if target is a neutral strategy
+//            bool isNeutral = false;
+//            if (typeid(target->getOwner()->getStrategy()) == typeid(Neutral)) {
+//                isNeutral = true;
+//            }
+//
+//            if (isNeutral) {
+//                //change target player strategy to aggressive
+//                delete target->getOwner()->getStrategy();
+//                PlayerStrategy *aggressive = new Aggressive(target->getOwner());
+//                target->getOwner()->setStrategy(aggressive);
+//                cout << "DEBUG: Neutral player strategy changed to aggressive" << endl;
+//            }
 
-            if (isNeutral) {
+            //check if target is a neutral strategy
+            Neutral* neutralCheck = dynamic_cast<Neutral*>(target->getOwner()->getStrategy());
+
+            if (neutralCheck != nullptr) {
                 //change target player strategy to aggressive
                 delete target->getOwner()->getStrategy();
-                PlayerStrategy *aggressive = new Aggressive(target->getOwner());
+                PlayerStrategy* aggressive = new Aggressive(target->getOwner());
                 target->getOwner()->setStrategy(aggressive);
                 cout << "DEBUG: Neutral player strategy changed to aggressive" << endl;
             }
