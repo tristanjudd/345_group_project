@@ -306,7 +306,7 @@ void GameEngine::stringToLogTournament(int numGames, int numMaps, vector<std::st
     outputFile.open(filename, std::ios_base::app);
 
     //print out the result in a matrix format where Game num is column name and map num is row name then the winner is the value
-    outputFile << "Results: " << endl << "\t";
+    outputFile << endl << "Results: " << endl << "\t";
     for (int i = 0; i < numGames; i++) {
         outputFile << "Game " << i + 1 << "\t";
     }
@@ -316,7 +316,7 @@ void GameEngine::stringToLogTournament(int numGames, int numMaps, vector<std::st
         for (int j = 0; j < numGames; j++) {
             outputFile << winners->at(i) << "\t";
         }
-        outputFile << endl;
+        outputFile << endl << endl;
     }
 
     outputFile.close();
@@ -736,30 +736,6 @@ PHASE GameEngine::checkDraw(GameEngine *game) {
     }
     return ASSIGN_REINFORCEMENT;
 }
-
-//// function for checking whether input is a number within a certain range
-//int string_is_num_in_range(string str, int n, int m) {
-//    // check that string is not empty and all chars are digits
-//    if (!str.empty() && std::all_of(str.begin(), str.end(), ::isdigit)) {
-//        // convert string to int and return
-//        int num = std::stoi(str);
-//        // if num in range return num
-//        if (num >= n && num <= m) return num;
-//            // else return false
-//        else return 0;
-//
-//    } else {
-//        // return false
-//        return 0;
-//    }
-//}
-//
-//void invalidInput() {
-//    cout << "Invalid input, try again" << endl;
-//    //clear input stream
-//    cin.clear();
-//    cin.ignore();
-//}
 
 // inits a bunch of objects to have something to test with in dev phase
 void GameEngine::initGameDummy(LogObserver *observer) {
