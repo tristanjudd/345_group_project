@@ -290,7 +290,7 @@ GameEngine::startupPhase(GameEngine *game, CommandProcessor *cp, Command *comman
     Notify(this);
 }
 
-void GameEngine::stringToLogTournament(int numGames, int numMaps, vector <std::string> *winners) {
+void GameEngine::stringToLogTournament(int numGames, int numMaps, vector<std::string> *winners) {
     //creating file string
     string filename = "../Log/gamelog.txt";
     ofstream outputFile;
@@ -358,7 +358,7 @@ PHASE GameEngine::validateMap(GameEngine *game, PHASE phase) {
 // Add player method
 PHASE GameEngine::addPlayer(GameEngine *game, string playerName, int playerId, LogObserver *observer) {
     Player *newPlayer = new Player(playerName, playerId, observer); //create new player
-    vector < Player * > *players = game->getPlayers();
+    vector<Player *> *players = game->getPlayers();
     players->push_back(newPlayer); //add player to vector of players
     cout << "Player " << *newPlayer->getName() << " added" << endl;
     cout << "Num of players: " << players->size() << endl << endl;
@@ -399,7 +399,7 @@ PHASE GameEngine::gameStart(GameEngine *game) {
 // Distribute territories method
 void GameEngine::distributeTerritories(GameEngine *game) {
     cout << "Distributing territories..." << endl;
-    vector < Territory * > *territories = game->getMap()->getTerritories();
+    vector<Territory *> *territories = game->getMap()->getTerritories();
     int numPlayers = game->getPlayers()->size();
     int numTerritories = territories->size();
     int territoriesPerPlayer = numTerritories / numPlayers;
@@ -407,7 +407,7 @@ void GameEngine::distributeTerritories(GameEngine *game) {
 
     //distribute all the territories to the players and set owner of territory
     for (int i = 0; i < numPlayers; i++) {
-        vector < Territory * > *territoriesForPlayers = game->getPlayers()->at(i)->getPlayerTerritories();
+        vector<Territory *> *territoriesForPlayers = game->getPlayers()->at(i)->getPlayerTerritories();
         for (int j = 0; j < territoriesPerPlayer; j++) {
             territoriesForPlayers->push_back(territories->at(i * territoriesPerPlayer + j)); //add territory to player
             territories->at(i * territoriesPerPlayer + j)->setOwner(game->getPlayers()->at(i)); //set owner of territory
@@ -423,7 +423,7 @@ void GameEngine::distributeTerritories(GameEngine *game) {
     //print out territories of players
     for (int i = 0; i < game->getPlayers()->size(); i++) {
         cout << "\nPlayer " << *game->getPlayers()->at(i)->getName() << " has territories: " << endl;
-        vector < Territory * > *tempTerritories = game->getPlayers()->at(i)->getPlayerTerritories();
+        vector<Territory *> *tempTerritories = game->getPlayers()->at(i)->getPlayerTerritories();
         for (int j = 0; j < tempTerritories->size(); j++) {
             cout << *tempTerritories->at(j)->getTerritoryName() << endl;
         }
@@ -434,8 +434,8 @@ void GameEngine::distributeTerritories(GameEngine *game) {
 // Determine player order method
 void GameEngine::determinePlayerOrder(GameEngine *game) {
     cout << "\nDetermining order of players..." << endl;
-    vector < Player * > *players = getPlayers();
-    vector < Player * > *playersOrder = new vector<Player *>();
+    vector<Player *> *players = getPlayers();
+    vector<Player *> *playersOrder = new vector<Player *>();
     int numPlayers = players->size();
     int randomNum;
     while (playersOrder->size() < numPlayers) {
@@ -567,7 +567,7 @@ PHASE GameEngine::reinforcementPhase(GameEngine *game) {
     // loop through all current players and assign reinforcements based on game logic
     for (Player *player: *game->getPlayers()) {
         // get current player's territories
-        vector < Territory * > playerTerritories = *(player->getPlayerTerritories());
+        vector<Territory *> playerTerritories = *(player->getPlayerTerritories());
 
         // Assign troops based on game criteria
         int newTroops = 3; // minimum new troops
@@ -579,7 +579,7 @@ PHASE GameEngine::reinforcementPhase(GameEngine *game) {
         // loop through all continents
         for (Continent *c: *(game->getMap()->getContinents())) {
             // get all member territories of continent
-            vector < Territory * > conts = *(c->getTerritoriesInContinent());
+            vector<Territory *> conts = *(c->getTerritoriesInContinent());
 
             int matches = 0;
             // for each territory in continent, check if it's also in player's territories
@@ -631,7 +631,7 @@ PHASE GameEngine::issueOrdersPhase(GameEngine *game, LogObserver *observer) {
 PHASE GameEngine::executeOrdersPhase() {
 
     // pointer to current player's order list
-    vector < Order * > *currentOrderList;
+    vector<Order *> *currentOrderList;
 
     // flags for deploy order and other order round-robin logic
     // initially set to true so we can enter loop
@@ -652,8 +652,13 @@ PHASE GameEngine::executeOrdersPhase() {
             if (!currentOrderList->empty()) {
                 Order *toExecute = currentOrderList->at(0);
 
-                // cast to deploy
-                auto *isDeploy = dynamic_cast<Deploy *>(toExecute);
+
+                //check if to execute is a deploy order
+                bool isDeploy = false;
+                if (typeid(toExecute).name() == typeid(Deploy).name()) {
+                    isDeploy = true;
+                }
+
                 // if it's a deploy order execute it and remove from order list
                 if (isDeploy) {
                     toExecute->execute();
@@ -769,66 +774,66 @@ void GameEngine::initGameDummy(LogObserver *observer) {
     Territory *t8 = new Territory(8, 1, "H");
     Territory *t9 = new Territory(9, 1, "I");
 
-    vector < Territory * > *borders1 = new vector<Territory *>;
+    vector<Territory *> *borders1 = new vector<Territory *>;
     borders1->push_back(t2);
     borders1->push_back(t4);
     t1->testSetBorders(borders1);
 
-    vector < Territory * > *borders2 = new vector<Territory *>;
+    vector<Territory *> *borders2 = new vector<Territory *>;
     borders2->push_back(t1);
     borders2->push_back(t3);
     borders2->push_back(t5);
     t2->testSetBorders(borders2);
 
-    vector < Territory * > *borders3 = new vector<Territory *>;
+    vector<Territory *> *borders3 = new vector<Territory *>;
     borders3->push_back(t2);
     borders3->push_back(t6);
     t3->testSetBorders(borders3);
 
-    vector < Territory * > *borders4 = new vector<Territory *>;
+    vector<Territory *> *borders4 = new vector<Territory *>;
     borders4->push_back(t1);
     borders4->push_back(t5);
     borders4->push_back(t7);
     t4->testSetBorders(borders4);
 
-    vector < Territory * > *borders5 = new vector<Territory *>;
+    vector<Territory *> *borders5 = new vector<Territory *>;
     borders5->push_back(t2);
     borders5->push_back(t4);
     borders5->push_back(t6);
     borders5->push_back(t8);
     t5->testSetBorders(borders5);
 
-    vector < Territory * > *borders6 = new vector<Territory *>;
+    vector<Territory *> *borders6 = new vector<Territory *>;
     borders6->push_back(t3);
     borders6->push_back(t5);
     borders6->push_back(t9);
     t6->testSetBorders(borders6);
 
-    vector < Territory * > *borders7 = new vector<Territory *>;
+    vector<Territory *> *borders7 = new vector<Territory *>;
     borders7->push_back(t4);
     borders7->push_back(t8);
     t7->testSetBorders(borders7);
 
-    vector < Territory * > *borders8 = new vector<Territory *>;
+    vector<Territory *> *borders8 = new vector<Territory *>;
     borders8->push_back(t5);
     borders8->push_back(t7);
     borders8->push_back(t9);
     t8->testSetBorders(borders8);
 
-    vector < Territory * > *borders9 = new vector<Territory *>;
+    vector<Territory *> *borders9 = new vector<Territory *>;
     borders9->push_back(t6);
     borders9->push_back(t8);
     t9->testSetBorders(borders9);
 
-    vector < Territory * > *list1 = new vector<Territory *>;
+    vector<Territory *> *list1 = new vector<Territory *>;
     list1->push_back(t1);
     list1->push_back(t2);
     list1->push_back(t3);
-    vector < Territory * > *list2 = new vector<Territory *>;
+    vector<Territory *> *list2 = new vector<Territory *>;
     list2->push_back(t4);
     list2->push_back(t5);
     list2->push_back(t6);
-    vector < Territory * > *list3 = new vector<Territory *>;
+    vector<Territory *> *list3 = new vector<Territory *>;
     list3->push_back(t7);
     list3->push_back(t8);
     list3->push_back(t9);
@@ -897,7 +902,7 @@ void GameEngine::initGameDummy(LogObserver *observer) {
     players->push_back(p3);
     players->push_back(p4);
 
-    vector < Territory * > *mapList = new vector<Territory *>;
+    vector<Territory *> *mapList = new vector<Territory *>;
     mapList->push_back(t1);
     mapList->push_back(t2);
     mapList->push_back(t3);
@@ -913,7 +918,7 @@ void GameEngine::initGameDummy(LogObserver *observer) {
     map->setTerritories(mapList);
 
     Continent *cont = new Continent();
-    vector < Continent * > *contVector = new vector<Continent *>;
+    vector<Continent *> *contVector = new vector<Continent *>;
     contVector->push_back(cont);
 
     cont->testSetTerritories(list1);
@@ -925,7 +930,7 @@ void GameEngine::initGameDummy(LogObserver *observer) {
 void GameEngine::initGameEndDummy(LogObserver *observer) {
     Player *p = new Player(observer);
     Territory *t = new Territory();
-    vector < Territory * > *tvec = new vector<Territory *>;
+    vector<Territory *> *tvec = new vector<Territory *>;
     tvec->push_back(t);
     p->setPlayerTerritories(tvec);
     players->push_back(p);
@@ -1004,10 +1009,10 @@ int GameEngine::loadTournament(string arguments) {
     fs::remove_all("tournament");
 
     // create new tournament
-    vector <string> commandTokens = MapLoader::getTokens(arguments, ' ');
+    vector<string> commandTokens = MapLoader::getTokens(arguments, ' ');
 
-    vector <string> mapFiles = *new vector<string>();
-    vector <string> strategyStrings = *new vector<string>();
+    vector<string> mapFiles = *new vector<string>();
+    vector<string> strategyStrings = *new vector<string>();
     int numberOfGames;
     int maxNumberOfTurns;
 
@@ -1018,7 +1023,7 @@ int GameEngine::loadTournament(string arguments) {
         commandTokens[6] == "-D") {
 
         // get each map file
-        vector <string> mapFileStrings = MapLoader::getTokens(commandTokens[1], ',');
+        vector<string> mapFileStrings = MapLoader::getTokens(commandTokens[1], ',');
         for (const string &mapFileString: mapFileStrings) {
             mapFiles.push_back(mapFileString);
         }
