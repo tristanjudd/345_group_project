@@ -92,20 +92,28 @@ public:
     bool issueOrder(LogObserver* observer);
     vector<Territory *>* toAttack();
     vector<Territory *>* toDefend();
+    vector<Territory *>* toAttack(Territory*); //Territories to attack based on selected territory
+    bool checkOpposingOrFree(vector<Territory *> *playerTerritories, Territory*);
+
+    Territory * getTerrWithLargestArmy();
 };
 
-//class Benevolent : public PlayerStrategy {
-//    Benevolent();
-//    Benevolent(Player* player);
-//    Benevolent(const Benevolent& b);
-//    ~Benevolent();
-//
-//    // Assignment operator
-//    void operator= (Benevolent const& b);
-//    // Stream operator
-//    friend ostream &operator<<(ostream &os, const Benevolent& b);
-//
-//    bool issueOrder(LogObserver* observer);
-//    vector<Territory *>* toAttack() ;
-//    vector<Territory *>* toDefend();
-//};
+class Benevolent : public PlayerStrategy {
+
+public:
+    Benevolent();
+    Benevolent(Player* player);
+    Benevolent(const Benevolent& b);
+    ~Benevolent();
+
+    // Assignment operator
+    void operator= (Benevolent const& b);
+    // Stream operator
+    friend ostream &operator<<(ostream &os, const Benevolent& b);
+
+    bool issueOrder(LogObserver* observer);
+    vector<Territory *>* toAttack() ;
+    vector<Territory *>* toDefend();
+
+    Territory* getTerrWithSmallestArmy();
+};
