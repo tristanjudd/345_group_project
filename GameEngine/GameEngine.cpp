@@ -63,16 +63,14 @@ ostream &operator<<(ostream &out, const GameEngine &gameEngine) {
 //destructor
 GameEngine::~GameEngine() {
     cout << "GameEngine destructor called" << endl;
-    winner = nullptr;
-    map = nullptr;
-    players = nullptr;
-    currentTurn = nullptr;
-    maxTurns = nullptr;
     delete winner;
     delete map;
-    delete players;
     delete currentTurn;
-    delete maxTurns;
+
+    for (auto player: *players) {
+        delete player;
+    }
+    delete players;
 
     delete neutral;
     delete peaceStatus;
@@ -1001,6 +999,15 @@ int GameEngine::loadTournament(string arguments) {
         // get each map file
         vector<string> mapFileStrings = MapLoader::getTokens(commandTokens[1], ',');
         for (const string &mapFileString: mapFileStrings) {
+            // run pre validation of map
+            bool mapLoaded = MapLoader::loadMap(this, new string(mapFileString));
+            if (!mapLoaded) {
+                cout << "Tournament command invalid: Incorrect map file " << mapFileString << " Please try again!"
+                     << endl;
+                return -1;
+            }
+
+            // add map
             mapFiles.push_back(mapFileString);
         }
 
