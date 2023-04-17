@@ -384,7 +384,7 @@ FileLineReader::FileLineReader(const string &filePath) {
 
     ifstream file(filePath);
     if (file.fail()) {
-        throw runtime_error("Command file does not exist. Please pass proper command line arguments.");
+        throw std::runtime_error("Command file does not exist. Please pass proper command line arguments.");
     }
 
     string line;
@@ -430,7 +430,7 @@ ostream &operator<<(ostream &os, const FileLineReader &flr) {
 // methods
 string FileLineReader::readLineFromFile(int l) {
     if (l >= lines->size()) {
-        throw runtime_error("Ran out of commands in file.");
+        throw std::runtime_error("Ran out of commands in file.");
     }
     return lines->at(l);
 }

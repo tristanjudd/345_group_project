@@ -5,11 +5,12 @@ using std::cout;
 #include<vector>
 using std::vector;
 #include <string>
-using namespace std;
 #include <cstdlib>
 using std::rand;
 #include <unordered_map>
-using namespace std;
+using std::string;
+using std::unordered_map;
+using std::to_string;
 
 #include "../Map/Map.h"
 #include "../GameLog/LoggingObserver.h"

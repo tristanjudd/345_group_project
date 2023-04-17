@@ -205,7 +205,7 @@ GameEngine::startupPhase(GameEngine *game, CommandProcessor *cp, Command *comman
                     for (int i = 0; i < numMaps; i++) {
                         cout << "Map " << i + 1 << ":  ";
                         for (int j = 0; j < numGames; j++) {
-                            cout << winners->at(i) << "\t";
+                            cout << winners->at(i) << " ";
                         }
                         cout << endl;
                     }
@@ -306,7 +306,7 @@ void GameEngine::stringToLogTournament(int numGames, int numMaps, vector<std::st
     outputFile.open(filename, std::ios_base::app);
 
     //print out the result in a matrix format where Game num is column name and map num is row name then the winner is the value
-    outputFile << "Results: " << endl << "\t";
+    outputFile << endl << "Results: " << endl << "\t";
     for (int i = 0; i < numGames; i++) {
         outputFile << "Game " << i + 1 << "\t";
     }
@@ -314,9 +314,9 @@ void GameEngine::stringToLogTournament(int numGames, int numMaps, vector<std::st
     for (int i = 0; i < numMaps; i++) {
         outputFile << "Map " << i + 1 << ":  ";
         for (int j = 0; j < numGames; j++) {
-            outputFile << winners->at(i) << "\t";
+            outputFile << winners->at(i) << " ";
         }
-        outputFile << endl;
+        outputFile << endl << endl;
     }
 
     outputFile.close();
@@ -596,7 +596,7 @@ PHASE GameEngine::reinforcementPhase(GameEngine *game) {
             }
         }
         // Update player's reinforcement pool
-        player->setReinforcements(player->getReinforcements() + newTroops);
+        player->setReinforcements(newTroops);
     }
     cout << "Reinforcements assigned.\n" << endl;
 
@@ -630,51 +630,69 @@ PHASE GameEngine::issueOrdersPhase(GameEngine *game, LogObserver *observer) {
 //Execute orders phase
 PHASE GameEngine::executeOrdersPhase() {
 
-    vector<Order *> currentOrderList;
-    // flag indicating whether an order has been executed
-    // initialized to true so that we can enter the execution loop
-    bool modFlag = true;
-    // flag indicating whether a deployment was executed
-    // initialized to true to make sure all deployments are executed before other orders
+    // pointer to current player's order list
+    vector<Order *> *currentOrderList;
+
+    // flags for deploy order and other order round-robin logic
+    // initially set to true so we can enter loop
     bool deployFlag = true;
+    bool orderFlag = true;
 
-    // loop executing orders until there are no orders left
-    while (modFlag) {
-        // set flag to false at the beginning of each round-robin
-        modFlag = false;
-        // go through each player and execute the first order in their list
+    // while there are deploy orders left to execute
+    while (deployFlag) {
+        // set to false immediately, if anyone executes a deploy order it will be set to true
+        deployFlag = false;
+
+        // go through all players and get order at top of list
         for (Player *player: *players) {
-            // get current player's order list
-            currentOrderList = *(player->getOrders()->getList());
+            // get list of orders
+            currentOrderList = player->getOrders()->getList();
 
-            // if there is at least one order left to execute
-            while (currentOrderList.size() > 0) {
-                //get top order
-                Order *toExecute = currentOrderList.at(0);
-                // remove order from front of list
-                currentOrderList.erase(currentOrderList.begin());
-                // check if order is a deploy order
-                auto *isDeploy = dynamic_cast<Deploy *>(toExecute);
-                // if order is deploy, nothing needs to be checked and it can be executed right away
-                if (toExecute) {
-                    toExecute->execute();
-                    // set deploy flag to true to indicate there was a deployment this round
-                    deployFlag = true;
-                } else {
-                    // if this is set, either another player deployed this turn
-                    // or a player deployed last turn and we need to run through a round-robin to make sure no others deploy
-                    if (deployFlag) {
-                        // set to false so that if nobody else deploys this turn, next turn other orders execute
-                        deployFlag = false;
-                    } else {
-                        // if flag is false, nobody deployed for a whole turn so non-deploy orders are now
-                        // safe to execute
-                        toExecute->execute();
-                    }
+            // if there is an order to execute
+            if (!currentOrderList->empty()) {
+                Order *toExecute = currentOrderList->at(0);
+
+
+                //check if to execute is a deploy order
+                bool isDeploy = false;
+                if (typeid(toExecute).name() == typeid(Deploy).name()) {
+                    isDeploy = true;
                 }
-            }
-        }
-    }
+
+                // if it's a deploy order execute it and remove from order list
+                if (isDeploy) {
+                    toExecute->execute();
+                    currentOrderList->erase(currentOrderList->begin());
+                    // set falg to true as there was a deploy order this round
+                    deployFlag = true;
+                }
+
+            } // end if order list not empty
+
+        } // end Player for
+    } // end while deployFlag
+
+    // while there are still other orders to execute
+    while (orderFlag) {
+        // set flag to false immediately, will be set to true if someone executes an order
+        orderFlag = false;
+
+        // go through all players and get first order in list
+        for (Player *player: *players) {
+            // get order list
+            currentOrderList = player->getOrders()->getList();
+
+            // if order list is not empty execute order and remove it from list
+            if (!currentOrderList->empty()) {
+                currentOrderList->at(0)->execute();
+                currentOrderList->erase(currentOrderList->begin());
+                // set flag to true because there may still be orders left
+                orderFlag = true;
+
+            } // end if order list not empty
+
+        } // end Player for
+    } // end while deployFlag
 
     //clear peaceStatus and conqStatus
     peaceStatus->clear();
@@ -718,30 +736,6 @@ PHASE GameEngine::checkDraw(GameEngine *game) {
     }
     return ASSIGN_REINFORCEMENT;
 }
-
-//// function for checking whether input is a number within a certain range
-//int string_is_num_in_range(string str, int n, int m) {
-//    // check that string is not empty and all chars are digits
-//    if (!str.empty() && std::all_of(str.begin(), str.end(), ::isdigit)) {
-//        // convert string to int and return
-//        int num = std::stoi(str);
-//        // if num in range return num
-//        if (num >= n && num <= m) return num;
-//            // else return false
-//        else return 0;
-//
-//    } else {
-//        // return false
-//        return 0;
-//    }
-//}
-//
-//void invalidInput() {
-//    cout << "Invalid input, try again" << endl;
-//    //clear input stream
-//    cin.clear();
-//    cin.ignore();
-//}
 
 // inits a bunch of objects to have something to test with in dev phase
 void GameEngine::initGameDummy(LogObserver *observer) {

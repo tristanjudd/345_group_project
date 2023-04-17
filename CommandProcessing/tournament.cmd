@@ -1,0 +1,1 @@
+tournament -M /Users/mike/Desktop/345_group_project/Map/canada.map, -P aggressive,cheater -G 3 -D 50
