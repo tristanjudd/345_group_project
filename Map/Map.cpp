@@ -21,6 +21,7 @@ Territory::Territory(int inId, int inContinentId, string inTerritoryName) {
     territoryName = new string(inTerritoryName);
     borders = new vector<int>();
     owner = nullptr;
+    borderedTerritories = new vector<Territory *>();
     cout << "Territory constructor called" << endl;
 }
 
@@ -32,6 +33,7 @@ Territory::Territory(const Territory &copy) {
     territoryName = new string(*copy.territoryName);
     borders = new vector<int>(*copy.borders);
     owner = copy.owner;
+    borderedTerritories = copy.borderedTerritories;
     cout << "Territory copy constructor called" << endl;
 }
 
@@ -137,7 +139,7 @@ void Territory::setBorderedTerritories(Territory *inTerritory, vector<Territory 
         tempTerritory->push_back(territories->at(inTerritory->getBorders()->at(i)));
     }
     inTerritory->borderedTerritories = tempTerritory;
-    tempTerritory->clear();
+    tempTerritory = nullptr;
     delete tempTerritory;
 }
 
@@ -232,7 +234,7 @@ void Continent::setTerritoriesInContinent(Continent *inContinent, vector<Territo
         }
     }
     inContinent->territoriesInContinent = tempTerritory;
-    tempTerritory->clear();
+    tempTerritory = nullptr;
     delete tempTerritory;
 }
 
@@ -498,6 +500,8 @@ bool Map::oneContinentPerTerritory() {
             }
         }
     }
+    temp = nullptr;
+    delete temp;
     //return true if territory size = terrCount meaning that all territories are in a continent
     //return true if continent size = contCount meaning that all continents have at least 1 territory
     if (*terrCount == territories->size() && *contCount == continents->size() && *terrCount != 0 && *contCount != 0) {
@@ -575,7 +579,7 @@ Map *MapLoader::readMap(string *filePath) {
             continue;
         }
 
-        tokens = getTokens(line);
+        tokens = getTokens(line, ' ');
         if (tokens.empty()) {
             continue;  // Skip empty line
         }
@@ -678,12 +682,11 @@ PARSE_MODE MapLoader::getMode(const string &inputString) {
 }
 
 // Split the line into each relevant token of information
-vector<string> MapLoader::getTokens(const string &inputString) {
+vector<string> MapLoader::getTokens(const string &inputString, const char &delimiter) {
     vector<string> tokens;
-    char delimiter = ' ';
 
-    char start = inputString.find_first_not_of(delimiter);
-    char end;
+    int start = inputString.find_first_not_of(delimiter);
+    int end;
 
     while (start != string::npos) {
         end = inputString.find(delimiter, start);

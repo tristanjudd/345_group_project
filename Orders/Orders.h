@@ -5,11 +5,12 @@ using std::cout;
 #include<vector>
 using std::vector;
 #include <string>
-using namespace std;
 #include <cstdlib>
 using std::rand;
 #include <unordered_map>
-using namespace std;
+using std::string;
+using std::unordered_map;
+using std::to_string;
 
 #include "../Map/Map.h"
 #include "../GameLog/LoggingObserver.h"
@@ -191,6 +192,22 @@ private:
 	Player* issuer;
 	int* victim;
 };
+
+//Cheat Order for Cheater Strategy
+class Cheat: public Order
+{
+    public:
+        Cheat(Player* _issuer, LogObserver* observer);
+        Cheat(const Cheat& _o);
+        ~Cheat();
+
+        bool validate();
+        bool execute();
+
+        void operator= (Cheat const &);
+
+};
+
 
 class OrderList: public ILoggable, public Subject
 {

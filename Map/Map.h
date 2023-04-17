@@ -170,7 +170,7 @@ public:
     // Methods
     static bool loadMap(GameEngine *game, string *inputPath);
     static Map* readMap(string *filePath);
-    static vector<string> getTokens(const string& inputString);
+    static vector<string> getTokens(const string& inputString, const char& delimiter);
 };
 int mapTest();
 #endif //MAP_H

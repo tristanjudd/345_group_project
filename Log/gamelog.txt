@@ -1,31 +1,226 @@
-
-Saving Effect: Loaded map C:\Users\Kojo\Documents\CompSci\345\345_group_project\Map\canada.map.
+Saving Effect: Prepared tournament.
+Saving Command: tournament
+Saving Effect: Loaded map C:\Users\Kojo\OneDrive\Documents\compsci\345\345_group_project\Map\canada.map.
 Saving Command: load map
 Current phase: MAP_LOADED
 Saving Effect: Validated map.
 Saving Command: validate map
 Current phase: MAP_VALIDATED
-Saving Effect: Added player cow.
+Saving Effect: Added player benevolent0.
 Saving Command: add player
 Current phase: PLAYERS_ADDED
-Saving Effect: Added player pig.
-Saving Command: add player
-Current phase: PLAYERS_ADDED
-Saving Effect: Started game.
-Saving Command: game start
-Current phase: END
-Saving Effect: Loaded map C:\Users\Kojo\Documents\CompSci\345\345_group_project\Map\canada.map.
-Saving Command: load map
-Current phase: MAP_LOADED
-Saving Effect: Validated map.
-Saving Command: validate map
-Current phase: MAP_VALIDATED
-Saving Effect: Added player cow.
-Saving Command: add player
-Current phase: PLAYERS_ADDED
-Saving Effect: Added player pig.
+Saving Effect: Added player aggressive1.
 Saving Command: add player
 Current phase: PLAYERS_ADDED
 Saving Effect: Started game.
 Saving Command: game start
 Current phase: END
+Current phase: ISSUE_ORDERS
+Adding order: Deploy order: Player 1  deploys 18 armies to BC-Vancouver_Island
+Adding order: Deploy order: Player 0  deploys 18 armies to British_Columbia-South
+Current phase: EXECUTE_ORDERS
+Executing Order effect BC-Vancouver_Island now has 18 armies
+Executing Order effect British_Columbia-South now has 18 armies
+Current phase: CHECK_WIN
+Current phase: ISSUE_ORDERS
+Adding order: Deploy order: Player 1  deploys 18 armies to BC-Vancouver_Island
+Adding order: Advance order: Player1 Advances 18 armies from BC-Vancouver_Island to British_Columbia-South
+Adding order: Deploy order: Player 0  deploys 18 armies to Alberta-South
+Current phase: EXECUTE_ORDERS
+Executing Order effect BC-Vancouver_Island now has 36 armies
+Executing Order effect Alberta-South now has 18 armies
+Executing Order effect Defender won the battle
+Current phase: CHECK_WIN
+Current phase: ISSUE_ORDERS
+Adding order: Deploy order: Player 1  deploys 18 armies to BC-Vancouver_Island
+Adding order: Advance order: Player1 Advances 18 armies from BC-Vancouver_Island to British_Columbia-South
+Adding order: Deploy order: Player 0  deploys 18 armies to Quebec-Central
+Current phase: EXECUTE_ORDERS
+Executing Order effect BC-Vancouver_Island now has 36 armies
+Executing Order effect Quebec-Central now has 18 armies
+Executing Order effect Player 1 conquered British_Columbia-South
+Current phase: CHECK_WIN
+Current phase: ISSUE_ORDERS
+Adding order: Deploy order: Player 1  deploys 18 armies to British_Columbia-North
+Adding order: Advance order: Player1 Advances 13 armies from British_Columbia-South to Alberta-South
+Adding order: Deploy order: Player 0  deploys 18 armies to Quebec-Central
+Current phase: EXECUTE_ORDERS
+Executing Order effect British_Columbia-North now has 18 armies
+Executing Order effect Quebec-Central now has 36 armies
+Executing Order effect Defender won the battle
+Current phase: CHECK_WIN
+Current phase: ISSUE_ORDERS
+Adding order: Deploy order: Player 1  deploys 18 armies to British_Columbia-North
+Adding order: Advance order: Player1 Advances 18 armies from British_Columbia-North to Yukon_Territory
+Adding order: Deploy order: Player 0  deploys 18 armies to Quebec-South
+Current phase: EXECUTE_ORDERS
+Executing Order effect British_Columbia-North now has 36 armies
+Executing Order effect Quebec-South now has 18 armies
+Executing Order effect Player 1 conquered Yukon_Territory
+Current phase: CHECK_WIN
+Current phase: ISSUE_ORDERS
+Adding order: Deploy order: Player 1  deploys 23 armies to Alberta-North
+Adding order: Deploy order: Player 0  deploys 17 armies to Nova_Scotia
+Current phase: EXECUTE_ORDERS
+Executing Order effect Alberta-North now has 23 armies
+Executing Order effect Nova_Scotia now has 17 armies
+Current phase: CHECK_WIN
+Current phase: ISSUE_ORDERS
+Adding order: Deploy order: Player 1  deploys 23 armies to Alberta-North
+Adding order: Advance order: Player1 Advances 23 armies from Alberta-North to Alberta-South
+Adding order: Deploy order: Player 0  deploys 17 armies to Ontario-South
+Current phase: EXECUTE_ORDERS
+Executing Order effect Alberta-North now has 46 armies
+Executing Order effect Ontario-South now has 17 armies
+Executing Order effect Player 1 conquered Alberta-South
+Current phase: CHECK_WIN
+Current phase: ISSUE_ORDERS
+Adding order: Deploy order: Player 1  deploys 24 armies to Saskatchewan-North
+Adding order: Advance order: Player1 Advances 14 armies from Alberta-South to Saskatchewan-South
+Adding order: Deploy order: Player 0  deploys 17 armies to N&L-Newfoundland
+Current phase: EXECUTE_ORDERS
+Executing Order effect Saskatchewan-North now has 24 armies
+Executing Order effect N&L-Newfoundland now has 17 armies
+Executing Order effect Player 1 conquered Saskatchewan-South
+Current phase: CHECK_WIN
+Current phase: ISSUE_ORDERS
+Adding order: Deploy order: Player 1  deploys 24 armies to Manitoba-North
+Adding order: Advance order: Player1 Advances 14 armies from Saskatchewan-South to Manitoba-South
+Adding order: Deploy order: Player 0  deploys 17 armies to N&L-Labrador
+Current phase: EXECUTE_ORDERS
+Executing Order effect Manitoba-North now has 24 armies
+Executing Order effect N&L-Labrador now has 17 armies
+Executing Order effect Player 1 conquered Manitoba-South
+Current phase: CHECK_WIN
+Current phase: ISSUE_ORDERS
+Adding order: Deploy order: Player 1  deploys 29 armies to Manitoba-North
+Adding order: Advance order: Player1 Advances 24 armies from Manitoba-North to Ontario-North
+Adding order: Advance order: Player1 Advances 14 armies from Manitoba-South to Ontario-West
+Adding order: Deploy order: Player 0  deploys 16 armies to Quebec-North
+Current phase: EXECUTE_ORDERS
+Executing Order effect Manitoba-North now has 53 armies
+Executing Order effect Quebec-North now has 16 armies
+Executing Order effect Player 1 conquered Ontario-North
+Executing Order effect Player 1 conquered Ontario-West
+Current phase: CHECK_WIN
+Current phase: ISSUE_ORDERS
+Adding order: Deploy order: Player 1  deploys 30 armies to NU-Southern_Islands
+Adding order: Advance order: Player1 Advances 24 armies from Ontario-North to Quebec-Central
+Adding order: Advance order: Player1 Advances 14 armies from Ontario-West to Ontario-South
+Adding order: Deploy order: Player 0  deploys 11 armies to Prince_Edward_Island
+Current phase: EXECUTE_ORDERS
+Executing Order effect NU-Southern_Islands now has 30 armies
+Executing Order effect Prince_Edward_Island now has 11 armies
+Executing Order effect Defender won the battle
+Executing Order effect Defender won the battle
+Current phase: CHECK_WIN
+Current phase: ISSUE_ORDERS
+Adding order: Deploy order: Player 1  deploys 30 armies to NU-Southern_Islands
+Adding order: Advance order: Player1 Advances 30 armies from NU-Southern_Islands to Quebec-North
+Adding order: Deploy order: Player 0  deploys 11 armies to Prince_Edward_Island
+Current phase: EXECUTE_ORDERS
+Executing Order effect NU-Southern_Islands now has 60 armies
+Executing Order effect Prince_Edward_Island now has 22 armies
+Executing Order effect Player 1 conquered Quebec-North
+Current phase: CHECK_WIN
+Current phase: ISSUE_ORDERS
+Adding order: Deploy order: Player 1  deploys 30 armies to Ontario-North
+Adding order: Advance order: Player1 Advances 19 armies from Quebec-North to N&L-Labrador
+Adding order: Deploy order: Player 0  deploys 10 armies to Prince_Edward_Island
+Current phase: EXECUTE_ORDERS
+Executing Order effect Ontario-North now has 30 armies
+Executing Order effect Prince_Edward_Island now has 32 armies
+Executing Order effect Defender won the battle
+Current phase: CHECK_WIN
+Current phase: ISSUE_ORDERS
+Adding order: Deploy order: Player 1  deploys 30 armies to Quebec-North
+Adding order: Advance order: Player1 Advances 30 armies from Ontario-North to Quebec-Central
+Adding order: Deploy order: Player 0  deploys 10 armies to Ontario-South
+Current phase: EXECUTE_ORDERS
+Executing Order effect Quebec-North now has 30 armies
+Executing Order effect Ontario-South now has 12 armies
+Executing Order effect Player 1 conquered Quebec-Central
+Current phase: CHECK_WIN
+Current phase: ISSUE_ORDERS
+Adding order: Deploy order: Player 1  deploys 31 armies to Ontario-North
+Adding order: Advance order: Player1 Advances 30 armies from Quebec-North to N&L-Labrador
+Adding order: Advance order: Player1 Advances 8 armies from Quebec-Central to N&L-Newfoundland
+Adding order: Deploy order: Player 0  deploys 10 armies to New_Brunswick
+Current phase: EXECUTE_ORDERS
+Executing Order effect Ontario-North now has 31 armies
+Executing Order effect New_Brunswick now has 10 armies
+Executing Order effect Player 1 conquered N&L-Labrador
+Executing Order effect Defender won the battle
+Current phase: CHECK_WIN
+Current phase: ISSUE_ORDERS
+Adding order: Deploy order: Player 1  deploys 31 armies to N&L-Labrador
+Adding order: Advance order: Player1 Advances 31 armies from Ontario-North to Ontario-South
+Adding order: Advance order: Player1 Advances 25 armies from N&L-Labrador to N&L-Newfoundland
+Adding order: Deploy order: Player 0  deploys 5 armies to Nova_Scotia
+Current phase: EXECUTE_ORDERS
+Executing Order effect N&L-Labrador now has 56 armies
+Executing Order effect Nova_Scotia now has 22 armies
+Executing Order effect Player 1 conquered Ontario-South
+Executing Order effect Player 1 conquered N&L-Newfoundland
+Current phase: CHECK_WIN
+Current phase: ISSUE_ORDERS
+Adding order: Deploy order: Player 1  deploys 32 armies to Quebec-Central
+Adding order: Advance order: Player1 Advances 19 armies from Ontario-South to Quebec-South
+Adding order: Advance order: Player1 Advances 11 armies from N&L-Newfoundland to Nova_Scotia
+Adding order: Deploy order: Player 0  deploys 4 armies to Quebec-South
+Current phase: EXECUTE_ORDERS
+Executing Order effect Quebec-Central now has 32 armies
+Executing Order effect Quebec-South now has 22 armies
+Executing Order effect Defender won the battle
+Executing Order effect Defender won the battle
+Current phase: CHECK_WIN
+Current phase: ISSUE_ORDERS
+Adding order: Deploy order: Player 1  deploys 32 armies to Quebec-Central
+Adding order: Advance order: Player1 Advances 32 armies from Quebec-Central to Quebec-South
+Adding order: Deploy order: Player 0  deploys 4 armies to New_Brunswick
+Current phase: EXECUTE_ORDERS
+Executing Order effect Quebec-Central now has 64 armies
+Executing Order effect New_Brunswick now has 14 armies
+Executing Order effect Player 1 conquered Quebec-South
+Current phase: CHECK_WIN
+Current phase: ISSUE_ORDERS
+Adding order: Deploy order: Player 1  deploys 37 armies to N&L-Newfoundland
+Adding order: Advance order: Player1 Advances 30 armies from Quebec-South to New_Brunswick
+Adding order: Deploy order: Player 0  deploys 4 armies to New_Brunswick
+Current phase: EXECUTE_ORDERS
+Executing Order effect N&L-Newfoundland now has 37 armies
+Executing Order effect New_Brunswick now has 18 armies
+Executing Order effect Player 1 conquered New_Brunswick
+Current phase: CHECK_WIN
+Current phase: ISSUE_ORDERS
+Adding order: Deploy order: Player 1  deploys 37 armies to N&L-Newfoundland
+Adding order: Advance order: Player1 Advances 37 armies from N&L-Newfoundland to Nova_Scotia
+Adding order: Advance order: Player1 Advances 9 armies from New_Brunswick to Prince_Edward_Island
+Adding order: Deploy order: Player 0  deploys 3 armies to Nova_Scotia
+Current phase: EXECUTE_ORDERS
+Executing Order effect N&L-Newfoundland now has 74 armies
+Executing Order effect Nova_Scotia now has 16 armies
+Executing Order effect Player 1 conquered Nova_Scotia
+Executing Order effect Defender won the battle
+Current phase: CHECK_WIN
+Current phase: ISSUE_ORDERS
+Adding order: Deploy order: Player 1  deploys 38 armies to New_Brunswick
+Adding order: Advance order: Player1 Advances 25 armies from Nova_Scotia to Prince_Edward_Island
+Adding order: Deploy order: Player 0  deploys 3 armies to Prince_Edward_Island
+Current phase: EXECUTE_ORDERS
+Executing Order effect New_Brunswick now has 38 armies
+Executing Order effect Prince_Edward_Island now has 28 armies
+Executing Order effect Defender won the battle
+Current phase: CHECK_WIN
+Current phase: ISSUE_ORDERS
+Adding order: Deploy order: Player 1  deploys 38 armies to New_Brunswick
+Adding order: Advance order: Player1 Advances 38 armies from New_Brunswick to Prince_Edward_Island
+Adding order: Deploy order: Player 0  deploys 3 armies to Prince_Edward_Island
+Current phase: EXECUTE_ORDERS
+Executing Order effect New_Brunswick now has 76 armies
+Executing Order effect Prince_Edward_Island now has 7 armies
+Executing Order effect Player 1 conquered Prince_Edward_Island
+Current phase: CHECK_WIN
+Results: 
+	Game 1	
+Map 1:  aggressive1	
