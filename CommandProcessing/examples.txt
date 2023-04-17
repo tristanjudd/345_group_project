@@ -1,17 +1,20 @@
 //good
-tournament -M /Users/mike/Desktop/345_group_project/Map/canada.map, -P aggressive,cheater -G 3 -D 50
+tournament -M /Users/mike/Desktop/345_group_project/Map/canada.map -P aggressive,cheater -G 3 -D 50
 
 //good
-tournament -M /Users/mike/Desktop/345_group_project/Map/canada.map, -P benevolent,aggressive -G 5 -D 10
+tournament -M /Users/mike/Desktop/345_group_project/Map/canada.map -P benevolent,aggressive -G 5 -D 10
+
+//bad -M
+tournament -M /Users/mike/Desktop/345_group_project/Map/canada. -P neutral,aggressive -G 2 -D 50
+
+//bad -P
+tournament -M /Users/mike/Desktop/345_group_project/Map/canada.map -P neutral -G 2 -D 50
 
 //bad -G
-tournament -M /Users/mike/Desktop/345_group_project/Map/canada.map, -P aggressive,neutral -G 0 -D 50
+tournament -M /Users/mike/Desktop/345_group_project/Map/canada.map -P aggressive,neutral -G 0 -D 50
 
 //bad -D
 tournament -M /Users/mike/Desktop/345_group_project/Map/canada.map,/Users/mike/Desktop/345_group_project/Map/sudamerica.map -P aggressive,neutral -G 5 -D 9
-
-//bad -P
-tournament -M /Users/mike/Desktop/345_group_project/Map/canada.map, -P neutral -G 2 -D 50
 
 //good
 tournament -M /Users/mike/Desktop/345_group_project/Map/canada.map,/Users/mike/Desktop/345_group_project/Map/sudamerica.map,/Users/mike/Desktop/345_group_project/Map/sudamerica.map -P aggressive,benevolent,neutral,cheater -G 5 -D 50
